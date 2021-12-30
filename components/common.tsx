@@ -34,7 +34,7 @@ const BodyContainerInner = styled.div`
   gap: 24px;
 `;
 
-export function Header({ children }: React.PropsWithChildren<{}>) {
+export function Header({ children }: React.PropsWithChildren<void>) {
   return (
     <HeaderContainer>
       <PageContainer> {children}</PageContainer>
@@ -42,7 +42,7 @@ export function Header({ children }: React.PropsWithChildren<{}>) {
   );
 }
 
-export function Page({ children }: React.PropsWithChildren<{}>) {
+export function Page({ children }: React.PropsWithChildren<void>) {
   return (
     <BodyContainer>
       <BodyContainerInner>{children}</BodyContainerInner>

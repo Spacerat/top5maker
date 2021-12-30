@@ -33,7 +33,7 @@ function Tagline() {
         <AccentText>anything</AccentText>
       </H1>
       <ImageContainer>
-        <Image src="/Illustration.png" width="226" height="124" />
+        <Image src="/Illustration.png" width="226" height="124" alt="" />
       </ImageContainer>
     </>
   );
