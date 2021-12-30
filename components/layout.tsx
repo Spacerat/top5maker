@@ -39,7 +39,7 @@ export const Main = styled.div`
   min-height: 100vh;
 `;
 
-export function Header({ children }: React.PropsWithChildren<void>) {
+export function Header({ children }: React.PropsWithChildren<unknown>) {
   return (
     <HeaderContainer>
       <PageContainer>{children}</PageContainer>
@@ -47,7 +47,7 @@ export function Header({ children }: React.PropsWithChildren<void>) {
   );
 }
 
-export function Page({ children }: React.PropsWithChildren<void>) {
+export function Page({ children }: React.PropsWithChildren<unknown>) {
   return (
     <BodyContainer>
       <BodyContainerInner>{children}</BodyContainerInner>
