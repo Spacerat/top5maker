@@ -1,11 +1,12 @@
 import styled from "styled-components";
-import { Body, H1, H3 } from "../components/text";
+import { H1, H3 } from "../components/text";
 import Image from "next/image";
 import React from "react";
 import { TopName, Header, Page } from "../components/common";
 import { TextInput } from "../components/TextInput";
 import { Button, FullMobileButton } from "../components/Button";
 import { TextButton } from "../components/TextButton";
+import { ListItem } from "../components/ListItem";
 
 const AccentText = styled.span`
   color: ${({ theme }) => theme.colors.secondaryLight};
@@ -81,34 +82,6 @@ function AddForm({ onAddItem }: AddFormProps) {
   );
 }
 
-const ItemContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  padding-top: 12px;
-  padding-bottom: 12px;
-  border-bottom: thin ${({ theme }) => theme.colors.primary3} solid;
-`;
-
-const ItemListContainer = styled.div``;
-
-const ItemTextContainer = styled.div`
-  flex: 1;
-`;
-
-function ItemWithActions({
-  children,
-  actions,
-}: React.PropsWithChildren<{ actions: React.ReactNode }>) {
-  return (
-    <ItemContainer>
-      <ItemTextContainer>
-        <Body>{children}</Body>
-      </ItemTextContainer>
-      {actions}
-    </ItemContainer>
-  );
-}
-
 function SetupItems() {
   // TODO: proper app state management
   const [items, setItems] = React.useState<readonly string[]>([]);
@@ -134,20 +107,22 @@ function SetupItems() {
   return (
     <>
       <H3>Add three or more items to get started</H3>
-      <ItemListContainer>
-        {items.map((item) => (
-          <ItemWithActions
-            key={item}
-            actions={
-              <TextButton value={item} onClick={() => removeItem(item)}>
-                ✖
-              </TextButton>
-            }
-          >
-            {item}
-          </ItemWithActions>
-        ))}
-      </ItemListContainer>
+      {items.length > 0 && (
+        <div>
+          {items.map((item) => (
+            <ListItem
+              key={item}
+              actions={
+                <TextButton value={item} onClick={() => removeItem(item)}>
+                  ✖
+                </TextButton>
+              }
+            >
+              {item}
+            </ListItem>
+          ))}
+        </div>
+      )}
       <AddForm onAddItem={addItem} />
       <FullMobileButton disabled={items.length < 3}>
         Start Sorting
