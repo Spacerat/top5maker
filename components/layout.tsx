@@ -1,4 +1,3 @@
-import { H2 } from "./text";
 import styled from "styled-components";
 
 const HeaderContainer = styled.header`
@@ -24,7 +23,6 @@ const BodyContainer = styled.div`
 `;
 
 const BodyContainerInner = styled.div`
-  background-color: ${({ theme }) => theme.colors.primary4};
   max-width: ${({ theme }) => theme.size.pageWidth};
   display: flex;
   flex-direction: column;
@@ -34,10 +32,17 @@ const BodyContainerInner = styled.div`
   gap: 24px;
 `;
 
+export const Main = styled.div`
+  background-color: ${({ theme }) => theme.colors.primary4};
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+`;
+
 export function Header({ children }: React.PropsWithChildren<void>) {
   return (
     <HeaderContainer>
-      <PageContainer> {children}</PageContainer>
+      <PageContainer>{children}</PageContainer>
     </HeaderContainer>
   );
 }
@@ -49,5 +54,3 @@ export function Page({ children }: React.PropsWithChildren<void>) {
     </BodyContainer>
   );
 }
-
-export const TopName = () => <H2>Top 5 Maker</H2>;

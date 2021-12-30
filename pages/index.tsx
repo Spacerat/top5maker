@@ -2,7 +2,8 @@ import styled from "styled-components";
 import { H1, H3 } from "../components/text";
 import Image from "next/image";
 import React from "react";
-import { TopName, Header, Page } from "../components/common";
+import { Main, Header, Page } from "../components/layout";
+import { TopName } from "../components/TopName";
 import { TextInput } from "../components/TextInput";
 import { Button, FullMobileButton } from "../components/Button";
 import { TextButton } from "../components/TextButton";
@@ -17,12 +18,6 @@ const ImageContainer = styled.div`
   display: flex;
   justify-content: center;
   margin-bottom: 24px;
-`;
-
-const Main = styled.div`
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
 `;
 
 function Tagline() {
