@@ -108,7 +108,11 @@ function SetupItems() {
             <ListItem
               key={item}
               actions={
-                <TextButton value={item} onClick={() => removeItem(item)}>
+                <TextButton
+                  value={item}
+                  onClick={() => removeItem(item)}
+                  aria-label={`Remove item: ${item}`}
+                >
                   ✖
                 </TextButton>
               }
