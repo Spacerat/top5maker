@@ -1,6 +1,7 @@
 import { produce } from "immer";
 import React from "react";
 import styled from "styled-components";
+import { useRouter } from "next/router";
 import { Brand } from "../components/Brand";
 import { Button } from "../components/Button";
 import { Header, Main, Page } from "../components/layout";
@@ -13,6 +14,7 @@ import {
   SortCache,
   SortStatus,
 } from "../lib/interruptibleSort";
+import { deserializeItems } from "../lib/serialization";
 
 const SideBySideButtons = styled.div`
   display: flex;
@@ -32,7 +34,10 @@ type State = {
   history: SortCache[];
 };
 
-type Action = { type: "update"; larger: string } | { type: "undo" };
+type Action =
+  | { type: "update"; larger: string }
+  | { type: "undo" }
+  | { type: "setItems"; items: string[] };
 
 function init(items: string[]): State {
   const cache = initCache();
@@ -57,20 +62,39 @@ function reducer(state: State, action: Action) {
         s.history.push(s.cache);
         s.status = heapsort(s.cache, s.items);
         return;
+      case "setItems":
+        s.items = action.items;
+        s.status = heapsort(s.cache, s.items);
+        return;
       case "undo":
         const last = s.history.pop();
         if (last !== undefined) {
           s.cache = last;
           s.status = heapsort(s.cache, s.items);
         }
+        return;
     }
   });
 }
 
-const tempItems = ["A", "B", "D", "C", "G", "F", "E"];
+function useQueryState() {
+  const { query } = useRouter();
+  const queryItems = query["items"];
+  if (typeof queryItems === "string") {
+    return { items: deserializeItems(queryItems) };
+  }
+  return { items: [] };
+}
 
 export default function Sort() {
-  const [state, dispatch] = React.useReducer(reducer, tempItems, init);
+  const { items } = useQueryState();
+
+  const [state, dispatch] = React.useReducer(reducer, items, init);
+
+  React.useEffect(() => {
+    dispatch({ type: "setItems", items });
+  }, [items]);
+
   const { status } = state;
 
   const comparison = status.done ? null : status.comparison;

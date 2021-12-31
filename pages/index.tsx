@@ -8,6 +8,8 @@ import { TextInput } from "../components/TextInput";
 import { Button, FullMobileButton } from "../components/Button";
 import { TextButton } from "../components/TextButton";
 import { ListItem } from "../components/ListItem";
+import Link from "next/link";
+import { serializeItems } from "../lib/serialization";
 
 const AccentText = styled.span`
   color: ${({ theme }) => theme.colors.secondaryLight};
@@ -123,9 +125,11 @@ function SetupItems() {
         </div>
       )}
       <AddForm onAddItem={addItem} />
-      <FullMobileButton disabled={items.length < 3}>
-        Start Sorting
-      </FullMobileButton>
+      <Link passHref href={`/sort?items=${serializeItems(items)}`}>
+        <FullMobileButton disabled={items.length < 3}>
+          Start Sorting
+        </FullMobileButton>
+      </Link>
     </>
   );
 }

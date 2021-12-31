@@ -15,7 +15,8 @@
     "react-dom": "^17.0.2",
     "react-is": "^17.0.2",
     "styled-components": "^5.2.3",
-    "styled-normalize": "^8.0.7"
+    "styled-normalize": "^8.0.7",
+    "url-safe-base64": "^1.1.1"
   },
   "devDependencies": {
     "@types/jest": "^27.4.0",
@@ -25,6 +26,7 @@
     "@types/styled-components": "^5.1.9",
     "@typescript-eslint/eslint-plugin": "^5.8.1",
     "@typescript-eslint/parser": "^5.8.1",
+    "@types/url-safe-base64": "^1.1.0",
     "babel-plugin-styled-components": "^1.12.0",
     "eslint": "8.5.0",
     "eslint-config-next": "12.0.7",
