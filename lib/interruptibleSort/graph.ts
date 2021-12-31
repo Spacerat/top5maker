@@ -24,7 +24,7 @@ export function isDescendant(
 function inDegrees(graph: Graph) {
   const degrees: Record<string, number> = {};
   Object.values(graph).forEach((children) => {
-    for (let child of children ?? []) {
+    for (const child of children ?? []) {
       degrees[child] = degrees[child] === undefined ? 1 : degrees[child] + 1;
     }
   });
@@ -66,7 +66,7 @@ function dfs(graph: Graph, root: string): string[] {
 
 /** Remove all 'items' in 'set' */
 function subtract<T>(set: Set<T>, items: Iterable<T>) {
-  for (let item of items) {
+  for (const item of items) {
     set.delete(item);
   }
 }
@@ -90,10 +90,10 @@ export function transitiveReduction(graph: Graph) {
 
   const descendants: Map<string, Set<string>> = new Map();
 
-  for (let u of Object.keys(graph)) {
-    let u_nbrs = new Set(graph[u]);
+  for (const u of Object.keys(graph)) {
+    const u_nbrs = new Set(graph[u]);
 
-    for (let v of graph[u]) {
+    for (const v of graph[u]) {
       if (u_nbrs.has(v)) {
         if (!descendants.has(v)) {
           descendants.set(v, new Set(dfs(graph, v)));
@@ -105,7 +105,7 @@ export function transitiveReduction(graph: Graph) {
         descendants.delete(v);
       }
     }
-    for (let v of u_nbrs.values()) {
+    for (const v of u_nbrs.values()) {
       reduction[u].push(v);
     }
   }

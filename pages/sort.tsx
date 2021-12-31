@@ -1,13 +1,11 @@
-import styled from "styled-components";
-import { H1, H3 } from "../components/text";
-import Image from "next/image";
+import { produce } from "immer";
 import React from "react";
-import { Main, Header, Page } from "../components/layout";
+import styled from "styled-components";
 import { Brand } from "../components/Brand";
-import { TextInput } from "../components/TextInput";
-import { Button, FullMobileButton } from "../components/Button";
-import { TextButton } from "../components/TextButton";
+import { Button } from "../components/Button";
+import { Header, Main, Page } from "../components/layout";
 import { ListItem } from "../components/ListItem";
+import { H1 } from "../components/text";
 import {
   cacheWithUpdate,
   heapsort,
@@ -15,7 +13,6 @@ import {
   SortCache,
   SortStatus,
 } from "../lib/interruptibleSort";
-import { produce } from "immer";
 
 const SideBySideButtons = styled.div`
   display: flex;
@@ -86,7 +83,7 @@ export default function Sort() {
       <Page>
         {comparison && (
           <>
-            <H1>What's Better?</H1>
+            <H1>What&apos;s Better?</H1>
             <SideBySideButtons>
               <Button
                 onClick={() =>

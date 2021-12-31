@@ -114,7 +114,7 @@ export function heapsort(
   heap = heapifyResult.progress;
 
   // Pop the top off until there's nothing left
-  let sorted: string[] = [];
+  const sorted: string[] = [];
 
   while (heap.length > 0) {
     swap(heap, 0, heap.length - 1);
@@ -175,7 +175,7 @@ function downHeap(
   inHeap: readonly string[],
   start: number
 ): SortStep {
-  let heap = [...inHeap];
+  const heap = [...inHeap];
 
   let root = start;
   let [leftChild, rightChild] = childIndices(start);

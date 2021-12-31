@@ -93,7 +93,7 @@ describe("heapsort", () => {
   });
 
   test("sorts a large array", () => {
-    let data = [
+    const data = [
       "1",
       "10",
       "7",
@@ -168,7 +168,7 @@ describe("heapsort", () => {
   });
 
   test("sorts a sorted array", () => {
-    let data = ["10", "9", "8", "7", "6", "5"];
+    const data = ["10", "9", "8", "7", "6", "5"];
 
     let cache = initCache();
 
