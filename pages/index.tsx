@@ -3,7 +3,7 @@ import { H1, H3 } from "../components/text";
 import Image from "next/image";
 import React from "react";
 import { Main, Header, Page } from "../components/layout";
-import { TopName } from "../components/TopName";
+import { Brand } from "../components/Brand";
 import { TextInput } from "../components/TextInput";
 import { Button, FullMobileButton } from "../components/Button";
 import { TextButton } from "../components/TextButton";
@@ -134,7 +134,7 @@ export default function Home() {
   return (
     <Main>
       <Header>
-        <TopName />
+        <Brand />
         <Tagline />
       </Header>
       <Page>
