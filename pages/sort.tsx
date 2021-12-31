@@ -1,4 +1,4 @@
-import { produce } from "immer";
+import { produce, castDraft } from "immer";
 import React from "react";
 import styled from "styled-components";
 import { useRouter } from "next/router";
@@ -6,7 +6,7 @@ import { Brand } from "../components/Brand";
 import { Button, SecondaryButton } from "../components/Button";
 import { Header, Main, Page } from "../components/layout";
 import { ListItem } from "../components/ListItem";
-import { H1 } from "../components/text";
+import { Bold, H1, H3 } from "../components/text";
 import {
   cacheWithUpdate,
   heapsort,
@@ -15,6 +15,9 @@ import {
   SortStatus,
 } from "../lib/interruptibleSort";
 import { deserializeItems } from "../lib/serialization";
+import { AddForm } from "../components/AddForm";
+import { stringSetAdd, stringSetRemove } from "../lib/immutableStringSet";
+import { TextButton } from "../components/TextButton";
 
 const SideBySideButtons = styled.div`
   display: flex;
@@ -30,14 +33,14 @@ const SideBySideButtons = styled.div`
 type State = {
   cache: SortCache;
   status: SortStatus;
-  items: string[];
-  history: SortCache[];
+  items: readonly string[];
+  prevState: State | null;
 };
 
 type Action =
   | { type: "update"; larger: string }
   | { type: "undo" }
-  | { type: "setItems"; items: string[] };
+  | { type: "setItems"; items: readonly string[] };
 
 function init(items: string[]): State {
   const cache = initCache();
@@ -45,7 +48,7 @@ function init(items: string[]): State {
     cache,
     status: heapsort(cache, items),
     items,
-    history: [{}],
+    prevState: null,
   };
 }
 
@@ -67,7 +70,10 @@ function swapComparison(lastStatus: SortStatus, newStatus: SortStatus) {
   return newStatus;
 }
 
-function reducer(state: State, action: Action) {
+function reducer(state: State, action: Action): State {
+  if (action.type === "undo" && state.prevState !== null) {
+    return state.prevState;
+  }
   return produce(state, (s) => {
     const status = s.status;
     switch (action.type) {
@@ -77,20 +83,15 @@ function reducer(state: State, action: Action) {
         const { a, b } = status.comparison;
         const smaller = larger === a ? b : a;
         s.cache = cacheWithUpdate(s.cache, { larger, smaller });
-        s.history.push(s.cache);
         s.status = swapComparison(s.status, heapsort(s.cache, s.items));
+        s.prevState = castDraft(state);
         return;
       case "setItems":
-        s.items = action.items;
+        s.items = castDraft(action.items);
         s.status = heapsort(s.cache, s.items);
-        return;
-      case "undo":
-        if (s.history.length >= 2) {
-          const last = s.history.pop();
-          if (last !== undefined) {
-            s.cache = s.history[s.history.length - 1];
-            s.status = swapComparison(s.status, heapsort(s.cache, s.items));
-          }
+        if (state.items.length > 0) {
+          // Replace history if there were no items before
+          s.prevState = castDraft(state);
         }
         return;
     }
@@ -121,6 +122,17 @@ export default function Sort() {
 
   const { a, b } = status.done ? { a: null, b: null } : status.comparison;
 
+  const addItem = React.useCallback(
+    (name: string) => {
+      dispatch({ type: "setItems", items: stringSetAdd(state.items, name) });
+    },
+    [state.items]
+  );
+
+  const removeItem = (name: string) => {
+    dispatch({ type: "setItems", items: stringSetRemove(state.items, name) });
+  };
+
   return (
     <Main>
       <Header>
@@ -140,7 +152,7 @@ export default function Sort() {
             </SideBySideButtons>
           </>
         )}
-        {state.history.length > 1 && (
+        {state.prevState !== null && (
           <SecondaryButton
             onClick={() => {
               dispatch({ type: "undo" });
@@ -149,16 +161,54 @@ export default function Sort() {
             Undo
           </SecondaryButton>
         )}
-        <div>
-          {status.sorted.map((item) => (
-            <ListItem key={item}>
-              <strong>{item}</strong>
-            </ListItem>
-          ))}
-          {status.progress.map((item) => (
-            <ListItem key={item}>{item}</ListItem>
-          ))}
-        </div>
+        {status.sorted.length > 0 && (
+          <>
+            <H3>Sorted items</H3>
+            <div>
+              {status.sorted.map((item) => (
+                <ListItem
+                  key={item}
+                  actions={
+                    <TextButton
+                      value={item}
+                      onClick={() => removeItem(item)}
+                      aria-label={`Remove item: ${item}`}
+                    >
+                      ✖
+                    </TextButton>
+                  }
+                >
+                  <Bold>{item}</Bold>
+                </ListItem>
+              ))}
+            </div>
+          </>
+        )}
+        {status.progress.length > 0 && (
+          <>
+            <H3>Unsorted items</H3>
+            <div>
+              {status.progress.map((item) => (
+                <ListItem
+                  key={item}
+                  actions={
+                    <TextButton
+                      value={item}
+                      onClick={() => removeItem(item)}
+                      aria-label={`Remove item: ${item}`}
+                    >
+                      ✖
+                    </TextButton>
+                  }
+                >
+                  {item}
+                </ListItem>
+              ))}
+            </div>
+          </>
+        )}
+        <H3>Add extra item</H3>
+        <AddForm onAddItem={addItem} />
       </Page>
     </Main>
   );

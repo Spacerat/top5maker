@@ -30,3 +30,10 @@ export const Body = styled.span`
   font-size: ${({ theme }) => theme.typography.body.fontSize};
   color: ${({ theme }) => theme.colors.gray1};
 `;
+
+export const Bold = styled.span`
+  font-family: ${({ theme }) => theme.fonts.roboto};
+  font-weight: 700;
+  font-size: ${({ theme }) => theme.typography.body.fontSize};
+  color: ${({ theme }) => theme.colors.gray1};
+`;
