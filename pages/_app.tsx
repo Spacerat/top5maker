@@ -1,7 +1,7 @@
 import { createGlobalStyle, ThemeProvider } from "styled-components";
 import type { AppProps } from "next/app";
 import { normalize } from "styled-normalize";
-import { theme } from "../lib/theme";
+import { theme } from "../theme";
 
 const GlobalStyle = createGlobalStyle`
   ${normalize}
