@@ -101,6 +101,11 @@ function SetupItems() {
     });
   };
 
+  const itemsUrl = React.useMemo(
+    () => (items.length > 2 ? serializeItems(items) : ""),
+    [items]
+  );
+
   return (
     <>
       <H3>Add three or more items to get started</H3>
@@ -125,7 +130,7 @@ function SetupItems() {
         </div>
       )}
       <AddForm onAddItem={addItem} />
-      <Link passHref href={`/sort?items=${serializeItems(items)}`}>
+      <Link passHref href={`/sort?items=${itemsUrl}`}>
         <FullMobileButton disabled={items.length < 3}>
           Start Sorting
         </FullMobileButton>
