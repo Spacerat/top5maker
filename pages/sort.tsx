@@ -3,7 +3,7 @@ import React from "react";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 import { Brand } from "../components/Brand";
-import { Button } from "../components/Button";
+import { Button, SecondaryButton } from "../components/Button";
 import { Header, Main, Page } from "../components/layout";
 import { ListItem } from "../components/ListItem";
 import { H1 } from "../components/text";
@@ -45,8 +45,26 @@ function init(items: string[]): State {
     cache,
     status: heapsort(cache, items),
     items,
-    history: [cache],
+    history: [{}],
   };
+}
+
+function swapComparison(lastStatus: SortStatus, newStatus: SortStatus) {
+  if (lastStatus.done || newStatus.done) {
+    return newStatus;
+  }
+  if (
+    lastStatus.comparison.a === newStatus.comparison.a ||
+    lastStatus.comparison.b === newStatus.comparison.b
+  ) {
+    return produce(newStatus, (status) => {
+      [status.comparison.a, status.comparison.b] = [
+        status.comparison.b,
+        status.comparison.a,
+      ];
+    });
+  }
+  return newStatus;
 }
 
 function reducer(state: State, action: Action) {
@@ -60,17 +78,19 @@ function reducer(state: State, action: Action) {
         const smaller = larger === a ? b : a;
         s.cache = cacheWithUpdate(s.cache, { larger, smaller });
         s.history.push(s.cache);
-        s.status = heapsort(s.cache, s.items);
+        s.status = swapComparison(s.status, heapsort(s.cache, s.items));
         return;
       case "setItems":
         s.items = action.items;
         s.status = heapsort(s.cache, s.items);
         return;
       case "undo":
-        const last = s.history.pop();
-        if (last !== undefined) {
-          s.cache = last;
-          s.status = heapsort(s.cache, s.items);
+        if (s.history.length >= 2) {
+          const last = s.history.pop();
+          if (last !== undefined) {
+            s.cache = s.history[s.history.length - 1];
+            s.status = swapComparison(s.status, heapsort(s.cache, s.items));
+          }
         }
         return;
     }
@@ -79,11 +99,13 @@ function reducer(state: State, action: Action) {
 
 function useQueryState() {
   const { query } = useRouter();
-  const queryItems = query["items"];
-  if (typeof queryItems === "string") {
-    return { items: deserializeItems(queryItems) };
-  }
-  return { items: [] };
+  return React.useMemo(() => {
+    const queryItems = query["items"];
+    if (typeof queryItems === "string") {
+      return { items: deserializeItems(queryItems) };
+    }
+    return { items: [] };
+  }, [query]);
 }
 
 export default function Sort() {
@@ -97,7 +119,7 @@ export default function Sort() {
 
   const { status } = state;
 
-  const comparison = status.done ? null : status.comparison;
+  const { a, b } = status.done ? { a: null, b: null } : status.comparison;
 
   return (
     <Main>
@@ -105,26 +127,27 @@ export default function Sort() {
         <Brand />
       </Header>
       <Page>
-        {comparison && (
+        {a && b && (
           <>
             <H1>What&apos;s Better?</H1>
             <SideBySideButtons>
-              <Button
-                onClick={() =>
-                  dispatch({ type: "update", larger: comparison.a })
-                }
-              >
-                {comparison.a}
+              <Button onClick={() => dispatch({ type: "update", larger: a })}>
+                {a}
               </Button>
-              <Button
-                onClick={() =>
-                  dispatch({ type: "update", larger: comparison.b })
-                }
-              >
-                {comparison.b}
+              <Button onClick={() => dispatch({ type: "update", larger: b })}>
+                {b}
               </Button>
             </SideBySideButtons>
           </>
+        )}
+        {state.history.length > 1 && (
+          <SecondaryButton
+            onClick={() => {
+              dispatch({ type: "undo" });
+            }}
+          >
+            Undo
+          </SecondaryButton>
         )}
         <div>
           {status.sorted.map((item) => (

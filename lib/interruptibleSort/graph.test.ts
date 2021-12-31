@@ -9,7 +9,7 @@ describe("transitiveReduction", () => {
       d: ["e"],
     };
     const result = transitiveReduction(g);
-    console.log(result);
+
     expect(result).toEqual({ a: ["b", "c"], b: ["d"], c: ["d"], d: ["e"] });
   });
 });

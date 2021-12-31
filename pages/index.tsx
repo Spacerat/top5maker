@@ -53,7 +53,6 @@ function AddForm({ onAddItem }: AddFormProps) {
 
   const onSubmit: React.FormEventHandler<HTMLFormElement> = React.useCallback(
     (e) => {
-      console.log(value);
       e.preventDefault();
       onAddItem(value);
       setValue("");

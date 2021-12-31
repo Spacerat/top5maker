@@ -10,6 +10,8 @@ export const theme = {
     // Primary control colors
     primaryHover: "hsl(328, 80%, 47%)",
     primaryPressed: "hsl(328, 80%, 44%)",
+    primary4Hover: "hsl(328, 70%, 98%)",
+    primary4Pressed: "hsl(328, 70%, 97%)",
 
     // Secondary
     secondaryLight: "hsl(58, 80%, 70%)",
