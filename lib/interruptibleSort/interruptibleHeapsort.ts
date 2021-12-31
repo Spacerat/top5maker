@@ -1,49 +1,75 @@
 import { Graph, withEdge, transitiveReduction, isDescendant } from "./graph";
 
+export type SortCache = Graph;
+
+/** A comparison which needs to be made to continue the sort process */
 export type Comparison = {
+  /** An item to compare */
   a: string;
+  /** An item to compare */
   b: string;
 };
 
 type NextComparison = {
+  /** Indicates that more comparisons are needed */
   done: false;
+
+  /** The next two values which need to be compared  */
   comparison: Comparison;
+
+  /** The current sort-order of the unsorted items */
   progress: string[];
 };
 
-type GetComparisonResult = ({ done: true } | NextComparison) & {
+export type SortStatus = ({ done: true } | NextComparison) & {
+  /** The sorted items, if any */
   sorted: string[];
+  /** The current sort-order of the unsorted items */
   progress: string[];
 };
 
-type CacheResult = { done: true; lessThan: boolean } | NextComparison;
-
-type IntermediateResult =
-  | {
-      done: true;
-      progress: string[];
-    }
-  | NextComparison;
-
+/** Compute the index of the parent of a node in an array-heap */
 const parentIdx = (idx: number) => Math.floor((idx - 1) / 2);
+
+/** Compute the indices of the children of a node in an array-heap */
 const childIndices = (idx: number): [number, number] => [
   2 * idx + 1,
   2 * idx + 2,
 ];
 
-export function initCache(): Graph {
+/** Create an empty cache (with the appropriate type) */
+export function initCache(): SortCache {
   return {};
 }
 
-export function updatedCache(
-  cache: Graph,
-  { greater, smaller }: { greater: string; smaller: string }
-): Graph {
-  return transitiveReduction(withEdge(cache, greater, smaller));
+/** Return the cache updated  */
+export function cacheWithUpdate(
+  cache: SortCache,
+  { larger, smaller }: { larger: string; smaller: string }
+): SortCache {
+  if (isDescendant(cache, { parent: larger, target: smaller })) {
+    return cache;
+  }
+  return transitiveReduction(
+    withEdge(cache, { parent: larger, child: smaller })
+  );
 }
 
+type CacheResult =
+  | {
+      /** True when the values were found in the cache */
+      done: true;
+      /** True when 'a' < 'b' */
+      lessThan: boolean;
+    }
+  | NextComparison;
+
+/**
+ * Return true or false if it is known that a < b or b < a;
+ * Otherwise return a NextComparison object
+ */
 function getCachedLessThan(
-  cache: Graph,
+  cache: SortCache,
   heap: string[],
   a: string,
   b: string
@@ -61,14 +87,22 @@ function getCachedLessThan(
   };
 }
 
+/** Mutate an array, swapping the items at indices a and b */
 function swap<T>(arr: T[], a: number, b: number) {
   [arr[a], arr[b]] = [arr[b], arr[a]];
 }
 
+/**
+ * Produce the next step of heapsort on the list of items, given a set of known relationships
+ *
+ * @param cache The cache of known order relationships
+ * @param items The items to sort
+ * @returns Either another comparison which needs to be added to the cache, or a results object with the sorted items.
+ */
 export function heapsort(
-  cache: Graph,
+  cache: SortCache,
   items: readonly string[]
-): GetComparisonResult {
+): SortStatus {
   // Create a random heap
   let heap = [...items];
 
@@ -95,10 +129,28 @@ export function heapsort(
   return { done: true, sorted, progress: heap };
 }
 
-export function heapify(
-  cache: Graph,
-  items: readonly string[]
-): IntermediateResult {
+/**
+ * The result of a step of the sorting algorithm.
+ * Either the step is done, or another comparison is needed
+ */
+type SortStep =
+  | {
+      /** True when the sort step is done */
+      done: true;
+
+      /** The updated state of the heap */
+      progress: string[];
+    }
+  | NextComparison;
+
+/**
+ * Produce the next step of building a heap of the list of items, given a set of known relationships.
+ *
+ * @param cache The cache of known order relationships
+ * @param items The items to heapify
+ * @returns Either another comparison which needs to be added to the cache, or a results object with the completed heap.
+ */
+export function heapify(cache: SortCache, items: readonly string[]): SortStep {
   let heap = [...items];
 
   for (let idx = parentIdx(heap.length - 1); idx >= 0; idx--) {
@@ -110,11 +162,19 @@ export function heapify(
   return { done: true, progress: heap };
 }
 
+/**
+ * Produce the next step of pushing down an item in a heap, given a set of known relationships.
+ *
+ * @param cache The cache of known order relationships
+ * @param inHeap The start state of the heap
+ * @param start The initial index of the item to push down
+ * @returns Either another comparison which needs to eb added to the cache, or a results object with the item in a valid position
+ */
 function downHeap(
-  cache: Graph,
+  cache: SortCache,
   inHeap: readonly string[],
   start: number
-): IntermediateResult {
+): SortStep {
   let heap = [...inHeap];
 
   let root = start;
@@ -154,10 +214,12 @@ function downHeap(
       }
     }
 
+    // If there's no swap needed, the item is in the correct place
     if (swapWith === root) {
       return { done: true, progress: heap };
     }
 
+    // Otherwise do the swap
     swap(heap, root, swapWith);
     root = swapWith;
 

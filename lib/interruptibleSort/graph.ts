@@ -1,6 +1,4 @@
-import { produce } from "immer";
-
-export type Graph = Record<string, readonly string[]>;
+export type Graph = Record<string, string[]>;
 
 /**
  * Check whether a node is a descendent of another node
@@ -33,25 +31,31 @@ function inDegrees(graph: Graph) {
   return degrees;
 }
 
+function edgeCount(graph: Graph) {
+  return Object.values(graph).reduce((prev, c) => prev + c.length, 0);
+}
+
+const shallowCopy = (graph: Graph) => Object.fromEntries(Object.entries(graph));
+
 /**
  * Create a copy of a graph with a new edge
  *
  * @param graph The graph to return an update of
- * @param parent The parent to start the edge at
- * @param child The chidl to end the edge at
+ * @param edge The new edge to add
+ * @param edge.parent The parent to start the edge at
+ * @param edge.child The child to end the edge at
  * @returns A new graph with the new edge
  */
-export function withEdge(graph: Graph, parent: string, child: string) {
-  return produce(graph, (g) => {
-    let children = g[parent];
-    if (children) {
-      if (!children.includes(child)) {
-        children.push(child);
-      }
-    } else {
-      g[parent] = [child];
-    }
-  });
+export function withEdge(
+  graph: Graph,
+  edge: { parent: string; child: string }
+) {
+  const { parent, child } = edge;
+  const children = graph[parent] ?? [];
+  if (children.includes(child)) return graph;
+  const newGraph = shallowCopy(graph);
+  newGraph[parent] = [...children, child];
+  return newGraph;
 }
 
 /** Return all nodes which descend from 'root' */
@@ -82,6 +86,7 @@ export function transitiveReduction(graph: Graph) {
     Object.keys(graph).map((k) => [k, []])
   );
   const check_count = inDegrees(graph);
+  const prev_size = edgeCount(graph);
 
   const descendants: Map<string, Set<string>> = new Map();
 
@@ -104,5 +109,7 @@ export function transitiveReduction(graph: Graph) {
       reduction[u].push(v);
     }
   }
-  return reduction;
+
+  const new_size = edgeCount(reduction);
+  return prev_size === new_size ? graph : reduction;
 }

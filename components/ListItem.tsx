@@ -15,7 +15,7 @@ const ItemTextContainer = styled.div`
 export function ListItem({
   children,
   actions,
-}: React.PropsWithChildren<{ actions: React.ReactNode }>) {
+}: React.PropsWithChildren<{ actions?: React.ReactNode }>) {
   return (
     <ItemContainer>
       <ItemTextContainer>
