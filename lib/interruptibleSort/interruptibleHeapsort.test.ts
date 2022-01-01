@@ -1,8 +1,8 @@
 import {
-  heapify,
-  initCache,
   cacheWithUpdate,
+  heapify,
   heapsort,
+  initCache,
 } from "./interruptibleHeapsort";
 
 describe("heapify", () => {

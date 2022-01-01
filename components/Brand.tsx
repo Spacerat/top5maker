@@ -1,5 +1,5 @@
-import { H2 } from "./text";
 import Link from "next/link";
+import { H2 } from "./text";
 
 export const Brand = () => (
   <Link href="/" passHref>

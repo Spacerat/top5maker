@@ -1,6 +1,6 @@
+import React from "react";
 import styled from "styled-components";
 import { Body } from "./text";
-import React from "react";
 
 const ItemContainer = styled.div`
   display: flex;

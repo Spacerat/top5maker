@@ -1,7 +1,7 @@
-import styled from "styled-components";
 import React from "react";
-import { TextInput } from "./TextInput";
+import styled from "styled-components";
 import { Button } from "./Button";
+import { TextInput } from "./TextInput";
 
 const FormLine = styled.form`
   display: flex;

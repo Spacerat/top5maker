@@ -1,4 +1,4 @@
-import { Graph, withEdge, transitiveReduction, isDescendant } from "./graph";
+import { Graph, isDescendant, transitiveReduction, withEdge } from "./graph";
 
 export type SortCache = Graph;
 
@@ -92,6 +92,16 @@ function swap<T>(arr: T[], a: number, b: number) {
   [arr[a], arr[b]] = [arr[b], arr[a]];
 }
 
+function bestPossibleSort(cache: SortCache, items: readonly string[]) {
+  const copy = [...items];
+  copy.sort((a, b) => {
+    if (isDescendant(cache, { parent: a, target: b })) return -1;
+    if (isDescendant(cache, { parent: b, target: a })) return 1;
+    return 0;
+  });
+  return copy;
+}
+
 /**
  * Produce the next step of heapsort on the list of items, given a set of known relationships
  *
@@ -109,7 +119,11 @@ export function heapsort(
   // Heapify
   const heapifyResult = heapify(cache, items);
   if (!heapifyResult.done) {
-    return { ...heapifyResult, sorted: [] };
+    return {
+      ...heapifyResult,
+      sorted: [],
+      progress: bestPossibleSort(cache, heapifyResult.progress),
+    };
   }
   heap = heapifyResult.progress;
 
@@ -121,7 +135,11 @@ export function heapsort(
     sorted.push(heap.pop() as string);
     const downShiftResult = downHeap(cache, heap, 0);
     if (!downShiftResult.done) {
-      return { ...downShiftResult, progress: heap, sorted };
+      return {
+        ...downShiftResult,
+        progress: bestPossibleSort(cache, heap),
+        sorted,
+      };
     }
     heap = downShiftResult.progress;
   }

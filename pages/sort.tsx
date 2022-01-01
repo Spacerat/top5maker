@@ -1,12 +1,15 @@
-import { produce, castDraft } from "immer";
+import { castDraft, produce } from "immer";
+import { useRouter } from "next/router";
 import React from "react";
 import styled from "styled-components";
-import { useRouter } from "next/router";
+import { AddForm } from "../components/AddForm";
 import { Brand } from "../components/Brand";
 import { Button, SecondaryButton } from "../components/Button";
 import { Header, Main, Page } from "../components/layout";
 import { ListItem } from "../components/ListItem";
 import { Bold, H1, H3 } from "../components/text";
+import { TextButton } from "../components/TextButton";
+import { stringSetAdd, stringSetRemove } from "../lib/immutableStringSet";
 import {
   cacheWithUpdate,
   heapsort,
@@ -15,9 +18,6 @@ import {
   SortStatus,
 } from "../lib/interruptibleSort";
 import { deserializeItems } from "../lib/serialization";
-import { AddForm } from "../components/AddForm";
-import { stringSetAdd, stringSetRemove } from "../lib/immutableStringSet";
-import { TextButton } from "../components/TextButton";
 
 const SideBySideButtons = styled.div`
   display: flex;
@@ -98,19 +98,21 @@ function reducer(state: State, action: Action): State {
   });
 }
 
-function useQueryState() {
-  const { query } = useRouter();
+function useQueryItems() {
+  const {
+    query: { items },
+  } = useRouter();
   return React.useMemo(() => {
-    const queryItems = query["items"];
+    const queryItems = items;
     if (typeof queryItems === "string") {
       return { items: deserializeItems(queryItems) };
     }
     return { items: [] };
-  }, [query]);
+  }, [items]);
 }
 
 export default function Sort() {
-  const { items } = useQueryState();
+  const { items } = useQueryItems();
 
   const [state, dispatch] = React.useReducer(reducer, items, init);
 
@@ -132,6 +134,21 @@ export default function Sort() {
   const removeItem = (name: string) => {
     dispatch({ type: "setItems", items: stringSetRemove(state.items, name) });
   };
+
+  //   const serializedCache = React.useMemo(
+  //     () => serializeCache(state.items, state.cache),
+  //     [state.items, state.cache]
+  //   );
+
+  //   const { replace, query } = useRouter();
+  //   React.useEffect(() => {
+  //     if (serializedCache !== "" && serializedCache !== query["cache"]) {
+  //       replace({
+  //         pathname: "sort",
+  //         query: { items: query.items, cache: serializedCache },
+  //       });
+  //     }
+  //   }, [serializedCache, replace, query]);
 
   return (
     <Main>
