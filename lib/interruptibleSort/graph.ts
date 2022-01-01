@@ -71,6 +71,15 @@ function subtract<T>(set: Set<T>, items: Iterable<T>) {
   }
 }
 
+export function withRemovedNode(graph: Graph, node: string): Graph {
+  return Object.fromEntries(
+    Object.entries(graph)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      .filter(([k, _]) => k !== node)
+      .map(([k, v]) => [k, v.filter((i) => i !== node)])
+  );
+}
+
 /**
  * Compute the Transitive Reduction of a graph
  *

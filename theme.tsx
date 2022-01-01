@@ -23,11 +23,15 @@ export const theme = {
     // Grays
     gray1: "hsl(240, 30%, 25%)",
     gray3: "hsl(240, 5%, 72%)",
+    page: "white",
   },
 
   shadows: {
     primary: {
       filter: "drop-shadow(0px 4px 3px rgba(182, 20, 106, 0.25));",
+    },
+    page: {
+      filter: "drop-shadow(0px 4px 3px rgba(0, 0, 0, 0.15));",
     },
   },
 

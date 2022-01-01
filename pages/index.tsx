@@ -2,13 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import styled from "styled-components";
-import { AddForm } from "../components/AddForm";
+import { AddForm } from "../components/AddItemInput";
 import { Brand } from "../components/Brand";
 import { FullMobileButton } from "../components/Button";
-import { Header, Main, Page } from "../components/layout";
-import { ListItem } from "../components/ListItem";
+import { RemoveItemButton } from "../components/IconButtons";
+import { Header, Main, Page, Paper } from "../components/layout";
+import { ListItem } from "../components/List";
 import { H1, H3 } from "../components/text";
-import { TextButton } from "../components/TextButton";
 import { stringSetAdd, stringSetRemove } from "../lib/immutableStringSet";
 import { serializeItems } from "../lib/serialization";
 
@@ -58,24 +58,16 @@ function SetupItems() {
     <>
       <H3>Add three or more items to get started</H3>
       {items.length > 0 && (
-        <div>
+        <Paper>
           {items.map((item) => (
             <ListItem
               key={item}
-              actions={
-                <TextButton
-                  value={item}
-                  onClick={() => removeItem(item)}
-                  aria-label={`Remove item: ${item}`}
-                >
-                  ✖
-                </TextButton>
-              }
+              actions={<RemoveItemButton item={item} onClick={removeItem} />}
             >
               {item}
             </ListItem>
           ))}
-        </div>
+        </Paper>
       )}
       <AddForm onAddItem={addItem} />
       <Link passHref href={`/sort?items=${itemsUrl}`}>

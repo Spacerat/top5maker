@@ -50,15 +50,16 @@ export function deserializeCache(
     items.map((item, index) => [String.fromCharCode(index + 65), item])
   );
 
-  return Object.fromEntries(
+  const foo = Object.fromEntries(
     decoded.split(",").map((s) => [
       nameMap.get(s[0]) || "",
       s
         .slice(1)
         .split("")
-        .map((n) => nameMap.get(n)),
+        .map((n) => nameMap.get(n) || ""),
     ])
   );
+  return foo;
 }
 
 export function deserializeItems(data: string) {

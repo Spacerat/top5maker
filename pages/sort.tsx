@@ -2,13 +2,13 @@ import { castDraft, produce } from "immer";
 import { useRouter } from "next/router";
 import React from "react";
 import styled from "styled-components";
-import { AddForm } from "../components/AddForm";
+import { AddForm } from "../components/AddItemInput";
 import { Brand } from "../components/Brand";
 import { Button, SecondaryButton } from "../components/Button";
-import { Header, Main, Page } from "../components/layout";
-import { ListItem } from "../components/ListItem";
-import { Bold, H1, H3 } from "../components/text";
-import { TextButton } from "../components/TextButton";
+import { RedoItemButton, RemoveItemButton } from "../components/IconButtons";
+import { Header, Main, Page, Paper } from "../components/layout";
+import { ListItem } from "../components/List";
+import { H1, H3 } from "../components/text";
 import { stringSetAdd, stringSetRemove } from "../lib/immutableStringSet";
 import {
   cacheWithUpdate,
@@ -17,6 +17,7 @@ import {
   SortCache,
   SortStatus,
 } from "../lib/interruptibleSort";
+import { withRemovedNode } from "../lib/interruptibleSort/graph";
 import { deserializeItems } from "../lib/serialization";
 
 const SideBySideButtons = styled.div`
@@ -40,7 +41,10 @@ type State = {
 type Action =
   | { type: "update"; larger: string }
   | { type: "undo" }
-  | { type: "setItems"; items: readonly string[] };
+  | { type: "setItems"; items: readonly string[] }
+  | { type: "addItem"; item: string }
+  | { type: "removeItem"; item: string }
+  | { type: "clearCache"; item: string };
 
 function init(items: string[]): State {
   const cache = initCache();
@@ -86,6 +90,21 @@ function reducer(state: State, action: Action): State {
         s.status = swapComparison(s.status, heapsort(s.cache, s.items));
         s.prevState = castDraft(state);
         return;
+      case "addItem":
+        s.items = castDraft(stringSetAdd(s.items, action.item));
+        s.status = heapsort(s.cache, s.items);
+        s.prevState = castDraft(state);
+        return;
+      case "removeItem":
+        s.items = castDraft(stringSetRemove(s.items, action.item));
+        s.status = heapsort(s.cache, s.items);
+        s.prevState = castDraft(state);
+        return;
+      case "clearCache":
+        s.cache = withRemovedNode(s.cache, action.item);
+        s.status = heapsort(s.cache, s.items);
+        s.prevState = castDraft(state);
+        return;
       case "setItems":
         s.items = castDraft(action.items);
         s.status = heapsort(s.cache, s.items);
@@ -124,16 +143,17 @@ export default function Sort() {
 
   const { a, b } = status.done ? { a: null, b: null } : status.comparison;
 
-  const addItem = React.useCallback(
-    (name: string) => {
-      dispatch({ type: "setItems", items: stringSetAdd(state.items, name) });
-    },
-    [state.items]
-  );
+  const addItem = React.useCallback((name: string) => {
+    dispatch({ type: "addItem", item: name });
+  }, []);
 
-  const removeItem = (name: string) => {
-    dispatch({ type: "setItems", items: stringSetRemove(state.items, name) });
-  };
+  const removeItem = React.useCallback((name: string) => {
+    dispatch({ type: "removeItem", item: name });
+  }, []);
+
+  const clearCache = React.useCallback((name: string) => {
+    dispatch({ type: "clearCache", item: name });
+  }, []);
 
   //   const serializedCache = React.useMemo(
   //     () => serializeCache(state.items, state.cache),
@@ -150,13 +170,32 @@ export default function Sort() {
   //     }
   //   }, [serializedCache, replace, query]);
 
+  const done = !(a && b);
+
+  const undo = (
+    <SecondaryButton
+      onClick={() => {
+        dispatch({ type: "undo" });
+      }}
+    >
+      Undo
+    </SecondaryButton>
+  );
+
+  const actions = (item: string) => (
+    <>
+      <RedoItemButton item={item} onClick={clearCache} />
+      <RemoveItemButton item={item} onClick={removeItem} />
+    </>
+  );
+
   return (
     <Main>
       <Header>
         <Brand />
       </Header>
       <Page>
-        {a && b && (
+        {!done && (
           <>
             <H1>What&apos;s Better?</H1>
             <SideBySideButtons>
@@ -169,62 +208,38 @@ export default function Sort() {
             </SideBySideButtons>
           </>
         )}
-        {state.prevState !== null && (
-          <SecondaryButton
-            onClick={() => {
-              dispatch({ type: "undo" });
-            }}
-          >
-            Undo
-          </SecondaryButton>
+        {done && (
+          <>
+            <H1>Here are your items from best to worst</H1>
+          </>
         )}
+        {!done && state.prevState !== null && undo}
         {status.sorted.length > 0 && (
           <>
-            <H3>Sorted items</H3>
-            <div>
+            {!done && <H3>Sorted items (best to worst)</H3>}
+            <Paper>
               {status.sorted.map((item) => (
-                <ListItem
-                  key={item}
-                  actions={
-                    <TextButton
-                      value={item}
-                      onClick={() => removeItem(item)}
-                      aria-label={`Remove item: ${item}`}
-                    >
-                      ✖
-                    </TextButton>
-                  }
-                >
-                  <Bold>{item}</Bold>
+                <ListItem key={item} actions={actions(item)}>
+                  {item}
                 </ListItem>
               ))}
-            </div>
+            </Paper>
           </>
         )}
         {status.progress.length > 0 && (
           <>
             <H3>Unsorted items</H3>
-            <div>
+            <Paper>
               {status.progress.map((item) => (
-                <ListItem
-                  key={item}
-                  actions={
-                    <TextButton
-                      value={item}
-                      onClick={() => removeItem(item)}
-                      aria-label={`Remove item: ${item}`}
-                    >
-                      ✖
-                    </TextButton>
-                  }
-                >
+                <ListItem key={item} actions={actions(item)}>
                   {item}
                 </ListItem>
               ))}
-            </div>
+            </Paper>
           </>
         )}
-        <H3>Add extra item</H3>
+        {done && state.prevState !== null && undo}
+        <H3>Add another item</H3>
         <AddForm onAddItem={addItem} />
       </Page>
     </Main>

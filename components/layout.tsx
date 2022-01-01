@@ -28,8 +28,14 @@ const BodyContainerInner = styled.div`
   flex-direction: column;
   flex: 1;
   padding: 16px;
-  padding-top: 40px;
+  padding-top: 24px;
   gap: 24px;
+`;
+
+export const Paper = styled.div`
+  background-color: ${({ theme }) => theme.colors.page};
+  ${({ theme }) => theme.shadows.page};
+  border-radius: ${({ theme }) => theme.border.radius};
 `;
 
 export const Main = styled.div`
