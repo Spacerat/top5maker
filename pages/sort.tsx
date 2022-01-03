@@ -1,24 +1,22 @@
-import { castDraft, produce } from "immer";
 import { useRouter } from "next/router";
 import React from "react";
 import styled from "styled-components";
 import { AddForm } from "../components/AddItemInput";
 import { Brand } from "../components/Brand";
-import { Button, SecondaryButton } from "../components/Button";
+import { Button, FullMobileSecondaryButton } from "../components/Button";
 import { RedoItemButton, RemoveItemButton } from "../components/IconButtons";
 import { Header, Main, Page, Paper } from "../components/layout";
 import { ListItem } from "../components/List";
-import { H1, H3 } from "../components/text";
-import { stringSetAdd, stringSetRemove } from "../lib/immutableStringSet";
+import { A, H1, H3 } from "../components/text";
 import {
-  cacheWithUpdate,
-  heapsort,
-  initCache,
-  SortCache,
-  SortStatus,
-} from "../lib/interruptibleSort";
-import { withRemovedNode } from "../lib/interruptibleSort/graph";
-import { deserializeItems } from "../lib/serialization";
+  ActionTypes,
+  decodeRecord,
+  encodeInitial,
+  encodeRecord,
+  init,
+  reducer,
+} from "../controllers/sortReducer";
+import { LOAD, UNDO, undoable, undoableInit } from "../lib/undoable";
 
 const SideBySideButtons = styled.div`
   display: flex;
@@ -31,155 +29,80 @@ const SideBySideButtons = styled.div`
   }
 `;
 
-type State = {
-  cache: SortCache;
-  status: SortStatus;
-  items: readonly string[];
-  prevState: State | null;
-};
-
-type Action =
-  | { type: "update"; larger: string }
-  | { type: "undo" }
-  | { type: "setItems"; items: readonly string[] }
-  | { type: "addItem"; item: string }
-  | { type: "removeItem"; item: string }
-  | { type: "clearCache"; item: string };
-
-function init(items: string[]): State {
-  const cache = initCache();
-  return {
-    cache,
-    status: heapsort(cache, items),
-    items,
-    prevState: null,
-  };
-}
-
-function swapComparison(lastStatus: SortStatus, newStatus: SortStatus) {
-  if (lastStatus.done || newStatus.done) {
-    return newStatus;
-  }
-  if (
-    lastStatus.comparison.a === newStatus.comparison.a ||
-    lastStatus.comparison.b === newStatus.comparison.b
-  ) {
-    return produce(newStatus, (status) => {
-      [status.comparison.a, status.comparison.b] = [
-        status.comparison.b,
-        status.comparison.a,
-      ];
-    });
-  }
-  return newStatus;
-}
-
-function reducer(state: State, action: Action): State {
-  if (action.type === "undo" && state.prevState !== null) {
-    return state.prevState;
-  }
-  return produce(state, (s) => {
-    const status = s.status;
-    switch (action.type) {
-      case "update":
-        if (status.done) return;
-        const larger = action.larger;
-        const { a, b } = status.comparison;
-        const smaller = larger === a ? b : a;
-        s.cache = cacheWithUpdate(s.cache, { larger, smaller });
-        s.status = swapComparison(s.status, heapsort(s.cache, s.items));
-        s.prevState = castDraft(state);
-        return;
-      case "addItem":
-        s.items = castDraft(stringSetAdd(s.items, action.item));
-        s.status = heapsort(s.cache, s.items);
-        s.prevState = castDraft(state);
-        return;
-      case "removeItem":
-        s.items = castDraft(stringSetRemove(s.items, action.item));
-        s.status = heapsort(s.cache, s.items);
-        s.prevState = castDraft(state);
-        return;
-      case "clearCache":
-        s.cache = withRemovedNode(s.cache, action.item);
-        s.status = heapsort(s.cache, s.items);
-        s.prevState = castDraft(state);
-        return;
-      case "setItems":
-        s.items = castDraft(action.items);
-        s.status = heapsort(s.cache, s.items);
-        if (state.items.length > 0) {
-          // Replace history if there were no items before
-          s.prevState = castDraft(state);
-        }
-        return;
-    }
-  });
-}
-
-function useQueryItems() {
+function useQueryRecord() {
   const {
-    query: { items },
+    query: { s },
   } = useRouter();
-  return React.useMemo(() => {
-    const queryItems = items;
-    if (typeof queryItems === "string") {
-      return { items: deserializeItems(queryItems) };
-    }
-    return { items: [] };
-  }, [items]);
+
+  const record = React.useMemo(() => {
+    return decodeRecord(s);
+  }, [s]);
+
+  return { slug: s, record };
 }
+
+const Again = styled(A)`
+  text-align: center;
+`;
 
 export default function Sort() {
-  const { items } = useQueryItems();
+  const { record: queryRecord, slug } = useQueryRecord();
 
-  const [state, dispatch] = React.useReducer(reducer, items, init);
+  const [{ state, record }, dispatch] = React.useReducer(
+    undoable(init, reducer),
+    queryRecord,
+    undoableInit(init, reducer)
+  );
+
+  const { replace, isReady: isRouterReady } = useRouter();
 
   React.useEffect(() => {
-    dispatch({ type: "setItems", items });
-  }, [items]);
+    if (record.length === 0 && queryRecord.length > 0) {
+      dispatch({ type: LOAD, record: queryRecord });
+    }
+  }, [isRouterReady, queryRecord, record]);
+
+  React.useEffect(() => {
+    const newSlug = encodeRecord(record);
+    if (record.length > 0 && isRouterReady && newSlug !== slug) {
+      console.log("replace", slug, newSlug);
+      replace({ query: { s: newSlug } }, undefined, {
+        shallow: true,
+      });
+    }
+  }, [slug, isRouterReady, record, replace]);
 
   const { status } = state;
 
   const { a, b } = status.done ? { a: null, b: null } : status.comparison;
 
   const addItem = React.useCallback((name: string) => {
-    dispatch({ type: "addItem", item: name });
+    dispatch({ type: ActionTypes.ADD_ITEM, item: name });
   }, []);
 
   const removeItem = React.useCallback((name: string) => {
-    dispatch({ type: "removeItem", item: name });
+    dispatch({ type: ActionTypes.REMOVE_ITEM, item: name });
   }, []);
 
   const clearCache = React.useCallback((name: string) => {
-    dispatch({ type: "clearCache", item: name });
+    dispatch({ type: ActionTypes.CLEAR_CACHE, item: name });
   }, []);
 
-  //   const serializedCache = React.useMemo(
-  //     () => serializeCache(state.items, state.cache),
-  //     [state.items, state.cache]
-  //   );
+  const done = isRouterReady && !(a && b);
 
-  //   const { replace, query } = useRouter();
-  //   React.useEffect(() => {
-  //     if (serializedCache !== "" && serializedCache !== query["cache"]) {
-  //       replace({
-  //         pathname: "sort",
-  //         query: { items: query.items, cache: serializedCache },
-  //       });
-  //     }
-  //   }, [serializedCache, replace, query]);
-
-  const done = !(a && b);
+  const itemsUrl = React.useMemo(
+    () => (state.items.length > 2 ? encodeInitial(state.items) : ""),
+    [state.items]
+  );
 
   const undo = (
-    <SecondaryButton
+    <FullMobileSecondaryButton
       onClick={() => {
-        dispatch({ type: "undo" });
+        dispatch({ type: UNDO });
       }}
     >
       Undo
-    </SecondaryButton>
+    </FullMobileSecondaryButton>
   );
 
   const actions = (item: string) => (
@@ -199,10 +122,18 @@ export default function Sort() {
           <>
             <H1>What&apos;s Better?</H1>
             <SideBySideButtons>
-              <Button onClick={() => dispatch({ type: "update", larger: a })}>
+              <Button
+                onClick={() =>
+                  dispatch({ type: ActionTypes.UPDATE, larger: "a" })
+                }
+              >
                 {a}
               </Button>
-              <Button onClick={() => dispatch({ type: "update", larger: b })}>
+              <Button
+                onClick={() =>
+                  dispatch({ type: ActionTypes.UPDATE, larger: "b" })
+                }
+              >
                 {b}
               </Button>
             </SideBySideButtons>
@@ -213,7 +144,7 @@ export default function Sort() {
             <H1>Here are your items from best to worst</H1>
           </>
         )}
-        {!done && state.prevState !== null && undo}
+        {!done && record.length > 1 && undo}
         {status.sorted.length > 0 && (
           <>
             {!done && <H3>Sorted items (best to worst)</H3>}
@@ -238,7 +169,13 @@ export default function Sort() {
             </Paper>
           </>
         )}
-        {done && state.prevState !== null && undo}
+        {done && record.length > 1 && (
+          <>
+            {undo}
+
+            <Again href={`/sort?s=${itemsUrl}`}>Sort These Again</Again>
+          </>
+        )}
         <H3>Add another item</H3>
         <AddForm onAddItem={addItem} />
       </Page>

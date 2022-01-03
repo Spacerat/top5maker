@@ -9,8 +9,8 @@ import { RemoveItemButton } from "../components/IconButtons";
 import { Header, Main, Page, Paper } from "../components/layout";
 import { ListItem } from "../components/List";
 import { H1, H3 } from "../components/text";
+import { encodeInitial } from "../controllers/sortReducer";
 import { stringSetAdd, stringSetRemove } from "../lib/immutableStringSet";
-import { serializeItems } from "../lib/serialization";
 
 const AccentText = styled.span`
   color: ${({ theme }) => theme.colors.secondaryLight};
@@ -50,7 +50,7 @@ function SetupItems() {
   };
 
   const itemsUrl = React.useMemo(
-    () => (items.length > 2 ? serializeItems(items) : ""),
+    () => (items.length > 2 ? encodeInitial(items) : ""),
     [items]
   );
 
@@ -70,7 +70,7 @@ function SetupItems() {
         </Paper>
       )}
       <AddForm onAddItem={addItem} />
-      <Link passHref href={`/sort?items=${itemsUrl}`}>
+      <Link passHref href={`/sort?s=${itemsUrl}`}>
         <FullMobileButton disabled={items.length < 3}>
           Start Sorting
         </FullMobileButton>
