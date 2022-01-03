@@ -59,7 +59,8 @@ function swapComparison(lastStatus: SortStatus, newStatus: SortStatus) {
 }
 
 function isValidActionRecord(x: unknown): x is Action[] {
-  return true;
+  // TODO: validate the actions properly
+  return x !== undefined;
 }
 
 export function encodeInitial(items: readonly string[]) {
