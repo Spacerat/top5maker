@@ -4,6 +4,7 @@ export const theme = {
     primary1: "hsl(328, 80%, 50%)",
     primary2: "hsl(328, 80%, 70%)",
     primary3: "hsl(328, 70%, 85%)",
+    primary4darker: "hsl(328, 70%, 96%)",
     primary4: "hsl(328, 70%, 99%)",
     primaryDark: "hsl(328, 80%, 20%)",
 

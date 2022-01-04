@@ -1,7 +1,7 @@
 import {
   cacheWithUpdate,
   heapify,
-  heapsort,
+  heapSort,
   initCache,
 } from "./interruptibleHeapsort";
 
@@ -42,49 +42,49 @@ describe("heapify", () => {
 describe("heapsort", () => {
   test("sorts a small array", () => {
     let cache = initCache();
-    expect(heapsort(cache, ["3", "4", "1", "2"])).toEqual({
+    expect(heapSort(cache, ["3", "4", "1", "2"])).toEqual({
       comparison: { a: "4", b: "2" },
       done: false,
       sorted: [],
       progress: ["3", "4", "1", "2"],
     });
     cache = cacheWithUpdate(cache, { larger: "4", smaller: "2" });
-    expect(heapsort(cache, ["3", "4", "1", "2"])).toEqual({
+    expect(heapSort(cache, ["3", "4", "1", "2"])).toEqual({
       comparison: { a: "3", b: "4" },
       done: false,
       progress: ["3", "4", "1", "2"],
       sorted: [],
     });
     cache = cacheWithUpdate(cache, { larger: "4", smaller: "3" });
-    expect(heapsort(cache, ["3", "4", "1", "2"])).toEqual({
+    expect(heapSort(cache, ["3", "4", "1", "2"])).toEqual({
       comparison: { a: "4", b: "1" },
       done: false,
       progress: ["3", "4", "1", "2"],
       sorted: [],
     });
     cache = cacheWithUpdate(cache, { larger: "4", smaller: "1" });
-    expect(heapsort(cache, ["3", "4", "1", "2"])).toEqual({
+    expect(heapSort(cache, ["3", "4", "1", "2"])).toEqual({
       comparison: { a: "3", b: "2" },
       done: false,
       progress: ["4", "3", "1", "2"],
       sorted: [],
     });
     cache = cacheWithUpdate(cache, { larger: "3", smaller: "2" });
-    expect(heapsort(cache, ["3", "4", "1", "2"])).toEqual({
+    expect(heapSort(cache, ["3", "4", "1", "2"])).toEqual({
       comparison: { a: "3", b: "1" },
       done: false,
       progress: ["2", "3", "1"],
       sorted: ["4"],
     });
     cache = cacheWithUpdate(cache, { larger: "3", smaller: "1" });
-    expect(heapsort(cache, ["3", "4", "1", "2"])).toEqual({
+    expect(heapSort(cache, ["3", "4", "1", "2"])).toEqual({
       comparison: { a: "1", b: "2" },
       done: false,
       progress: ["1", "2"],
       sorted: ["4", "3"],
     });
     cache = cacheWithUpdate(cache, { larger: "2", smaller: "1" });
-    expect(heapsort(cache, ["3", "4", "1", "2"])).toEqual({
+    expect(heapSort(cache, ["3", "4", "1", "2"])).toEqual({
       done: true,
       progress: [],
       sorted: ["4", "3", "2", "1"],
@@ -111,7 +111,7 @@ describe("heapsort", () => {
     ];
     let cache = initCache();
 
-    let result = heapsort(cache, data);
+    let result = heapSort(cache, data);
     let steps = 0;
     while (!result.done) {
       steps += 1;
@@ -120,7 +120,7 @@ describe("heapsort", () => {
         parseInt(a, 10) > parseInt(b, 10) ? [a, b] : [b, a];
 
       cache = cacheWithUpdate(cache, { larger: greater, smaller });
-      result = heapsort(cache, data);
+      result = heapSort(cache, data);
 
       if (result.sorted.length === 1) {
         expect([19, 20, 21]).toContain(steps);
@@ -172,7 +172,7 @@ describe("heapsort", () => {
 
     let cache = initCache();
 
-    let result = heapsort(cache, data);
+    let result = heapSort(cache, data);
     let steps = 0;
     while (!result.done) {
       steps += 1;
@@ -181,7 +181,7 @@ describe("heapsort", () => {
         parseInt(a, 10) > parseInt(b, 10) ? [a, b] : [b, a];
 
       cache = cacheWithUpdate(cache, { larger: greater, smaller });
-      result = heapsort(cache, data);
+      result = heapSort(cache, data);
     }
 
     // TODO: Could we do better in the pre-sorted case?

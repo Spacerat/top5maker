@@ -9,7 +9,7 @@ const AccentText = styled.span`
 
 export const Brand = () => (
   <Link href="/" passHref>
-    <NoStyleAnchor>
+    <NoStyleAnchor tabIndex={-1}>
       <H2>Sort Hero</H2>
     </NoStyleAnchor>
   </Link>

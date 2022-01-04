@@ -21,12 +21,16 @@ type NextComparison = {
   progress: string[];
 };
 
-export type SortStatus = ({ done: true } | NextComparison) & {
+type SortProgress = {
   /** The sorted items, if any */
   sorted: string[];
   /** The current sort-order of the unsorted items */
   progress: string[];
 };
+
+export type InProgressSortStatus = NextComparison & SortProgress;
+export type DoneSortStatus = { done: true } & SortProgress;
+export type SortStatus = InProgressSortStatus | DoneSortStatus;
 
 /** Compute the index of the parent of a node in an array-heap */
 const parentIdx = (idx: number) => Math.floor((idx - 1) / 2);
@@ -109,7 +113,7 @@ function bestPossibleSort(cache: SortCache, items: readonly string[]) {
  * @param items The items to sort
  * @returns Either another comparison which needs to be added to the cache, or a results object with the sorted items.
  */
-export function heapsort(
+export function heapSort(
   cache: SortCache,
   items: readonly string[]
 ): SortStatus {

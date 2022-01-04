@@ -3,7 +3,7 @@ import {
   encode as encode64toSafe,
   isUrlSafeBase64,
 } from "url-safe-base64";
-import { Graph } from "./interruptibleSort/graph";
+import { Graph } from "../lib/interruptibleSort/graph";
 
 function isString(t: unknown): t is string {
   return typeof t === "string";
@@ -39,9 +39,9 @@ export function serializeCache(items: readonly string[], cache: Graph) {
 
 export function deserializeCache(
   items: readonly string[],
-  data: string
+  data: string | string[] | undefined
 ): Graph {
-  if (!isUrlSafeBase64(data)) {
+  if (!isString(data) || !isUrlSafeBase64(data)) {
     return {};
   }
   const decoded = safe64decode(data);
@@ -50,7 +50,7 @@ export function deserializeCache(
     items.map((item, index) => [String.fromCharCode(index + 65), item])
   );
 
-  const foo = Object.fromEntries(
+  const cache = Object.fromEntries(
     decoded.split(",").map((s) => [
       nameMap.get(s[0]) || "",
       s
@@ -59,11 +59,11 @@ export function deserializeCache(
         .map((n) => nameMap.get(n) || ""),
     ])
   );
-  return foo;
+  return cache;
 }
 
-export function deserializeItems(data: string) {
-  if (!isUrlSafeBase64(data)) {
+export function deserializeItems(data: string | string[] | undefined) {
+  if (!isString(data) || !isUrlSafeBase64(data)) {
     return [];
   }
   const result = JSON.parse(safe64decode(data));

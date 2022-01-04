@@ -66,3 +66,9 @@ export const FullMobileButton = styled(Button)`
   max-width: 350px;
   align-self: center;
 `;
+
+export const FullMobileSecondaryButton = styled(SecondaryButton)`
+  width: 100%;
+  max-width: 350px;
+  align-self: center;
+`;

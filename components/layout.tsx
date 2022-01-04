@@ -15,20 +15,25 @@ const PageContainer = styled.div`
   margin-right: auto;
 `;
 
-const BodyContainer = styled.div`
+type PageProps = { kind?: "main" | "darker" };
+
+const BodyContainer = styled.div<PageProps>`
   flex: 1;
+  background-color: ${({ theme, kind = "main" }) =>
+    kind === "main" ? theme.colors.primary4 : theme.colors.primary4darker};
   display: flex;
   justify-content: center;
   flex-direction: row;
 `;
 
-const BodyContainerInner = styled.div`
+const PageSection = styled.div`
   max-width: ${({ theme }) => theme.size.pageWidth};
   display: flex;
   flex-direction: column;
   flex: 1;
   padding: 16px;
   padding-top: 24px;
+  padding-bottom: 24px;
   gap: 24px;
 `;
 
@@ -39,7 +44,6 @@ export const Paper = styled.div`
 `;
 
 export const Main = styled.div`
-  background-color: ${({ theme }) => theme.colors.primary4};
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -53,10 +57,10 @@ export function Header({ children }: React.PropsWithChildren<unknown>) {
   );
 }
 
-export function Page({ children }: React.PropsWithChildren<unknown>) {
+export function Page({ children, kind }: React.PropsWithChildren<PageProps>) {
   return (
-    <BodyContainer>
-      <BodyContainerInner>{children}</BodyContainerInner>
+    <BodyContainer kind={kind}>
+      <PageSection>{children}</PageSection>
     </BodyContainer>
   );
 }

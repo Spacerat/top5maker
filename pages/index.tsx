@@ -1,5 +1,6 @@
 import Link from "next/link";
 import React from "react";
+import { useSortUrl } from "../app/useSortUrl";
 import { AddForm } from "../components/AddItemInput";
 import { Brand, TagLine } from "../components/Brand";
 import { FullMobileButton } from "../components/Button";
@@ -8,7 +9,6 @@ import { Header, Main, Page, Paper } from "../components/layout";
 import { ListItem } from "../components/List";
 import { H3 } from "../components/text";
 import { stringSetAdd, stringSetRemove } from "../lib/immutableStringSet";
-import { serializeItems } from "../lib/serialization";
 
 function SetupItems() {
   // TODO: proper app state management
@@ -22,10 +22,7 @@ function SetupItems() {
     setItems((curItems) => stringSetRemove(curItems, name));
   };
 
-  const itemsUrl = React.useMemo(
-    () => (items.length > 2 ? serializeItems(items) : ""),
-    [items]
-  );
+  const sortUrl = useSortUrl(items);
 
   return (
     <>
@@ -43,7 +40,7 @@ function SetupItems() {
         </Paper>
       )}
       <AddForm onAddItem={addItem} />
-      <Link passHref href={`/sort?items=${itemsUrl}`}>
+      <Link passHref href={sortUrl}>
         <FullMobileButton disabled={items.length < 3}>
           Start Sorting
         </FullMobileButton>
