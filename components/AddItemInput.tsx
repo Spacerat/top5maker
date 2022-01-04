@@ -10,8 +10,9 @@ const FormLine = styled.form`
 `;
 type AddFormProps = {
   onAddItem: (name: string) => void;
+  keepInView?: boolean;
 };
-export function AddForm({ onAddItem }: AddFormProps) {
+export function AddForm({ onAddItem, keepInView }: AddFormProps) {
   const [value, setValue] = React.useState("");
 
   const textRef = React.useRef<HTMLInputElement>(null);
@@ -22,9 +23,13 @@ export function AddForm({ onAddItem }: AddFormProps) {
       onAddItem(value);
       setValue("");
       textRef.current?.focus();
+      // HACK: keep the bottom of the list in view
+      // scrollIntoView doesn't seem to work well for this on mobile
+      // is there a better way?
+      if (keepInView) setTimeout(() => window.scrollBy(0, 52), 1);
       return false;
     },
-    [onAddItem, value]
+    [onAddItem, value, keepInView]
   );
 
   return (

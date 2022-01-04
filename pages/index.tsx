@@ -27,7 +27,7 @@ function SetupItems() {
     <>
       <H3>Add three or more items to get started</H3>
       <ItemList items={items} onRemove={removeItem} />
-      <AddForm onAddItem={addItem} />
+      <AddForm onAddItem={addItem} keepInView />
       <Link passHref href={sortUrl}>
         <FullMobileButton disabled={items.length < 3}>
           Start Sorting
