@@ -14,9 +14,8 @@ import { SortAppState, useSortState } from "../app/useSortState";
 import { AddForm } from "../components/AddItemInput";
 import { Brand } from "../components/Brand";
 import { Button, FullMobileSecondaryButton } from "../components/Button";
-import { RedoItemButton, RemoveItemButton } from "../components/IconButtons";
-import { Header, Main, Page, Paper } from "../components/layout";
-import { ListItem } from "../components/List";
+import { Header, Main, Page } from "../components/layout";
+import { ItemList } from "../components/List";
 import { H1, H3, PrimaryLink } from "../components/text";
 
 const NativeShareIcon = () => (
@@ -57,55 +56,9 @@ const SideBySideButtons = styled.div`
   }
 `;
 
-// TODO: this is a hack to make it easier for people to copy/paste the final list.
-// The better solution would be to restructure the page itself so that the list elements
-// are separate from the action button elements.
-const NoSelect = styled.div`
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
-  -khtml-user-select: none; /* Konqueror HTML */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
-  user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome and Opera */
-`;
-
 const Again = styled.div`
   text-align: center;
 `;
-
-function ItemList({
-  header,
-  items,
-  onRemove,
-  onClear,
-}: {
-  header: React.ReactNode;
-  items: readonly string[];
-  onRemove: (item: string) => void;
-  onClear: (item: string) => void;
-}) {
-  const actions = (item: string) => (
-    <NoSelect>
-      <RedoItemButton item={item} onClick={onClear} />
-      <RemoveItemButton item={item} onClick={onRemove} />
-    </NoSelect>
-  );
-
-  if (items.length === 0) return null;
-  return (
-    <>
-      {header}
-      <Paper>
-        {items.map((item) => (
-          <ListItem key={item} actions={actions(item)}>
-            {item}
-          </ListItem>
-        ))}
-      </Paper>
-    </>
-  );
-}
 
 function SortLayout({ state }: { state: SortAppState }) {
   const { pick, status, addItem, removeItem, clearCache, canUndo, undo } =

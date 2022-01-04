@@ -4,9 +4,8 @@ import { useSortUrl } from "../app/useSortUrl";
 import { AddForm } from "../components/AddItemInput";
 import { Brand, TagLine } from "../components/Brand";
 import { FullMobileButton } from "../components/Button";
-import { RemoveItemButton } from "../components/IconButtons";
-import { Header, Main, Page, Paper } from "../components/layout";
-import { ListItem } from "../components/List";
+import { Header, Main, Page } from "../components/layout";
+import { ItemList } from "../components/List";
 import { H3 } from "../components/text";
 import { stringSetAdd, stringSetRemove } from "../lib/immutableStringSet";
 
@@ -27,18 +26,7 @@ function SetupItems() {
   return (
     <>
       <H3>Add three or more items to get started</H3>
-      {items.length > 0 && (
-        <Paper>
-          {items.map((item) => (
-            <ListItem
-              key={item}
-              actions={<RemoveItemButton item={item} onClick={removeItem} />}
-            >
-              {item}
-            </ListItem>
-          ))}
-        </Paper>
-      )}
+      <ItemList items={items} onRemove={removeItem} />
       <AddForm onAddItem={addItem} />
       <Link passHref href={sortUrl}>
         <FullMobileButton disabled={items.length < 3}>
