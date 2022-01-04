@@ -16,6 +16,11 @@ export const H2 = styled.h2`
   margin-bottom: 20px;
 `;
 
+export const NoStyleAnchor = styled.a`
+  color: inherit;
+  text-decoration: none;
+`;
+
 export const H3 = styled.h3`
   font-family: ${({ theme }) => theme.fonts.roboto};
   font-weight: 500;

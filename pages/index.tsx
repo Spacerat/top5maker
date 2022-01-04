@@ -1,41 +1,14 @@
-import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import styled from "styled-components";
 import { AddForm } from "../components/AddItemInput";
-import { Brand } from "../components/Brand";
+import { Brand, TagLine } from "../components/Brand";
 import { FullMobileButton } from "../components/Button";
 import { RemoveItemButton } from "../components/IconButtons";
 import { Header, Main, Page, Paper } from "../components/layout";
 import { ListItem } from "../components/List";
-import { H1, H3 } from "../components/text";
+import { H3 } from "../components/text";
 import { stringSetAdd, stringSetRemove } from "../lib/immutableStringSet";
 import { serializeItems } from "../lib/serialization";
-
-const AccentText = styled.span`
-  color: ${({ theme }) => theme.colors.secondaryLight};
-`;
-
-const ImageContainer = styled.div`
-  align-self: center;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 24px;
-`;
-
-function Tagline() {
-  return (
-    <>
-      <H1>
-        The quickest way to make a list of the best{" "}
-        <AccentText>anything</AccentText>
-      </H1>
-      <ImageContainer>
-        <Image src="/Illustration.png" width="226" height="124" alt="" />
-      </ImageContainer>
-    </>
-  );
-}
 
 function SetupItems() {
   // TODO: proper app state management
@@ -84,7 +57,7 @@ export default function Home() {
     <Main>
       <Header>
         <Brand />
-        <Tagline />
+        <TagLine />
       </Header>
       <Page>
         <SetupItems />
