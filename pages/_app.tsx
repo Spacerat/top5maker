@@ -5,6 +5,7 @@ import { theme } from "../theme";
 
 const GlobalStyle = createGlobalStyle`
   ${normalize}
+
 `;
 
 export default function App({ Component, pageProps }: AppProps) {

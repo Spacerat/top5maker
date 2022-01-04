@@ -13,6 +13,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-is": "^17.0.2",
+    "react-share": "^4.4.0",
     "styled-components": "^5.2.3",
     "styled-normalize": "^8.0.7",
     "url-safe-base64": "^1.1.1"

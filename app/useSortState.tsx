@@ -1,16 +1,16 @@
 import { useRouter } from "next/router";
 import React from "react";
-import { cacheQueryKey, itemsQueryKey } from "../app/config";
+import { stringSetAdd, stringSetRemove } from "../lib/immutableStringSet";
+import { cacheWithUpdate, heapSort, SortCache } from "../lib/interruptibleSort";
+import { withRemovedNode } from "../lib/interruptibleSort/graph";
+import { cacheQueryKey, itemsQueryKey } from "./config";
 import {
   deserializeCache,
   deserializeItems,
   serializeCache,
   serializeItems,
-} from "../app/serialization";
-import { useSortUrl } from "../app/useSortUrl";
-import { stringSetAdd, stringSetRemove } from "../lib/immutableStringSet";
-import { cacheWithUpdate, heapSort, SortCache } from "../lib/interruptibleSort";
-import { withRemovedNode } from "../lib/interruptibleSort/graph";
+} from "./serialization";
+import { useSortUrl } from "./useSortUrl";
 
 type QueryState = { [cacheQueryKey]: string; [itemsQueryKey]: string };
 
@@ -98,6 +98,7 @@ export function useSortState() {
     isReady,
     canUndo: history.length > 0,
     restartLink,
+
     undo,
     pick,
     addItem,
