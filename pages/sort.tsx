@@ -76,7 +76,6 @@ function SortLayout({ state }: { state: SortAppState }) {
 function DoneLayout({ state }: { state: SortAppState }) {
   const {
     status,
-
     addItem,
     removeItem,
     clearCache,

@@ -51,13 +51,16 @@ export function deserializeCache(
   );
 
   const cache = Object.fromEntries(
-    decoded.split(",").map((s) => [
-      nameMap.get(s[0]) || "",
-      s
-        .slice(1)
-        .split("")
-        .map((n) => nameMap.get(n) || ""),
-    ])
+    decoded
+      .split(",")
+      .map((s) => [
+        nameMap.get(s[0]) || "",
+        s
+          .slice(1)
+          .split("")
+          .map((n) => nameMap.get(n) || ""),
+      ])
+      .filter((entry) => entry[0].length > 0)
   );
   return cache;
 }

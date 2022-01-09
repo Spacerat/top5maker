@@ -71,12 +71,20 @@ function subtract<T>(set: Set<T>, items: Iterable<T>) {
   }
 }
 
+/**
+ * Return a new grap with the node removed, and all of its parents
+ * connected to its children.
+ */
 export function withRemovedNode(graph: Graph, node: string): Graph {
+  const children = graph[node] ?? [];
+
   return Object.fromEntries(
     Object.entries(graph)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .filter(([k, _]) => k !== node)
-      .map(([k, v]) => [k, v.filter((i) => i !== node)])
+      .filter((entry) => entry[0] !== node)
+      .map(([k, v]) => [
+        k,
+        v.includes(node) ? [...v.filter((i) => i !== node), ...children] : v,
+      ])
   );
 }
 

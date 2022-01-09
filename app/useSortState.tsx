@@ -116,8 +116,8 @@ export function useSortState() {
   const { pick, addItem, removeItem, clearCache } = React.useMemo(() => {
     const setState = ({ newCache = cache, newItems = items }: StateUpdate) => {
       const newQuery = {
-        [cacheQueryKey]: serializeCache(items, newCache),
         [itemsQueryKey]: serializeItems(newItems),
+        [cacheQueryKey]: serializeCache(newItems, newCache),
       };
       replace(newQuery);
       setHistory((curr) => [...curr, newQuery]);
@@ -139,7 +139,7 @@ export function useSortState() {
       removeItem(item: string) {
         setState({
           newItems: stringSetRemove(items, item),
-          // newCache: withRemovedNode(cache, item),
+          newCache: withRemovedNode(cache, item),
         });
       },
       /** Called when the user resets an item while sorting */
@@ -164,6 +164,8 @@ export function useSortState() {
     isReady,
     canUndo: history.length > 1,
     restartLink: useSortUrl(items),
+    items,
+    cache,
     undo,
     pick,
     addItem,

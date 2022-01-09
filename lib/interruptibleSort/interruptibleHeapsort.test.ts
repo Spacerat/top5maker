@@ -59,7 +59,7 @@ describe("heapsort", () => {
     expect(heapSort(cache, ["3", "4", "1", "2"])).toEqual({
       comparison: { a: "4", b: "1" },
       done: false,
-      progress: ["3", "4", "1", "2"],
+      progress: ["4", "3", "1", "2"],
       sorted: [],
     });
     cache = cacheWithUpdate(cache, { larger: "4", smaller: "1" });
@@ -73,7 +73,7 @@ describe("heapsort", () => {
     expect(heapSort(cache, ["3", "4", "1", "2"])).toEqual({
       comparison: { a: "3", b: "1" },
       done: false,
-      progress: ["2", "3", "1"],
+      progress: ["3", "2", "1"],
       sorted: ["4"],
     });
     cache = cacheWithUpdate(cache, { larger: "3", smaller: "1" });
