@@ -14,6 +14,8 @@ import { useSortUrl } from "./useSortUrl";
 
 type QueryState = { [cacheQueryKey]: string; [itemsQueryKey]: string };
 
+type StateUpdate = { newCache?: SortCache; newItems?: readonly string[] };
+
 export function useSortState() {
   const { query, isReady, replace } = useRouter();
 
@@ -49,64 +51,43 @@ export function useSortState() {
 
   // Actions
 
-  /** Update the (in the URL as well as the Undo state)  */
-  const setState = useCallback(
-    ({
-      newCache = cache,
-      newItems = items,
-    }: {
-      newCache?: SortCache;
-      newItems?: readonly string[];
-    }) => {
+  const { pick, addItem, removeItem, clearCache } = useMemo(() => {
+    const setState = ({ newCache = cache, newItems = items }: StateUpdate) => {
       const newQuery = {
         [cacheQueryKey]: serializeCache(items, newCache),
         [itemsQueryKey]: serializeItems(newItems),
       };
       replace({ query: newQuery });
       setHistory((curr) => [...curr, newQuery]);
-    },
-    [cache, items, replace]
-  );
+    };
 
-  /** Called when the user clicks on the larger item */
-  const pick = useCallback(
-    (larger: string) => {
-      if (status.done) return;
-      const { a, b } = status.comparison;
-      const smaller = larger === a ? b : a;
-      setState({ newCache: cacheWithUpdate(cache, { larger, smaller }) });
-    },
-    [cache, setState, status]
-  );
-
-  /** Called when the user adds an item while sorting */
-  const addItem = useCallback(
-    (item: string) => {
-      setState({ newItems: stringSetAdd(items, item) });
-    },
-    [setState, items]
-  );
-
-  /** Called when the user removes an item while sorting */
-  const removeItem = useCallback(
-    (item: string) => {
-      setState({
-        newItems: stringSetRemove(items, item),
-        // newCache: withRemovedNode(cache, item),
-      });
-    },
-    [setState, items]
-  );
-
-  /** Called when the user resets an item while sorting */
-  const clearCache = useCallback(
-    (item: string) => {
-      setState({
-        newCache: withRemovedNode(cache, item),
-      });
-    },
-    [setState, cache]
-  );
+    return {
+      /** Called when the user clicks on the larger item */
+      pick(larger: string) {
+        if (status.done) return;
+        const { a, b } = status.comparison;
+        const smaller = larger === a ? b : a;
+        setState({ newCache: cacheWithUpdate(cache, { larger, smaller }) });
+      },
+      /** Called when the user adds an item while sorting */
+      addItem(item: string) {
+        setState({ newItems: stringSetAdd(items, item) });
+      },
+      /** Called when the user removes an item while sorting */
+      removeItem(item: string) {
+        setState({
+          newItems: stringSetRemove(items, item),
+          // newCache: withRemovedNode(cache, item),
+        });
+      },
+      /** Called when the user resets an item while sorting */
+      clearCache(item: string) {
+        setState({
+          newCache: withRemovedNode(cache, item),
+        });
+      },
+    };
+  }, [cache, items, replace, status]);
 
   /** Called when the user clicks the undo button */
   const undo = useCallback(() => {

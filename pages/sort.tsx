@@ -162,23 +162,24 @@ function SharePanel({ sorted }: { sorted: readonly string[] }) {
   // TODO: any way for me to track shares?
   // Add something to the URL?
 
-  const message = `Apparently, ${top3}! Here's the full list:`;
+  const message = `${top3}! Here's the full list:`;
+  const url = window.location.href;
 
   return (
     <div>
-      <TwitterShareButton url={window.location.href} title={message}>
+      <TwitterShareButton url={url} title={message}>
         <TwitterIcon />
       </TwitterShareButton>
-      <FacebookShareButton url={window.location.href} quote={message}>
+      <FacebookShareButton url={url} quote={message}>
         <FacebookIcon />
       </FacebookShareButton>
-      <WhatsappShareButton url={window.location.href} title={message}>
+      <WhatsappShareButton url={url} title={message}>
         <WhatsappIcon />
       </WhatsappShareButton>
-      <TelegramShareButton url={window.location.href} title={message}>
+      <TelegramShareButton url={url} title={message}>
         <TelegramIcon />
       </TelegramShareButton>
-      <NativeShareButton url={window.location.href} text={message} />
+      <NativeShareButton url={url} text={message} />
     </div>
   );
 }
