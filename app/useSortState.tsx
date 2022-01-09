@@ -65,7 +65,13 @@ const initialState: SortState = {
  * keeping it in sync with the current URL.
  */
 export function useSortState() {
-  const { query, isReady, replace } = useRouter();
+  const { query, isReady, replace: nextReplace } = useRouter();
+
+  const replace = React.useCallback(
+    // Keep scroll position when updating app state in URL
+    (query) => nextReplace({ query }, undefined, { scroll: false }),
+    [nextReplace]
+  );
 
   const [history, setHistory] = React.useState<QueryState[]>([
     query as QueryState,
@@ -113,7 +119,7 @@ export function useSortState() {
         [cacheQueryKey]: serializeCache(items, newCache),
         [itemsQueryKey]: serializeItems(newItems),
       };
-      replace({ query: newQuery });
+      replace(newQuery);
       setHistory((curr) => [...curr, newQuery]);
     };
 
@@ -148,7 +154,7 @@ export function useSortState() {
   /** Called when the user clicks the undo button */
   const undo = React.useCallback(() => {
     if (history.length > 1) {
-      replace({ query: history[history.length - 2] });
+      replace(history[history.length - 2]);
       setHistory((curr) => curr.slice(0, -1));
     }
   }, [history, replace]);
