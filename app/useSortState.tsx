@@ -1,6 +1,6 @@
 import { produce } from "immer";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React from "react";
 import { stringSetAdd, stringSetRemove } from "../lib/immutableStringSet";
 import {
   cacheWithUpdate,
@@ -67,14 +67,16 @@ const initialState: SortState = {
 export function useSortState() {
   const { query, isReady, replace } = useRouter();
 
-  const [history, setHistory] = useState<QueryState[]>([query as QueryState]);
+  const [history, setHistory] = React.useState<QueryState[]>([
+    query as QueryState,
+  ]);
 
   const [{ cache, items, status }, setSortState] =
-    useState<SortState>(initialState);
+    React.useState<SortState>(initialState);
 
   // Compute the current app state as a function of the query path and the previous state
 
-  useEffect(() => {
+  React.useEffect(() => {
     setSortState((currentState) =>
       produce(currentState, (curr) => {
         // Deserialize the query parameters
@@ -105,7 +107,7 @@ export function useSortState() {
 
   // User interactions - these all act on the query path
 
-  const { pick, addItem, removeItem, clearCache } = useMemo(() => {
+  const { pick, addItem, removeItem, clearCache } = React.useMemo(() => {
     const setState = ({ newCache = cache, newItems = items }: StateUpdate) => {
       const newQuery = {
         [cacheQueryKey]: serializeCache(items, newCache),
@@ -144,7 +146,7 @@ export function useSortState() {
   }, [cache, items, status, replace]);
 
   /** Called when the user clicks the undo button */
-  const undo = useCallback(() => {
+  const undo = React.useCallback(() => {
     if (history.length > 1) {
       replace({ query: history[history.length - 2] });
       setHistory((curr) => curr.slice(0, -1));
