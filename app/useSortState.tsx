@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import React from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { stringSetAdd, stringSetRemove } from "../lib/immutableStringSet";
 import { cacheWithUpdate, heapSort, SortCache } from "../lib/interruptibleSort";
 import { withRemovedNode } from "../lib/interruptibleSort/graph";
@@ -16,21 +16,41 @@ type QueryState = { [cacheQueryKey]: string; [itemsQueryKey]: string };
 
 export function useSortState() {
   const { query, isReady, replace } = useRouter();
+
+  const [history, setHistory] = useState<QueryState[]>(() => [
+    query as QueryState,
+  ]);
+
   const itemsData = query[itemsQueryKey];
   const cacheData = query[cacheQueryKey];
 
-  const [history, setHistory] = React.useState<QueryState[]>([]);
+  // Decode the current list of items to sort from the URL
 
-  const items = React.useMemo(() => deserializeItems(itemsData), [itemsData]);
+  const items = useMemo(() => deserializeItems(itemsData), [itemsData]);
 
-  const cache = React.useMemo(
+  // Redirect to the home page if the list of items was empty or invalid
+
+  useEffect(() => {
+    if (items.length === 0) {
+      replace("/");
+    }
+  }, [items, replace]);
+
+  // Decode the current state of known sort-order from the URL
+
+  const cache = useMemo(
     () => deserializeCache(items, cacheData),
     [items, cacheData]
   );
 
-  const status = React.useMemo(() => heapSort(cache, items), [cache, items]);
+  // Sort the items (using the cache) to find out what comparison is needed next
 
-  const setState = React.useCallback(
+  const status = useMemo(() => heapSort(cache, items), [cache, items]);
+
+  // Actions
+
+  /** Update the (in the URL as well as the Undo state)  */
+  const setState = useCallback(
     ({
       newCache = cache,
       newItems = items,
@@ -48,7 +68,8 @@ export function useSortState() {
     [cache, items, replace]
   );
 
-  const pick = React.useCallback(
+  /** Called when the user clicks on the larger item */
+  const pick = useCallback(
     (larger: string) => {
       if (status.done) return;
       const { a, b } = status.comparison;
@@ -58,14 +79,16 @@ export function useSortState() {
     [cache, setState, status]
   );
 
-  const addItem = React.useCallback(
+  /** Called when the user adds an item while sorting */
+  const addItem = useCallback(
     (item: string) => {
       setState({ newItems: stringSetAdd(items, item) });
     },
     [setState, items]
   );
 
-  const removeItem = React.useCallback(
+  /** Called when the user removes an item while sorting */
+  const removeItem = useCallback(
     (item: string) => {
       setState({
         newItems: stringSetRemove(items, item),
@@ -75,7 +98,8 @@ export function useSortState() {
     [setState, items]
   );
 
-  const clearCache = React.useCallback(
+  /** Called when the user resets an item while sorting */
+  const clearCache = useCallback(
     (item: string) => {
       setState({
         newCache: withRemovedNode(cache, item),
@@ -84,21 +108,19 @@ export function useSortState() {
     [setState, cache]
   );
 
-  const undo = React.useCallback(() => {
-    if (history.length > 0) {
+  /** Called when the user clicks the undo button */
+  const undo = useCallback(() => {
+    if (history.length > 1) {
+      replace({ query: history[history.length - 2] });
       setHistory((curr) => curr.slice(0, -1));
-      replace({ query: history[history.length - 1] });
     }
   }, [history, replace]);
-
-  const restartLink = useSortUrl(items);
 
   return {
     status,
     isReady,
-    canUndo: history.length > 0,
-    restartLink,
-
+    canUndo: history.length > 1,
+    restartLink: useSortUrl(items),
     undo,
     pick,
     addItem,
