@@ -1,7 +1,13 @@
+import { produce } from "immer";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { stringSetAdd, stringSetRemove } from "../lib/immutableStringSet";
-import { cacheWithUpdate, heapSort, SortCache } from "../lib/interruptibleSort";
+import {
+  cacheWithUpdate,
+  heapSort,
+  SortCache,
+  SortStatus,
+} from "../lib/interruptibleSort";
 import { withRemovedNode } from "../lib/interruptibleSort/graph";
 import { cacheQueryKey, itemsQueryKey } from "./config";
 import {
@@ -16,40 +22,88 @@ type QueryState = { [cacheQueryKey]: string; [itemsQueryKey]: string };
 
 type StateUpdate = { newCache?: SortCache; newItems?: readonly string[] };
 
+type SortState = {
+  query: QueryState;
+  items: string[];
+  cache: SortCache;
+  status: SortStatus;
+};
+
+function sanitize(param: string | string[] | undefined) {
+  return typeof param === "string" ? param : "";
+}
+
+/**
+ * Swap the order of a comparison from the sorter if the same item appeared
+ * in the same place twice. This improves the UX, by ensuring that the text
+ * of the button you are looking at always changes when you press it.
+ */
+function swapComparisonIfNeeded(currStatus: SortStatus, newStatus: SortStatus) {
+  if (
+    !newStatus.done &&
+    !currStatus.done &&
+    (newStatus.comparison.a === currStatus.comparison.a ||
+      newStatus.comparison.b === currStatus.comparison.b)
+  ) {
+    return {
+      ...newStatus,
+      comparison: { a: newStatus.comparison.b, b: newStatus.comparison.a },
+    };
+  }
+  return newStatus;
+}
+
+const initialState: SortState = {
+  query: { [cacheQueryKey]: "", [itemsQueryKey]: "" },
+  items: [],
+  cache: {},
+  status: heapSort({}, []),
+};
+
+/**
+ * This hook wraps the core 'heapSort' function to manage the app's state,
+ * keeping it in sync with the current URL.
+ */
 export function useSortState() {
   const { query, isReady, replace } = useRouter();
 
-  const [history, setHistory] = useState<QueryState[]>(() => [
-    query as QueryState,
-  ]);
+  const [history, setHistory] = useState<QueryState[]>([query as QueryState]);
 
-  const itemsData = query[itemsQueryKey];
-  const cacheData = query[cacheQueryKey];
+  const [{ cache, items, status }, setSortState] =
+    useState<SortState>(initialState);
 
-  // Decode the current list of items to sort from the URL
-
-  const items = useMemo(() => deserializeItems(itemsData), [itemsData]);
-
-  // Redirect to the home page if the list of items was empty or invalid
+  // Compute the current app state as a function of the query path and the previous state
 
   useEffect(() => {
-    if (items.length === 0) {
-      replace("/");
-    }
-  }, [items, replace]);
+    setSortState((currentState) =>
+      produce(currentState, (curr) => {
+        // Deserialize the query parameters
 
-  // Decode the current state of known sort-order from the URL
+        const queryItems = sanitize(query[itemsQueryKey]);
+        const queryChanged = queryItems != curr.query?.[itemsQueryKey];
+        if (queryChanged) {
+          curr.query[itemsQueryKey] = queryItems;
+          curr.items = deserializeItems(queryItems);
+        }
+        const queryCache = sanitize(query[cacheQueryKey]);
+        const cacheChanged = queryCache != curr.query[itemsQueryKey];
+        if (cacheChanged) {
+          curr.query[itemsQueryKey] = queryCache;
+          curr.cache = deserializeCache(curr.items, queryCache);
+        }
 
-  const cache = useMemo(
-    () => deserializeCache(items, cacheData),
-    [items, cacheData]
-  );
+        // Figure out what needs to be compared next
 
-  // Sort the items (using the cache) to find out what comparison is needed next
+        if (queryChanged || cacheChanged) {
+          const currStatus = curr.status;
+          const newStatus = heapSort(curr.cache, curr.items);
+          curr.status = swapComparisonIfNeeded(currStatus, newStatus);
+        }
+      })
+    );
+  }, [query]);
 
-  const status = useMemo(() => heapSort(cache, items), [cache, items]);
-
-  // Actions
+  // User interactions - these all act on the query path
 
   const { pick, addItem, removeItem, clearCache } = useMemo(() => {
     const setState = ({ newCache = cache, newItems = items }: StateUpdate) => {
@@ -87,7 +141,7 @@ export function useSortState() {
         });
       },
     };
-  }, [cache, items, replace, status]);
+  }, [cache, items, status, replace]);
 
   /** Called when the user clicks the undo button */
   const undo = useCallback(() => {
