@@ -47,6 +47,7 @@ export const Main = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  min-width: 320px;
 `;
 
 export function Header({ children }: React.PropsWithChildren<unknown>) {

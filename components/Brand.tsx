@@ -19,17 +19,26 @@ const ImageContainer = styled.div`
   display: flex;
   justify-content: center;
   margin-bottom: 24px;
+  flex: 1;
+  min-width: 226px;
+`;
+
+const HeaderWrap = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 40px;
 `;
 
 export function TagLine() {
   return (
-    <>
+    <HeaderWrap>
       <H1>
         Sort <AccentText>anything</AccentText> from best to worst.
       </H1>
+
       <ImageContainer>
         <Image src="/Illustration.png" width="226" height="124" alt="" />
       </ImageContainer>
-    </>
+    </HeaderWrap>
   );
 }
