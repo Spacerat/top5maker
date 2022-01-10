@@ -1,3 +1,4 @@
+import Head from "next/head";
 import Link from "next/link";
 import React from "react";
 import { useSortUrl } from "../app/useSortUrl";
@@ -39,14 +40,19 @@ function SetupItems() {
 
 export default function Home() {
   return (
-    <Main>
-      <Header>
-        <Brand />
-        <TagLine />
-      </Header>
-      <Page>
-        <SetupItems />
-      </Page>
-    </Main>
+    <>
+      <Head>
+        <title>Sort Star</title>
+      </Head>
+      <Main>
+        <Header>
+          <Brand />
+          <TagLine />
+        </Header>
+        <Page>
+          <SetupItems />
+        </Page>
+      </Main>
+    </>
   );
 }

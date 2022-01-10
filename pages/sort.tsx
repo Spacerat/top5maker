@@ -1,3 +1,4 @@
+import Head from "next/head";
 import Link from "next/link";
 import {
   FacebookIcon,
@@ -155,15 +156,20 @@ export default function Sort() {
   const state = useSortState();
 
   return (
-    <Main>
-      <Header>
-        <Brand />
-      </Header>
-      {state.status.done ? (
-        <DoneLayout state={state} />
-      ) : (
-        <SortLayout state={state} />
-      )}
-    </Main>
+    <>
+      <Head>
+        <title>{state.status.done ? "Results" : "Sorting"} - Sort Star</title>
+      </Head>
+      <Main>
+        <Header>
+          <Brand />
+        </Header>
+        {state.status.done ? (
+          <DoneLayout state={state} />
+        ) : (
+          <SortLayout state={state} />
+        )}
+      </Main>
+    </>
   );
 }
