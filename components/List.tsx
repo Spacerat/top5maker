@@ -50,8 +50,8 @@ export function ItemList({
 }: {
   header?: React.ReactNode;
   items: readonly string[];
-  onRemove?: (item: string) => void;
-  onClear?: (item: string) => void;
+  onRemove?: null | ((item: string) => void);
+  onClear?: null | ((item: string) => void);
 }) {
   const actions = (item: string) => (
     <NoSelect>

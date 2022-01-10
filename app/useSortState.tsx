@@ -53,11 +53,14 @@ function swapComparisonIfNeeded(currStatus: SortStatus, newStatus: SortStatus) {
   return newStatus;
 }
 
-const initialState: SortState = {
-  query: { [cacheQueryKey]: "", [itemsQueryKey]: "" },
-  items: [],
-  cache: {},
-  status: heapSort({}, []),
+const initialState = (query: QueryState): SortState => {
+  const items = deserializeItems(sanitize(query[itemsQueryKey]));
+  return {
+    query,
+    items,
+    cache: {},
+    status: heapSort({}, items),
+  };
 };
 
 /**
@@ -65,20 +68,27 @@ const initialState: SortState = {
  * keeping it in sync with the current URL.
  */
 export function useSortState() {
-  const { query, isReady, replace: nextReplace } = useRouter();
+  const { query, isReady, replace } = useRouter();
 
-  const replace = React.useCallback(
+  const replaceQuery = React.useCallback(
     // Keep scroll position when updating app state in URL
-    (query) => nextReplace({ query }, undefined, { scroll: false }),
-    [nextReplace]
+    (query) => replace({ query }, undefined, { scroll: false }),
+    [replace]
   );
 
   const [history, setHistory] = React.useState<QueryState[]>([
     query as QueryState,
   ]);
 
-  const [{ cache, items, status }, setSortState] =
-    React.useState<SortState>(initialState);
+  const [{ cache, items, status }, setSortState] = React.useState<SortState>(
+    () => initialState(query as QueryState)
+  );
+
+  React.useEffect(() => {
+    if (isReady && items.length === 0) {
+      replace("/");
+    }
+  }, [items, isReady, replace]);
 
   // Compute the current app state as a function of the query path and the previous state
 
@@ -119,7 +129,7 @@ export function useSortState() {
         [itemsQueryKey]: serializeItems(newItems),
         [cacheQueryKey]: serializeCache(newItems, newCache),
       };
-      replace(newQuery);
+      replaceQuery(newQuery);
       setHistory((curr) => [...curr, newQuery]);
     };
 
@@ -149,15 +159,15 @@ export function useSortState() {
         });
       },
     };
-  }, [cache, items, status, replace]);
+  }, [cache, items, status, replaceQuery]);
 
   /** Called when the user clicks the undo button */
   const undo = React.useCallback(() => {
     if (history.length > 1) {
-      replace(history[history.length - 2]);
+      replaceQuery(history[history.length - 2]);
       setHistory((curr) => curr.slice(0, -1));
     }
-  }, [history, replace]);
+  }, [history, replaceQuery]);
 
   return {
     status,
@@ -169,7 +179,7 @@ export function useSortState() {
     undo,
     pick,
     addItem,
-    removeItem,
+    removeItem: items.length > 3 ? removeItem : null,
     clearCache,
   };
 }

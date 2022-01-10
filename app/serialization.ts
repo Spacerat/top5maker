@@ -1,20 +1,8 @@
-import {
-  decode as decode64fromSafe,
-  encode as encode64toSafe,
-  isUrlSafeBase64,
-} from "url-safe-base64";
+import { isSafeBase64, safe64decode, safe64encode } from "../lib/base64";
 import { Graph } from "../lib/interruptibleSort/graph";
 
 function isString(t: unknown): t is string {
   return typeof t === "string";
-}
-
-function safe64encode(data: string) {
-  return encode64toSafe(btoa(data));
-}
-
-function safe64decode(data: string) {
-  return atob(decode64fromSafe(data));
 }
 
 export function serializeItems(items: readonly string[]): string {
@@ -41,7 +29,7 @@ export function deserializeCache(
   items: readonly string[],
   data: string | string[] | undefined
 ): Graph {
-  if (!isString(data) || !isUrlSafeBase64(data)) {
+  if (!isSafeBase64(data)) {
     return {};
   }
   const decoded = safe64decode(data);
@@ -66,10 +54,15 @@ export function deserializeCache(
 }
 
 export function deserializeItems(data: string | string[] | undefined) {
-  if (!isString(data) || !isUrlSafeBase64(data)) {
+  if (!isSafeBase64(data)) {
     return [];
   }
-  const result = JSON.parse(safe64decode(data));
+  let result: unknown;
+  try {
+    result = JSON.parse(safe64decode(data));
+  } catch {
+    return [];
+  }
 
   if (Array.isArray(result) && result.every(isString)) {
     return result;

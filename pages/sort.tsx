@@ -64,7 +64,6 @@ function SortLayout({ state }: { state: SortAppState }) {
       <ItemList
         header={<H3>Unsorted items</H3>}
         items={status.progress}
-        onClear={clearCache}
         onRemove={removeItem}
       />
       <H3>Add another item</H3>
@@ -97,23 +96,18 @@ function DoneLayout({ state }: { state: SortAppState }) {
           onClear={clearCache}
           onRemove={removeItem}
         />
-        <ItemList
-          header={<H3>Unsorted items</H3>}
-          items={status.progress}
-          onClear={clearCache}
-          onRemove={removeItem}
-        />
+        {canUndo && (
+          <FullMobileSecondaryButton onClick={undo}>
+            Undo
+          </FullMobileSecondaryButton>
+        )}
         <H3>Share this list</H3>
         <SharePanel sorted={status.sorted} />
       </Page>
       <Page kind="darker">
         <H3>Add another item</H3>
         <AddForm onAddItem={addItem} />
-        {canUndo && (
-          <FullMobileSecondaryButton onClick={undo}>
-            Undo
-          </FullMobileSecondaryButton>
-        )}
+
         <Again>
           <Link href={restartLink} passHref>
             <PrimaryLink>Re-sort this list</PrimaryLink>
