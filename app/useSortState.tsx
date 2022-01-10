@@ -27,6 +27,7 @@ type SortState = {
   items: string[];
   cache: SortCache;
   status: SortStatus;
+  hydrated: boolean;
 };
 
 function sanitize(param: string | string[] | undefined) {
@@ -60,6 +61,7 @@ const initialState = (query: QueryState): SortState => {
     items,
     cache: {},
     status: heapSort({}, items),
+    hydrated: false,
   };
 };
 
@@ -80,22 +82,17 @@ export function useSortState() {
     query as QueryState,
   ]);
 
-  const [{ cache, items, status }, setSortState] = React.useState<SortState>(
-    () => initialState(query as QueryState)
-  );
-
-  React.useEffect(() => {
-    if (isReady && items.length === 0) {
-      replace("/");
-    }
-  }, [items, isReady, replace]);
+  const [{ cache, items, status, hydrated }, setSortState] =
+    React.useState<SortState>(() => initialState(query as QueryState));
 
   // Compute the current app state as a function of the query path and the previous state
 
   React.useEffect(() => {
-    setSortState((currentState) =>
-      produce(currentState, (curr) => {
+    setSortState((currentState) => {
+      if (!isReady) return currentState;
+      return produce(currentState, (curr) => {
         // Deserialize the query parameters
+        curr.hydrated = true;
 
         const queryItems = sanitize(query[itemsQueryKey]);
         const queryChanged = queryItems != curr.query?.[itemsQueryKey];
@@ -117,9 +114,15 @@ export function useSortState() {
           const newStatus = heapSort(curr.cache, curr.items);
           curr.status = swapComparisonIfNeeded(currStatus, newStatus);
         }
-      })
-    );
-  }, [query]);
+      });
+    });
+  }, [query, isReady]);
+
+  React.useEffect(() => {
+    if (hydrated && items.length === 0) {
+      replace("/");
+    }
+  }, [hydrated, items, replace]);
 
   // User interactions - these all act on the query path
 
@@ -171,7 +174,7 @@ export function useSortState() {
 
   return {
     status,
-    isReady,
+    isReady: hydrated,
     canUndo: history.length > 1,
     restartLink: useSortUrl(items),
     items,
