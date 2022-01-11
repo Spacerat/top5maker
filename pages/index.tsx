@@ -11,7 +11,6 @@ import { H3 } from "../components/text";
 import { stringSetAdd, stringSetRemove } from "../lib/immutableStringSet";
 
 function SetupItems() {
-  // TODO: proper app state management
   const [items, setItems] = React.useState<readonly string[]>([]);
 
   const addItem = React.useCallback((name: string) => {

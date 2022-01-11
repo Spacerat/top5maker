@@ -23,9 +23,9 @@ export function AddForm({ onAddItem, keepInView }: AddFormProps) {
       onAddItem(value);
       setValue("");
       textRef.current?.focus();
-      // HACK: keep the bottom of the list in view
-      // scrollIntoView doesn't seem to work well for this on mobile
-      // is there a better way?
+      // HACK: keep the bottom of the list in view.
+      // scrollIntoView doesn't seem to work well for this on mobile.
+      // Is there a better way?
       if (keepInView) setTimeout(() => window.scrollBy(0, 52), 1);
       return false;
     },
