@@ -48,6 +48,7 @@ export default class MyDocument extends Document {
             href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;700&family=Roboto:wght@400;500&display=swap"
             rel="stylesheet"
           ></link>
+          <meta name="description" content="Sort anything with SortStar.app! Favourite superhero? Best holiday destination? Next restaurant trip? SortStar has you covered."
         </Head>
         <body>
           <Main />
