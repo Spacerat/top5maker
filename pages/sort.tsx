@@ -188,7 +188,10 @@ export default function Sort() {
   return (
     <>
       <Head>
-        <title>{state.status.done ? "Results" : "Sorting"} - Sort Star</title>
+        <title>
+          {state.isReady && state.status.done ? "Results" : "Sorting"} - Sort
+          Star
+        </title>
       </Head>
       <Main>
         <Header>

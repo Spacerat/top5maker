@@ -25,8 +25,8 @@ export const Button = styled(BaseButton)`
     border: 1px ${({ theme }) => theme.colors.primaryPressed} solid;
   }
   &:focus-visible {
-    outline: 1px ${({ theme }) => theme.colors.primaryDark} solid;
-    border: 1px ${({ theme }) => theme.colors.primaryDark} solid;
+    outline: 1px ${({ theme }) => theme.colors.link} solid;
+    border: 1px ${({ theme }) => theme.colors.link} solid;
   }
   &:disabled {
     background-color: ${({ theme }) => theme.colors.primary3};
@@ -46,8 +46,8 @@ export const SecondaryButton = styled(BaseButton)`
     background-color: ${({ theme }) => theme.colors.primary4Pressed};
   }
   &:focus-visible {
-    outline: 1px ${({ theme }) => theme.colors.primaryDark} solid;
-    border: 1px ${({ theme }) => theme.colors.primaryDark} solid;
+    outline: 1px ${({ theme }) => theme.colors.link} solid;
+    border: 1px ${({ theme }) => theme.colors.link} solid;
   }
   &:disabled {
     background-color: ${({ theme }) => theme.colors.primary3};

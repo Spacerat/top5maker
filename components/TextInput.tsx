@@ -10,8 +10,8 @@ export const TextInput = styled.input`
   padding-left: 12px;
 
   &:focus-visible {
-    border: 1px ${({ theme }) => theme.colors.primary1} solid;
-    outline: 1px ${({ theme }) => theme.colors.primary1} solid;
+    border: 1px ${({ theme }) => theme.colors.link} solid;
+    outline: 1px ${({ theme }) => theme.colors.link} solid;
   }
 
   &::placeholder {
