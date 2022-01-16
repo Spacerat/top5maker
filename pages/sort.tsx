@@ -26,7 +26,9 @@ const SideBySideButtons = styled.div`
   gap: 24px;
   & button {
     flex: 1;
-    height: 160px;
+    min-height: 160px;
+    height: initial;
+    padding: 16px;
     ${({ theme }) => theme.shadows.primary}
   }
 `;

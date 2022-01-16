@@ -6,21 +6,15 @@ const BaseButton = styled.button`
   font-weight: 500;
   padding-left: 18px;
   padding-right: 18px;
+  padding-top: 8px;
+  padding-bottom: 8px;
   border-radius: ${({ theme }) => theme.border.radius};
-  height: 40px;
 `;
 
 export const Button = styled(BaseButton)`
-  font-size: ${({ theme }) => theme.typography.body.fontSize};
-  font-family: ${({ theme }) => theme.fonts.roboto};
-  font-weight: 500;
-  padding-left: 18px;
-  padding-right: 18px;
-  border-radius: ${({ theme }) => theme.border.radius};
   border: 1px ${({ theme }) => theme.colors.primary1} solid;
   color: ${({ theme }) => theme.colors.primary4};
   background-color: ${({ theme }) => theme.colors.primary1};
-  height: 40px;
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.primaryHover};
