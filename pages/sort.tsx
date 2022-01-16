@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Link from "next/link";
+import { useEffect } from "react";
 import {
   FacebookIcon,
   FacebookShareButton,
@@ -19,6 +20,7 @@ import { Header, Main, Page } from "../components/layout";
 import { ItemList } from "../components/List";
 import { NativeShareButton } from "../components/NativeShareButton";
 import { H1, H3 } from "../components/text";
+import { SortStatus } from "../lib/interruptibleSort";
 
 const SideBySideButtons = styled.div`
   display: flex;
@@ -40,6 +42,9 @@ const Again = styled.div`
 function SortLayout({ state }: { state: SortAppState }) {
   const { pick, status, addItem, removeItem, clearCache, canUndo, undo } =
     state;
+
+  useKeyboardSupport(status, pick);
+
   if (status.done) {
     return null;
   }
@@ -73,6 +78,29 @@ function SortLayout({ state }: { state: SortAppState }) {
       <AddForm onAddItem={addItem} />
     </Page>
   );
+}
+
+function useKeyboardSupport(
+  status: SortStatus,
+  pick: (larger: string) => void
+) {
+  useEffect(() => {
+    if (status.done) return;
+    const { a, b } = status.comparison;
+    const listener = (e: KeyboardEvent) => {
+      if ((e.target as HTMLElement)?.tagName === "INPUT") {
+        return;
+      }
+      if (e.key === "ArrowLeft") {
+        pick(a);
+      } else if (e.key === "ArrowRight") {
+        pick(b);
+      }
+    };
+    window.addEventListener("keydown", listener);
+
+    return () => window.removeEventListener("keydown", listener);
+  }, [pick, status]);
 }
 
 function DoneLayout({ state }: { state: SortAppState }) {
