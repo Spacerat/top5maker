@@ -38,7 +38,7 @@ export function TagLine() {
       </H1>
 
       <ImageContainer>
-        <Image src="/Illustration.png" width="226" height="124" alt="" />
+        <Image src="/Illustration.svg" width="226" height="124" alt="" />
       </ImageContainer>
     </HeaderWrap>
   );
