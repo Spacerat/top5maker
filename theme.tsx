@@ -29,7 +29,7 @@ export const theme = {
       "linear-gradient(172.38deg, #e61a86 36.31%, #e0529e 115.99%), #e51986;",
 
     // Grays
-    gray1: "hsl(240, 30%, 25%)",
+    gray1: "hsl(240, 25%, 35%)",
     gray2: "hsl(240, 15%, 50%)",
     gray3: "hsl(240, 5%, 72%)",
     page: "white",
