@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import styled from "styled-components";
+import { FooterSection } from "./layout";
 import { H1, H2, NoStyleAnchor } from "./text";
 
 const AccentText = styled.span`
@@ -40,5 +41,16 @@ export function TagLine() {
         <Image src="/Illustration.png" width="226" height="124" alt="" />
       </ImageContainer>
     </HeaderWrap>
+  );
+}
+
+export function Footer() {
+  return (
+    <FooterSection>
+      <small>
+        Website &copy; Copyright 2022{" "}
+        <a href="https://veryjoe.com">Joseph Atkins-Turkish</a>
+      </small>
+    </FooterSection>
   );
 }

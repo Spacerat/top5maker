@@ -2,12 +2,11 @@ import React from "react";
 import styled from "styled-components";
 import { RedoItemButton, RemoveItemButton } from "../components/IconButtons";
 import { Paper } from "../components/layout";
-import { Body } from "./text";
 
 const ItemContainer = styled.div`
   display: flex;
   flex-direction: row;
-  padding: 16px;
+  padding: 20px;
   &:not(:last-child) {
     border-bottom: thin ${({ theme }) => theme.colors.primary3} solid;
   }
@@ -22,9 +21,7 @@ export function ListItem({
 }: React.PropsWithChildren<{ actions?: React.ReactNode }>) {
   return (
     <ItemContainer>
-      <ItemTextContainer>
-        <Body>{children}</Body>
-      </ItemTextContainer>
+      <ItemTextContainer>{children}</ItemTextContainer>
       {actions}
     </ItemContainer>
   );
@@ -64,7 +61,7 @@ export function ItemList({
   return (
     <>
       {header}
-      <Paper>
+      <Paper height="high">
         {items.map((item) => (
           <ListItem key={item} actions={actions(item)}>
             {item}

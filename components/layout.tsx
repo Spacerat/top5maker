@@ -1,5 +1,12 @@
 import styled from "styled-components";
 
+export const Main = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-width: 320px;
+`;
+
 const HeaderContainer = styled.header`
   color: ${({ theme }) => theme.colors.primary4};
   padding-left: 20px;
@@ -15,15 +22,31 @@ const PageContainer = styled.div`
   margin-right: auto;
 `;
 
+export function Header({ children }: React.PropsWithChildren<unknown>) {
+  return (
+    <HeaderContainer>
+      <PageContainer>{children}</PageContainer>
+    </HeaderContainer>
+  );
+}
+
 type PageProps = { kind?: "main" | "darker" };
 
-const BodyContainer = styled.div<PageProps>`
-  flex: 1;
-  background-color: ${({ theme, kind = "main" }) =>
-    kind === "main" ? theme.colors.primary4 : theme.colors.primary4darker};
+const MainSectionContainer = styled.div<PageProps>`
   display: flex;
   justify-content: center;
   flex-direction: row;
+  background-color: ${({ theme, kind = "main" }) =>
+    kind === "main" ? theme.colors.primary4 : theme.colors.primary4plus};
+  flex: 1;
+`;
+
+const FooterSectionContainer = styled.footer`
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  background-color: ${({ theme }) => theme.colors.primary4plusplus};
+  color: ${({ theme }) => theme.colors.gray2};
 `;
 
 const PageSection = styled.div`
@@ -37,31 +60,43 @@ const PageSection = styled.div`
   gap: 24px;
 `;
 
-export const Paper = styled.div`
+export function Page({ children, kind }: React.PropsWithChildren<PageProps>) {
+  return (
+    <MainSectionContainer kind={kind}>
+      <PageSection>{children}</PageSection>
+    </MainSectionContainer>
+  );
+}
+
+export function FooterSection({
+  children,
+}: React.PropsWithChildren<PageProps>) {
+  return (
+    <FooterSectionContainer>
+      <PageSection>{children}</PageSection>
+    </FooterSectionContainer>
+  );
+}
+
+type PaperProps = {
+  height?: "high" | "low" | "none";
+};
+
+export const Paper = styled.div<PaperProps>`
   background-color: ${({ theme }) => theme.colors.page};
-  ${({ theme }) => theme.shadows.page};
+  ${({ theme, height = "none" }) => theme.shadows.paper[height]};
   border-radius: ${({ theme }) => theme.border.radius};
 `;
 
-export const Main = styled.div`
+export const CardGrid = styled.div`
   display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  min-width: 320px;
+  flex-wrap: wrap;
+  column-gap: 24px;
+  row-gap: 24px;
 `;
 
-export function Header({ children }: React.PropsWithChildren<unknown>) {
-  return (
-    <HeaderContainer>
-      <PageContainer>{children}</PageContainer>
-    </HeaderContainer>
-  );
-}
-
-export function Page({ children, kind }: React.PropsWithChildren<PageProps>) {
-  return (
-    <BodyContainer kind={kind}>
-      <PageSection>{children}</PageSection>
-    </BodyContainer>
-  );
-}
+export const Card = styled(Paper)`
+  padding: 24px;
+  min-width: 250px;
+  flex: 1;
+`;

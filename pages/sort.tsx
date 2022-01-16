@@ -18,7 +18,7 @@ import { Button, FullMobileSecondaryButton } from "../components/Button";
 import { Header, Main, Page } from "../components/layout";
 import { ItemList } from "../components/List";
 import { NativeShareButton } from "../components/NativeShareButton";
-import { H1, H3, PrimaryLink } from "../components/text";
+import { H1, H3 } from "../components/text";
 
 const SideBySideButtons = styled.div`
   display: flex;
@@ -111,12 +111,12 @@ function DoneLayout({ state }: { state: SortAppState }) {
 
         <Again>
           <Link href={restartLink} passHref>
-            <PrimaryLink>Re-sort this list</PrimaryLink>
+            Re-sort this list
           </Link>
         </Again>
         <Again>
           <Link passHref href="/">
-            <PrimaryLink>Start over</PrimaryLink>
+            Start over
           </Link>
         </Again>
       </Page>

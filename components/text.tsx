@@ -16,36 +16,16 @@ export const H2 = styled.h2`
   margin-bottom: 20px;
 `;
 
+export const NoColorAnchor = styled.a`
+  color: inherit;
+`;
+
 export const NoStyleAnchor = styled.a`
   color: inherit;
   text-decoration: none;
 `;
 
 export const H3 = styled.h3`
-  font-family: ${({ theme }) => theme.fonts.roboto};
   font-weight: 500;
-  font-size: ${({ theme }) => theme.typography.body.fontSize};
-  color: ${({ theme }) => theme.colors.gray1};
   margin: 0;
-`;
-
-export const Body = styled.span`
-  font-family: ${({ theme }) => theme.fonts.roboto};
-  font-weight: 400;
-  font-size: ${({ theme }) => theme.typography.body.fontSize};
-  color: ${({ theme }) => theme.colors.gray1};
-`;
-
-export const Bold = styled.span`
-  font-family: ${({ theme }) => theme.fonts.roboto};
-  font-weight: 700;
-  font-size: ${({ theme }) => theme.typography.body.fontSize};
-  color: ${({ theme }) => theme.colors.gray1};
-`;
-
-export const PrimaryLink = styled.a`
-  font-family: ${({ theme }) => theme.fonts.roboto};
-  font-weight: 400;
-  font-size: ${({ theme }) => theme.typography.body.fontSize};
-  color: ${({ theme }) => theme.colors.primary1};
 `;
