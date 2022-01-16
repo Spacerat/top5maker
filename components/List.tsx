@@ -7,6 +7,7 @@ const ItemContainer = styled.div`
   display: flex;
   flex-direction: row;
   padding: 20px;
+  align-items: center;
   &:not(:last-child) {
     border-bottom: thin ${({ theme }) => theme.colors.primary3} solid;
   }
