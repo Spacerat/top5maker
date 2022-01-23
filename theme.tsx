@@ -76,6 +76,7 @@ export const globalStyle = css`
     font-weight: 400;
     font-size: ${({ theme }) => theme.typography.body.fontSize};
     color: ${({ theme }) => theme.colors.gray1};
+    background-color: ${({ theme }) => theme.colors.primary4plusplus};
   }
 
   a {
