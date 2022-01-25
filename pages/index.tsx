@@ -3,7 +3,7 @@ import Link from "next/link";
 import React from "react";
 import { makeSortUrl, useSortUrl } from "../app/useSortUrl";
 import { AddForm } from "../components/AddItemInput";
-import { Brand, Footer, TagLine } from "../components/Brand";
+import { Brand, Footer, Illustration, TagLine } from "../components/Brand";
 import { FullMobileButton } from "../components/Button";
 import { Card, CardGrid, Header, Main, Page } from "../components/layout";
 import { ItemList } from "../components/List";
@@ -106,8 +106,11 @@ export default function Home() {
       </Head>
       <Main>
         <Header>
-          <Brand />
-          <TagLine />
+          <div>
+            <Brand />
+            <TagLine />
+          </div>
+          <Illustration />
         </Header>
 
         <Page>

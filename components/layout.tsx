@@ -22,10 +22,19 @@ const PageContainer = styled.div`
   margin-right: auto;
 `;
 
+const HeaderContent = styled(PageContainer)`
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 40px;
+  row-gap: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+`;
+
 export function Header({ children }: React.PropsWithChildren<unknown>) {
   return (
     <HeaderContainer>
-      <PageContainer>{children}</PageContainer>
+      <HeaderContent>{children}</HeaderContent>
     </HeaderContainer>
   );
 }
@@ -39,6 +48,8 @@ const MainSectionContainer = styled.div<PageProps>`
   background-color: ${({ theme, kind = "main" }) =>
     kind === "main" ? theme.colors.primary4 : theme.colors.primary4plus};
   flex: 1;
+  padding-left: 20px;
+  padding-right: 20px;
 `;
 
 const FooterSectionContainer = styled.footer`
@@ -54,7 +65,6 @@ const PageSection = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-  padding: 16px;
   padding-top: 24px;
   padding-bottom: 24px;
   gap: 24px;

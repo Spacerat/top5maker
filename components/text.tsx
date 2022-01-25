@@ -2,18 +2,18 @@ import styled from "styled-components";
 
 export const H1 = styled.h1`
   font-family: ${({ theme }) => theme.fonts.nunito};
-  font-size: 34px;
-  font-weight: 700;
-  margin-top: 24px;
-  margin-bottom: 24px;
-  line-height: 38px;
+  font-size: 27px;
+  font-weight: 400;
+  margin: 0;
 `;
 
 export const H2 = styled.h2`
   font-family: ${({ theme }) => theme.fonts.nunito};
-  font-weight: 400;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  font-size: 34px;
+  font-weight: 700;
+  margin: 0;
+  margin-top: 24px;
+  line-height: 38px;
 `;
 
 export const NoColorAnchor = styled.a`
