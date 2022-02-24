@@ -58,6 +58,8 @@ const FooterSectionContainer = styled.footer`
   flex-direction: row;
   background-color: ${({ theme }) => theme.colors.primary4plusplus};
   color: ${({ theme }) => theme.colors.gray2};
+  padding-left: 20px;
+  padding-right: 20px;
 `;
 
 const PageSection = styled.div`
