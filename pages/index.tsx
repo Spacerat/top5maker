@@ -115,6 +115,7 @@ export default function Home() {
 
         <Page>
           <H3>Add three or more items to get started</H3>
+          You can add items one by one, or paste multiple lines
           <SetupItems />
         </Page>
         <Page kind="darker">

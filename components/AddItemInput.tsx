@@ -36,9 +36,19 @@ export function AddForm({ onAddItem, keepInView }: AddFormProps) {
     <FormLine onSubmit={onSubmit}>
       <TextInput
         type="text"
-        placeholder="Enter a name here"
+        placeholder="Add your items to here"
         value={value}
         onChange={(e) => setValue(e.target.value)}
+        onPaste={(e) => {
+         const text = e.clipboardData.getData('text')
+         if (text && text.includes('\n')) {
+           const toAdd = text.split('\n').map(x => x.trim()).filter(x => !!x);
+           if (toAdd.length > 1) {
+            toAdd.forEach(onAddItem);
+            e.preventDefault()
+           }
+         }
+        }}
         ref={textRef}
       />
       <Button type="submit" disabled={value.length === 0}>
