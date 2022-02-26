@@ -10,26 +10,28 @@ export type Comparison = {
   b: string;
 };
 
+type IncompleteSortState = {
+  /** The current sort-order of the unsorted items */
+  incompleteSorted: string[];
+
+  progress?: number;
+};
+
 type NextComparison = {
   /** Indicates that more comparisons are needed */
   done: false;
 
   /** The next two values which need to be compared  */
   comparison: Comparison;
-
-  /** The current sort-order of the unsorted items */
-  progress: string[];
 };
 
-type SortProgress = {
+type SortItemsState = IncompleteSortState & {
   /** The sorted items, if any */
   sorted: string[];
-  /** The current sort-order of the unsorted items */
-  progress: string[];
 };
 
-export type InProgressSortStatus = NextComparison & SortProgress;
-export type DoneSortStatus = { done: true } & SortProgress;
+export type InProgressSortStatus = NextComparison & SortItemsState;
+export type DoneSortStatus = { done: true } & SortItemsState;
 export type SortStatus = InProgressSortStatus | DoneSortStatus;
 
 /** Compute the index of the parent of a node in an array-heap */
@@ -40,11 +42,6 @@ const childIndices = (idx: number): [number, number] => [
   2 * idx + 1,
   2 * idx + 2,
 ];
-
-/** Create an empty cache (with the appropriate type) */
-export function initCache(): SortCache {
-  return {};
-}
 
 /** Return the cache updated  */
 export function cacheWithUpdate(
@@ -74,7 +71,6 @@ type CacheResult =
  */
 function getCachedLessThan(
   cache: SortCache,
-  heap: string[],
   a: string,
   b: string
 ): CacheResult {
@@ -87,7 +83,6 @@ function getCachedLessThan(
   return {
     comparison: { a, b },
     done: false,
-    progress: heap,
   };
 }
 
@@ -126,10 +121,10 @@ export function heapSort(
     return {
       ...heapifyResult,
       sorted: [],
-      progress: bestPossibleSort(cache, heapifyResult.progress),
+      incompleteSorted: bestPossibleSort(cache, heapifyResult.heap),
     };
   }
-  heap = heapifyResult.progress;
+  heap = heapifyResult.heap;
 
   // Pop the top off until there's nothing left
   const sorted: string[] = [];
@@ -141,29 +136,30 @@ export function heapSort(
     if (!downShiftResult.done) {
       return {
         ...downShiftResult,
-        progress: bestPossibleSort(cache, heap),
+        incompleteSorted: bestPossibleSort(cache, heap),
         sorted,
       };
     }
-    heap = downShiftResult.progress;
+    heap = downShiftResult.heap;
   }
 
-  return { done: true, sorted, progress: heap };
+  return { done: true, sorted, incompleteSorted: heap };
 }
 
 /**
  * The result of a step of the sorting algorithm.
  * Either the step is done, or another comparison is needed
  */
-type SortStep =
+type SortStep = {
+  /* The new state of the heap */
+  heap: string[];
+} & (
   | {
       /** True when the sort step is done */
       done: true;
-
-      /** The updated state of the heap */
-      progress: string[];
     }
-  | NextComparison;
+  | NextComparison
+);
 
 /**
  * Produce the next step of building a heap of the list of items, given a set of known relationships.
@@ -178,10 +174,10 @@ export function heapify(cache: SortCache, items: readonly string[]): SortStep {
   for (let idx = parentIdx(heap.length - 1); idx >= 0; idx--) {
     const result = downHeap(cache, heap, idx);
     if (!result.done) return result;
-    heap = result.progress;
+    heap = result.heap;
   }
 
-  return { done: true, progress: heap };
+  return { done: true, heap };
 }
 
 /**
@@ -209,12 +205,11 @@ function downHeap(
     // with the left child
     const leftChildComparison = getCachedLessThan(
       cache,
-      heap,
       heap[swapWith],
       heap[leftChild]
     );
     if (!leftChildComparison.done) {
-      return leftChildComparison;
+      return { ...leftChildComparison, heap };
     }
     if (leftChildComparison.lessThan === true) {
       swapWith = leftChild;
@@ -224,12 +219,11 @@ function downHeap(
     if (rightChild < heap.length) {
       const rightChildComparison = getCachedLessThan(
         cache,
-        heap,
         heap[swapWith],
         heap[rightChild]
       );
       if (!rightChildComparison.done) {
-        return rightChildComparison;
+        return { ...rightChildComparison, heap };
       }
       if (rightChildComparison.lessThan === true) {
         swapWith = rightChild;
@@ -238,7 +232,7 @@ function downHeap(
 
     // If there's no swap needed, the item is in the correct place
     if (swapWith === root) {
-      return { done: true, progress: heap };
+      return { done: true, heap };
     }
 
     // Otherwise do the swap
@@ -247,5 +241,5 @@ function downHeap(
 
     [leftChild, rightChild] = childIndices(root);
   }
-  return { done: true, progress: heap };
+  return { done: true, heap };
 }

@@ -1,13 +1,8 @@
-import {
-  cacheWithUpdate,
-  heapify,
-  heapSort,
-  initCache,
-} from "./interruptibleHeapsort";
+import { cacheWithUpdate, heapify, heapSort } from "./interruptibleHeapsort";
 
 describe("heapify", () => {
   test("builds a small heap", () => {
-    let cache = initCache();
+    let cache = {};
     expect(heapify(cache, ["3", "4", "1", "2"])).toEqual({
       comparison: { a: "4", b: "2" },
       done: false,
@@ -41,7 +36,7 @@ describe("heapify", () => {
 
 describe("heapsort", () => {
   test("sorts a small array", () => {
-    let cache = initCache();
+    let cache = {};
     expect(heapSort(cache, ["3", "4", "1", "2"])).toEqual({
       comparison: { a: "4", b: "2" },
       done: false,
@@ -109,7 +104,7 @@ describe("heapsort", () => {
       "6",
       "13",
     ];
-    let cache = initCache();
+    let cache = {};
 
     let result = heapSort(cache, data);
     let steps = 0;
@@ -170,7 +165,7 @@ describe("heapsort", () => {
   test("sorts a sorted array", () => {
     const data = ["10", "9", "8", "7", "6", "5"];
 
-    let cache = initCache();
+    let cache = {};
 
     let result = heapSort(cache, data);
     let steps = 0;

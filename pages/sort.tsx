@@ -43,7 +43,7 @@ function SortLayout({ state }: { state: SortAppState }) {
   const { pick, status, addItem, removeItem, clearCache, canUndo, undo } =
     state;
 
-  useKeyboardSupport(status, pick);
+  useKeyboardSupport(status, undo, pick);
 
   if (status.done) {
     return null;
@@ -71,7 +71,7 @@ function SortLayout({ state }: { state: SortAppState }) {
       />
       <ItemList
         header={<H3>Unsorted items</H3>}
-        items={status.progress}
+        items={status.incompleteSorted}
         onRemove={removeItem}
       />
       <H3>Add another item</H3>
