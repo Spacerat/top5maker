@@ -82,7 +82,8 @@ function SortLayout({ state }: { state: SortAppState }) {
 
 function useKeyboardSupport(
   status: SortStatus,
-  pick: (larger: string) => void
+  undo: () => void,
+  pick?: (larger: string) => void
 ) {
   useEffect(() => {
     if (status.done) return;
@@ -92,9 +93,11 @@ function useKeyboardSupport(
         return;
       }
       if (e.key === "ArrowLeft") {
-        pick(a);
+        pick && pick(a);
       } else if (e.key === "ArrowRight") {
-        pick(b);
+        pick && pick(b);
+      } else if (e.key === "U" || e.key === "u") {
+        undo();
       }
     };
     window.addEventListener("keydown", listener);
@@ -114,6 +117,9 @@ function DoneLayout({ state }: { state: SortAppState }) {
     undo,
     isReady,
   } = state;
+
+  useKeyboardSupport(status, undo);
+
   if (!status.done || !isReady) {
     return null;
   }
