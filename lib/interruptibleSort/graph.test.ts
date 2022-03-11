@@ -1,4 +1,4 @@
-import { Graph, transitiveReduction, withRemovedNode } from "./graph";
+import { Graph, maxFamilialConnections, sumFamilialConnections, transitiveReduction, withRemovedNode } from "./graph";
 
 describe("transitiveReduction", () => {
   test("reduces a simple graph", () => {
@@ -25,5 +25,38 @@ describe("withRemoveNode", () => {
     const result = withRemovedNode(g, "b");
 
     expect(result).toEqual({ a: ["c"], c: ["d"], d: ["e"] });
+  });
+});
+
+
+describe("familial connections", () => {
+  test("empty graph is zero", () => {
+    const result = sumFamilialConnections({});
+    expect(result).toEqual(0);
+  });
+  test("no connections is zero", () => {
+    const g: Graph = { "a": [], "b": [], "c": [] };
+    const result = sumFamilialConnections(g);
+    expect(result).toEqual(0);
+  });
+  test("complete sort", () => {
+    const g: Graph = { "a": ["b"], "b": ["c"] };
+    const result = sumFamilialConnections(g);
+    expect(result).toEqual(6);
+  });
+  test("incomplete sort", () => {
+    const g: Graph = { "a": ["b", "c"]};
+    const result = sumFamilialConnections(g);
+    expect(result).toEqual(4);
+  });
+  test("diamond", () => {
+    const g: Graph = { "a": ["b", "c"], "b": ["d"], "c": ["d"]};
+    const result = sumFamilialConnections(g);
+    expect(result).toEqual(10);
+  });
+
+  test("max familial connections", () => {
+    expect(maxFamilialConnections(3)).toEqual(6)
+    expect(maxFamilialConnections(0)).toBeCloseTo(0)
   });
 });

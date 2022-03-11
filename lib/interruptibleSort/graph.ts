@@ -130,3 +130,35 @@ export function transitiveReduction(graph: Graph) {
   const new_size = edgeCount(reduction);
   return prev_size === new_size ? graph : reduction;
 }
+
+export function inverse(graph: Graph) {
+  let inverse: Graph = {}
+  for (const [parent, children] of Object.entries(graph)) {
+    for (const child of children) {
+      let parents = inverse[child] ?? []
+      parents.push(parent)
+      inverse[child] = parents
+    }
+  }
+  return inverse
+}
+
+function nodeSet(graph: Graph) {
+  return new Set(Object.entries(graph).flatMap(([parent, children]) => [parent, ...children]))
+}
+
+export function sumFamilialConnections(graph: Graph) {
+  const allNodes = nodeSet(graph)
+  if (allNodes.size === 0) return 0;
+  const inverted = inverse(graph)
+  let totalCount = 0
+  for (const node of allNodes)   {
+    totalCount += new Set(dfs(graph, node)).size
+    totalCount += new Set(dfs(inverted, node)).size
+  }
+  return totalCount
+}
+
+export function maxFamilialConnections(nodeCount: number) {
+  return nodeCount * (nodeCount - 1)
+}
