@@ -9,6 +9,7 @@ import {
   SortStatus,
 } from "../lib/interruptibleSort";
 import {
+  Graph,
   maxFamilialConnections,
   sumFamilialConnections,
   withRemovedNode,
@@ -21,6 +22,12 @@ import {
   serializeItems,
 } from "./serialization";
 import { useSortUrl } from "./useSortUrl";
+
+function getSortedness(cache: Graph, maxItems: number) {
+  return Math.sqrt(
+    sumFamilialConnections(cache) / maxFamilialConnections(maxItems)
+  );
+}
 
 type QueryState = { [cacheQueryKey]: string; [itemsQueryKey]: string };
 
@@ -177,8 +184,7 @@ export function useSortState() {
   }, [history, replaceQuery]);
 
   return {
-    progress:
-      sumFamilialConnections(cache) / maxFamilialConnections(items.length),
+    progress: getSortedness(cache, items.length),
     status,
     isReady: hydrated,
     canUndo: history.length > 1,
