@@ -8,7 +8,7 @@ import {
   SortCache,
   SortStatus,
 } from "../lib/interruptibleSort";
-import { withRemovedNode } from "../lib/interruptibleSort/graph";
+import { maxFamilialConnections, sumFamilialConnections, withRemovedNode } from "../lib/interruptibleSort/graph";
 import { cacheQueryKey, itemsQueryKey } from "./config";
 import {
   deserializeCache,
@@ -173,6 +173,7 @@ export function useSortState() {
   }, [history, replaceQuery]);
 
   return {
+    progress: sumFamilialConnections(cache) / maxFamilialConnections(items.length),
     status,
     isReady: hydrated,
     canUndo: history.length > 1,
