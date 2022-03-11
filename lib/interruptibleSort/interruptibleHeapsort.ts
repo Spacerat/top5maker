@@ -13,8 +13,6 @@ export type Comparison = {
 type IncompleteSortState = {
   /** The current sort-order of the unsorted items */
   incompleteSorted: string[];
-
-  progress?: number;
 };
 
 type NextComparison = {
@@ -119,7 +117,8 @@ export function heapSort(
   const heapifyResult = heapify(cache, items);
   if (!heapifyResult.done) {
     return {
-      ...heapifyResult,
+      done: false,
+      comparison: heapifyResult.comparison,
       sorted: [],
       incompleteSorted: bestPossibleSort(cache, heapifyResult.heap),
     };
@@ -135,7 +134,8 @@ export function heapSort(
     const downShiftResult = downHeap(cache, heap, 0);
     if (!downShiftResult.done) {
       return {
-        ...downShiftResult,
+        done: false,
+        comparison: downShiftResult.comparison,
         incompleteSorted: bestPossibleSort(cache, heap),
         sorted,
       };

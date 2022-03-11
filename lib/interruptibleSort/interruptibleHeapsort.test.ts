@@ -6,30 +6,30 @@ describe("heapify", () => {
     expect(heapify(cache, ["3", "4", "1", "2"])).toEqual({
       comparison: { a: "4", b: "2" },
       done: false,
-      progress: ["3", "4", "1", "2"],
+      heap: ["3", "4", "1", "2"],
     });
     cache = cacheWithUpdate(cache, { larger: "4", smaller: "2" });
     expect(heapify(cache, ["3", "4", "1", "2"])).toEqual({
       comparison: { a: "3", b: "4" },
       done: false,
-      progress: ["3", "4", "1", "2"],
+      heap: ["3", "4", "1", "2"],
     });
     cache = cacheWithUpdate(cache, { larger: "4", smaller: "3" });
     expect(heapify(cache, ["3", "4", "1", "2"])).toEqual({
       comparison: { a: "4", b: "1" },
       done: false,
-      progress: ["3", "4", "1", "2"],
+      heap: ["3", "4", "1", "2"],
     });
     cache = cacheWithUpdate(cache, { larger: "4", smaller: "1" });
     expect(heapify(cache, ["3", "4", "1", "2"])).toEqual({
       comparison: { a: "3", b: "2" },
       done: false,
-      progress: ["4", "3", "1", "2"],
+      heap: ["4", "3", "1", "2"],
     });
     cache = cacheWithUpdate(cache, { larger: "3", smaller: "2" });
     expect(heapify(cache, ["3", "4", "1", "2"])).toEqual({
       done: true,
-      progress: ["4", "3", "1", "2"],
+      heap: ["4", "3", "1", "2"],
     });
   });
 });
@@ -40,48 +40,48 @@ describe("heapsort", () => {
     expect(heapSort(cache, ["3", "4", "1", "2"])).toEqual({
       comparison: { a: "4", b: "2" },
       done: false,
+      incompleteSorted: ["3", "4", "1", "2"],
       sorted: [],
-      progress: ["3", "4", "1", "2"],
     });
     cache = cacheWithUpdate(cache, { larger: "4", smaller: "2" });
     expect(heapSort(cache, ["3", "4", "1", "2"])).toEqual({
       comparison: { a: "3", b: "4" },
       done: false,
-      progress: ["3", "4", "1", "2"],
+      incompleteSorted: ["3", "4", "1", "2"],
       sorted: [],
     });
     cache = cacheWithUpdate(cache, { larger: "4", smaller: "3" });
     expect(heapSort(cache, ["3", "4", "1", "2"])).toEqual({
       comparison: { a: "4", b: "1" },
       done: false,
-      progress: ["4", "3", "1", "2"],
+      incompleteSorted: ["4", "3", "1", "2"],
       sorted: [],
     });
     cache = cacheWithUpdate(cache, { larger: "4", smaller: "1" });
     expect(heapSort(cache, ["3", "4", "1", "2"])).toEqual({
       comparison: { a: "3", b: "2" },
       done: false,
-      progress: ["4", "3", "1", "2"],
+      incompleteSorted: ["4", "3", "1", "2"],
       sorted: [],
     });
     cache = cacheWithUpdate(cache, { larger: "3", smaller: "2" });
     expect(heapSort(cache, ["3", "4", "1", "2"])).toEqual({
       comparison: { a: "3", b: "1" },
       done: false,
-      progress: ["3", "2", "1"],
+      incompleteSorted: ["3", "2", "1"],
       sorted: ["4"],
     });
     cache = cacheWithUpdate(cache, { larger: "3", smaller: "1" });
     expect(heapSort(cache, ["3", "4", "1", "2"])).toEqual({
       comparison: { a: "1", b: "2" },
       done: false,
-      progress: ["1", "2"],
+      incompleteSorted: ["1", "2"],
       sorted: ["4", "3"],
     });
     cache = cacheWithUpdate(cache, { larger: "2", smaller: "1" });
     expect(heapSort(cache, ["3", "4", "1", "2"])).toEqual({
       done: true,
-      progress: [],
+      incompleteSorted: [],
       sorted: ["4", "3", "2", "1"],
     });
     expect(cache).toEqual({ "2": ["1"], "3": ["2"], "4": ["3"] });
