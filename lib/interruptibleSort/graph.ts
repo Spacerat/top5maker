@@ -132,10 +132,10 @@ export function transitiveReduction(graph: Graph) {
 }
 
 export function inverse(graph: Graph) {
-  let inverse: Graph = {};
+  const inverse: Graph = {};
   for (const [parent, children] of Object.entries(graph)) {
     for (const child of children) {
-      let parents = inverse[child] ?? [];
+      const parents = inverse[child] ?? [];
       parents.push(parent);
       inverse[child] = parents;
     }

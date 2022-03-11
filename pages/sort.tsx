@@ -126,7 +126,7 @@ function useKeyboardSupport(
     window.addEventListener("keydown", listener);
 
     return () => window.removeEventListener("keydown", listener);
-  }, [pick, status]);
+  }, [pick, undo, status]);
 }
 
 function DoneLayout({ state }: { state: SortAppState }) {
