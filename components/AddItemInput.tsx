@@ -11,8 +11,9 @@ const FormLine = styled.form`
 type AddFormProps = {
   onAddItem: (name: string) => void;
   keepInView?: boolean;
+  disabled?: boolean
 };
-export function AddForm({ onAddItem, keepInView }: AddFormProps) {
+export function AddForm({ onAddItem, keepInView, disabled }: AddFormProps) {
   const [value, setValue] = React.useState("");
 
   const textRef = React.useRef<HTMLInputElement>(null);
@@ -54,7 +55,7 @@ export function AddForm({ onAddItem, keepInView }: AddFormProps) {
         }}
         ref={textRef}
       />
-      <Button type="submit" disabled={value.length === 0}>
+      <Button type="submit" disabled={disabled || value.length === 0}>
         Add
       </Button>
     </FormLine>
