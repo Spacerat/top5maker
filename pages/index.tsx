@@ -22,7 +22,9 @@ function SetupItems() {
   const [items, setItems] = React.useState<readonly string[]>([]);
 
   const addItem = React.useCallback((name: string) => {
-      setItems((curItems) => curItems.length <= MAX_ITEMS ? stringSetAdd(curItems, name) : curItems);
+    setItems((curItems) =>
+      curItems.length <= MAX_ITEMS ? stringSetAdd(curItems, name) : curItems
+    );
   }, []);
 
   const removeItem = (name: string) => {
@@ -34,7 +36,11 @@ function SetupItems() {
   return (
     <>
       <ItemList items={items} onRemove={removeItem} />
-      <AddForm onAddItem={addItem} keepInView disabled={items.length >= MAX_ITEMS} />
+      <AddForm
+        onAddItem={addItem}
+        keepInView
+        disabled={items.length >= MAX_ITEMS}
+      />
       <Link passHref href={sortUrl}>
         <FullMobileButton disabled={items.length < 3}>
           Start Sorting

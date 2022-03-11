@@ -39,14 +39,31 @@ const Again = styled.div`
   text-align: center;
 `;
 
-function ProgressBar({value}: {value: number}) {
-  const percentage = value * 100
-  return <progress value={percentage} max="100" style={{width: "100%"}} aria-label={"Sort Progress"}>{percentage}%</progress>
+function ProgressBar({ value }: { value: number }) {
+  const percentage = value * 100;
+  return (
+    <progress
+      value={percentage}
+      max="100"
+      style={{ width: "100%" }}
+      aria-label={"Sort Progress"}
+    >
+      {percentage}%
+    </progress>
+  );
 }
 
 function SortLayout({ state }: { state: SortAppState }) {
-  const { pick, status, addItem, removeItem, clearCache, canUndo, undo, progress } =
-    state;
+  const {
+    pick,
+    status,
+    addItem,
+    removeItem,
+    clearCache,
+    canUndo,
+    undo,
+    progress,
+  } = state;
 
   useKeyboardSupport(status, undo, pick);
 

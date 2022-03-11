@@ -11,7 +11,7 @@ const FormLine = styled.form`
 type AddFormProps = {
   onAddItem: (name: string) => void;
   keepInView?: boolean;
-  disabled?: boolean
+  disabled?: boolean;
 };
 export function AddForm({ onAddItem, keepInView, disabled }: AddFormProps) {
   const [value, setValue] = React.useState("");
