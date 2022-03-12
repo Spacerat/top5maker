@@ -177,7 +177,10 @@ export function useSortState() {
       },
       /** Called when the user adds an item while sorting */
       addItems(newItems: readonly string[]) {
-        setState({ newItems: stringSetUnion(items, newItems, MAX_ITEMS) });
+        const updatedItems = stringSetUnion(items, newItems, MAX_ITEMS);
+        if (updatedItems.length > items.length) {
+          setState({ newItems: updatedItems });
+        }
       },
       /** Called when the user removes an item while sorting */
       removeItem(item: string) {
