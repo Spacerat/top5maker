@@ -30,6 +30,8 @@ const SideBySideButtons = styled.div`
     flex: 1;
     min-height: 160px;
     height: initial;
+    overflow: auto;
+    overflow-wrap: break-word;
     padding: 16px;
     ${({ theme }) => theme.shadows.primary}
   }

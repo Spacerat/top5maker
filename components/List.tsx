@@ -14,6 +14,8 @@ const ItemContainer = styled.div`
 `;
 const ItemTextContainer = styled.div`
   flex: 1;
+  overflow: auto;
+  overflow-wrap: break-word;
 `;
 
 export function ListItem({

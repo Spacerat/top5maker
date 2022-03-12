@@ -63,7 +63,7 @@ const FooterSectionContainer = styled.footer`
 `;
 
 const PageSection = styled.div`
-  max-width: ${({ theme }) => theme.size.pageWidth};
+  max-width: min(${({ theme }) => theme.size.pageWidth}, 100%);
   display: flex;
   flex-direction: column;
   flex: 1;
