@@ -33,7 +33,7 @@ const SideBySideButtons = styled.div`
     overflow: auto;
     overflow-wrap: break-word;
     padding: 16px;
-    ${({ theme }) => theme.shadows.primary}
+    ${({ theme }) => theme.shadows.primary.box}
   }
 `;
 

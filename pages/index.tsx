@@ -92,7 +92,7 @@ const names = example("Baby Names", [
 
 function ExampleCard(example: Example) {
   return (
-    <Card height="low">
+    <Card elevation="low">
       <Link href={example.url}>{example.name}</Link>, including:
       <ul>
         {example.display.map((x) => (

@@ -36,15 +36,25 @@ export const theme = {
   },
 
   shadows: {
+    // HACKS: drop-shadow everywhere would be ideal, but Safari seems to have issues with filter: drop-shadow() on elements which appear/disappear (e.g. in a list)
+    // Meanwhile, box-shadow has its own issues across all browsers (e.g. rendering under things and not being visible)
+    // Therefore we have to use box-shadow in some places and drop-shadow in others
     primary: {
-      filter: "drop-shadow(0px 4px 3px rgba(182, 20, 106, 0.25));",
+      filter: {
+        filter: "drop-shadow(0px 4px 3px rgba(182, 20, 106, 0.25));",
+      },
+      box: {
+        boxShadow: "0px 4px 4px rgba(182, 20, 106, 0.25);",
+      },
     },
     paper: {
       high: {
-        filter: "drop-shadow(0px 4px 3px rgba(0, 0, 0, 0.15));",
+        // filter: "drop-shadow(0px 4px 3px rgba(0, 0, 0, 0.15));",
+        boxShadow: "0px 4px 5px rgba(0, 0, 0, 0.15)",
       },
       low: {
-        filter: "drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.10));",
+        // filter: "drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.10));",
+        boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.10)",
       },
       none: {},
     },

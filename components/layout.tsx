@@ -13,7 +13,7 @@ const HeaderContainer = styled.header`
   padding-right: 20px;
   background-color: ${({ theme }) => theme.colors.primary1};
   background: ${({ theme }) => theme.colors.primaryGradient};
-  ${({ theme }) => theme.shadows.primary}
+  ${({ theme }) => theme.shadows.primary.filter}
 `;
 
 const PageContainer = styled.div`
