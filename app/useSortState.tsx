@@ -1,5 +1,6 @@
 import { produce } from "immer";
 import { useRouter } from "next/router";
+import { ParsedUrlQuery } from "querystring";
 import React from "react";
 import { stringSetRemove, stringSetUnion } from "../lib/immutableStringSet";
 import {
@@ -76,13 +77,20 @@ function swapComparisonIfNeeded(currStatus: SortStatus, newStatus: SortStatus) {
 const initialState = (query: QueryState): SortState => {
   const items = deserializeItems(sanitize(query[itemsQueryKey]));
   return {
-    query,
+    query: sanitizeQuery(query),
     items,
     cache: {},
     status: heapSort({}, items),
     hydrated: false,
   };
 };
+
+function sanitizeQuery(query: ParsedUrlQuery): QueryState {
+  return {
+    [itemsQueryKey]: sanitize(query[itemsQueryKey]),
+    [cacheQueryKey]: sanitize(query[cacheQueryKey]),
+  };
+}
 
 /**
  * This hook wraps the core 'heapSort' function to manage the app's state,
@@ -97,18 +105,22 @@ export function useSortState() {
     [replace]
   );
 
-  const [history, setHistory] = React.useState<QueryState[]>([
-    query as QueryState,
-  ]);
+  const [history, setHistory] = React.useState<QueryState[]>([]);
 
   const [{ cache, items, status, hydrated }, setSortState] =
-    React.useState<SortState>(() => initialState(query as QueryState));
+    React.useState<SortState>(() => initialState(sanitizeQuery(query)));
 
   // Compute the current app state as a function of the query path and the previous state
 
   React.useEffect(() => {
     setSortState((currentState) => {
       if (!isReady) return currentState;
+      // Set up the first history entry if needed
+      if (currentState.hydrated == false) {
+        setHistory((curr) =>
+          curr.length === 0 ? [sanitizeQuery(query)] : curr
+        );
+      }
       return produce(currentState, (curr) => {
         // Deserialize the query parameters
         curr.hydrated = true;
