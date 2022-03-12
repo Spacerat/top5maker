@@ -30,7 +30,7 @@ function getSortedness(cache: Graph, maxItems: number) {
   // Therefore, this should rescale the metric to be linear in number of comaprisons...
   // ... I think?
 
-  const scale = (n: number) => Math.sqrt(n) * Math.log2(n);
+  const scale = (n: number) => Math.sqrt(n); // * Math.log2(n);
   return (
     scale(sumFamilialConnections(cache)) /
     scale(maxFamilialConnections(maxItems))
