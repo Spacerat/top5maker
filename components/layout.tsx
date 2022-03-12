@@ -91,12 +91,12 @@ export function FooterSection({
 }
 
 type PaperProps = {
-  height?: "high" | "low" | "none";
+  elevation?: "high" | "low" | "none";
 };
 
 export const Paper = styled.div<PaperProps>`
   background-color: ${({ theme }) => theme.colors.page};
-  ${({ theme, height = "none" }) => theme.shadows.paper[height]};
+  ${({ theme, elevation = "none" }) => theme.shadows.paper[elevation]};
   border-radius: ${({ theme }) => theme.border.radius};
 `;
 

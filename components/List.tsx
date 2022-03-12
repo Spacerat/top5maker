@@ -64,7 +64,7 @@ export function ItemList({
   return (
     <>
       {header}
-      <Paper height="high">
+      <Paper elevation="high">
         {items.map((item) => (
           <ListItem key={item} actions={actions(item)}>
             {item}
