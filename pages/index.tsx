@@ -1,6 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
 import React from "react";
+import { MAX_ITEMS } from "../app/config";
 import { makeSortUrl, useSortUrl } from "../app/useSortUrl";
 import { AddForm } from "../components/AddItemInput";
 import { Brand, Footer, Illustration, TagLine } from "../components/Brand";
@@ -8,23 +9,13 @@ import { FullMobileButton } from "../components/Button";
 import { Card, CardGrid, Header, Main, Page } from "../components/layout";
 import { ItemList } from "../components/List";
 import { H3 } from "../components/text";
-import { stringSetAdd, stringSetRemove } from "../lib/immutableStringSet";
-
-// NOTE: There is a bug which causes exceptions when too many items are added,
-// which results in the need for this limit. If the bug can be solved, perhaps
-// the limit can be removed.
-// https://github.com/Spacerat/top5maker/issues/3
-//
-// That being said, the UX for N=180 isn't great anyway - it takes a LONG time to sort so many items!
-const MAX_ITEMS = 180;
+import { stringSetRemove, stringSetUnion } from "../lib/immutableStringSet";
 
 function SetupItems() {
   const [items, setItems] = React.useState<readonly string[]>([]);
 
-  const addItem = React.useCallback((name: string) => {
-    setItems((curItems) =>
-      curItems.length <= MAX_ITEMS ? stringSetAdd(curItems, name) : curItems
-    );
+  const addItems = React.useCallback((names: readonly string[]) => {
+    setItems((curItems) => stringSetUnion(curItems, names, MAX_ITEMS));
   }, []);
 
   const removeItem = (name: string) => {
@@ -37,7 +28,7 @@ function SetupItems() {
     <>
       <ItemList items={items} onRemove={removeItem} />
       <AddForm
-        onAddItem={addItem}
+        onAddItems={addItems}
         keepInView
         disabled={items.length >= MAX_ITEMS}
       />

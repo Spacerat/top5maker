@@ -57,7 +57,7 @@ function SortLayout({ state }: { state: SortAppState }) {
   const {
     pick,
     status,
-    addItem,
+    addItems,
     removeItem,
     clearCache,
     canUndo,
@@ -98,7 +98,7 @@ function SortLayout({ state }: { state: SortAppState }) {
         onRemove={removeItem}
       />
       <H3>Add another item</H3>
-      <AddForm onAddItem={addItem} />
+      <AddForm onAddItems={addItems} />
     </Page>
   );
 }
@@ -132,7 +132,7 @@ function useKeyboardSupport(
 function DoneLayout({ state }: { state: SortAppState }) {
   const {
     status,
-    addItem,
+    addItems,
     removeItem,
     clearCache,
     canUndo,
@@ -166,7 +166,7 @@ function DoneLayout({ state }: { state: SortAppState }) {
       </Page>
       <Page kind="darker">
         <H3>Add another item</H3>
-        <AddForm onAddItem={addItem} />
+        <AddForm onAddItems={addItems} />
 
         <Again>
           <Link href={restartLink} passHref>

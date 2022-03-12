@@ -1,7 +1,7 @@
 import { produce } from "immer";
 import { useRouter } from "next/router";
 import React from "react";
-import { stringSetAdd, stringSetRemove } from "../lib/immutableStringSet";
+import { stringSetRemove, stringSetUnion } from "../lib/immutableStringSet";
 import {
   cacheWithUpdate,
   heapSort,
@@ -14,7 +14,7 @@ import {
   sumFamilialConnections,
   withRemovedNode,
 } from "../lib/interruptibleSort/graph";
-import { cacheQueryKey, itemsQueryKey } from "./config";
+import { cacheQueryKey, itemsQueryKey, MAX_ITEMS } from "./config";
 import {
   deserializeCache,
   deserializeItems,
@@ -145,7 +145,7 @@ export function useSortState() {
 
   // User interactions - these all act on the query path
 
-  const { pick, addItem, removeItem, clearCache } = React.useMemo(() => {
+  const { pick, addItems, removeItem, clearCache } = React.useMemo(() => {
     const setState = ({ newCache = cache, newItems = items }: StateUpdate) => {
       const newQuery = {
         [itemsQueryKey]: serializeItems(newItems),
@@ -164,8 +164,8 @@ export function useSortState() {
         setState({ newCache: cacheWithUpdate(cache, { larger, smaller }) });
       },
       /** Called when the user adds an item while sorting */
-      addItem(item: string) {
-        setState({ newItems: stringSetAdd(items, item) });
+      addItems(newItems: readonly string[]) {
+        setState({ newItems: stringSetUnion(items, newItems, MAX_ITEMS) });
       },
       /** Called when the user removes an item while sorting */
       removeItem(item: string) {
@@ -201,7 +201,7 @@ export function useSortState() {
     cache,
     undo,
     pick,
-    addItem,
+    addItems,
     removeItem: items.length > 3 ? removeItem : null,
     clearCache,
   };

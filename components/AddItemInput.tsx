@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ClipboardEventHandler, useCallback } from "react";
 import styled from "styled-components";
 import { Button } from "./Button";
 import { TextInput } from "./TextInput";
@@ -8,12 +8,14 @@ const FormLine = styled.form`
   flex-direction: row;
   gap: 16px;
 `;
+
 type AddFormProps = {
-  onAddItem: (name: string) => void;
+  onAddItems: (names: string[]) => void;
   keepInView?: boolean;
   disabled?: boolean;
 };
-export function AddForm({ onAddItem, keepInView, disabled }: AddFormProps) {
+
+export function AddForm({ onAddItems, keepInView, disabled }: AddFormProps) {
   const [value, setValue] = React.useState("");
 
   const textRef = React.useRef<HTMLInputElement>(null);
@@ -21,16 +23,34 @@ export function AddForm({ onAddItem, keepInView, disabled }: AddFormProps) {
   const onSubmit: React.FormEventHandler<HTMLFormElement> = React.useCallback(
     (e) => {
       e.preventDefault();
-      onAddItem(value);
-      setValue("");
-      textRef.current?.focus();
-      // HACK: keep the bottom of the list in view.
-      // scrollIntoView doesn't seem to work well for this on mobile.
-      // Is there a better way?
-      if (keepInView) setTimeout(() => window.scrollBy(0, 52), 1);
-      return false;
+      if (value.length > 0) {
+        onAddItems([value]);
+        setValue("");
+        textRef.current?.focus();
+        // HACK: keep the bottom of the list in view.
+        // scrollIntoView doesn't seem to work well for this on mobile.
+        // Is there a better way?
+        if (keepInView) setTimeout(() => window.scrollBy(0, 52), 1);
+      }
     },
-    [onAddItem, value, keepInView]
+    [onAddItems, value, keepInView]
+  );
+
+  const onPaste: ClipboardEventHandler = useCallback(
+    (e) => {
+      const text = e.clipboardData?.getData("text");
+      if (text && text.includes("\n")) {
+        const toAdd = text
+          .split("\n")
+          .map((x) => x.trim())
+          .filter((x) => !!x);
+        if (toAdd.length > 1) {
+          onAddItems(toAdd);
+          e.preventDefault();
+        }
+      }
+    },
+    [onAddItems]
   );
 
   return (
@@ -40,19 +60,7 @@ export function AddForm({ onAddItem, keepInView, disabled }: AddFormProps) {
         placeholder="Add your items to here"
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        onPaste={(e) => {
-          const text = e.clipboardData.getData("text");
-          if (text && text.includes("\n")) {
-            const toAdd = text
-              .split("\n")
-              .map((x) => x.trim())
-              .filter((x) => !!x);
-            if (toAdd.length > 1) {
-              toAdd.forEach(onAddItem);
-              e.preventDefault();
-            }
-          }
-        }}
+        onPaste={onPaste}
         ref={textRef}
       />
       <Button type="submit" disabled={disabled || value.length === 0}>
