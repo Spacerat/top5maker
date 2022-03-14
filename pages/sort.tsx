@@ -37,7 +37,7 @@ const SideBySideButtons = styled.div`
   }
 `;
 
-const Again = styled.div`
+const Centered = styled.div`
   text-align: center;
 `;
 
@@ -152,16 +152,16 @@ function DoneLayout({ state }: { state: SortAppState }) {
         <H3>Add another item</H3>
         <AddForm onAddItems={addItems} />
 
-        <Again>
+        <Centered>
           <Link href={restartLink} passHref>
             Re-sort this list
           </Link>
-        </Again>
-        <Again>
+        </Centered>
+        <Centered>
           <Link passHref href="/">
             Start over
           </Link>
-        </Again>
+        </Centered>
       </Page>
     </>
   );
