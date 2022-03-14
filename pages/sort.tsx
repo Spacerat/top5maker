@@ -19,6 +19,7 @@ import { Button, FullMobileSecondaryButton } from "../components/Button";
 import { Header, Main, Page } from "../components/layout";
 import { ItemList } from "../components/List";
 import { NativeShareButton } from "../components/NativeShareButton";
+import { ShortcutHighlightUnderline } from "../components/ShortcutHighlightUnderline";
 import { H1, H3 } from "../components/text";
 import { SortStatus } from "../lib/interruptibleSort";
 
@@ -169,7 +170,9 @@ function DoneLayout({ state }: { state: SortAppState }) {
 
 function UndoButton({ undo }: { undo?: null | undefined | (() => void) }) {
   return undo ? (
-    <FullMobileSecondaryButton onClick={undo}>Undo</FullMobileSecondaryButton>
+    <FullMobileSecondaryButton onClick={undo}>
+      <ShortcutHighlightUnderline>U</ShortcutHighlightUnderline>ndo
+    </FullMobileSecondaryButton>
   ) : null;
 }
 
