@@ -32,6 +32,7 @@ export const theme = {
     gray1: "hsl(240, 25%, 35%)",
     gray2: "hsl(240, 15%, 50%)",
     gray3: "hsl(240, 5%, 72%)",
+    gray4: "hsl(240, 5%, 86%)",
     page: "white",
   },
 
