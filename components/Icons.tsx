@@ -32,7 +32,13 @@ export function RedoIcon() {
 }
 
 export const LeftButton = ({ title }: { title?: string }) => (
-  <svg width="45" height="45" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    width="30"
+    height="30"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 45 45"
+  >
     {title && <title>{title}</title>}
     <rect
       x="1.5"
@@ -52,20 +58,19 @@ export const LeftButton = ({ title }: { title?: string }) => (
 
 export const RightButton = ({ title }: { title?: string }) => (
   <svg
-    width="45"
-    height="45"
+    width="30"
+    height="30"
     viewBox="0 0 45 45"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
     {title && <title>{title}</title>}
     <rect
-      x="-1.5"
+      x="1.5"
       y="1.5"
       width="42"
       height="42"
       rx="6.5"
-      transform="matrix(-1 0 0 1 42 0)"
       stroke="currentColor"
       strokeWidth="3"
     />

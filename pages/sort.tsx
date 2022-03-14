@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Link from "next/link";
-import { useEffect } from "react";
+import React, { PropsWithChildren, ReactNode, useEffect } from "react";
 import {
   FacebookIcon,
   FacebookShareButton,
@@ -16,6 +16,7 @@ import { SortAppState, useSortState } from "../app/useSortState";
 import { AddForm } from "../components/AddItemInput";
 import { Brand } from "../components/Brand";
 import { Button, FullMobileSecondaryButton } from "../components/Button";
+import { LeftButton, RightButton } from "../components/Icons";
 import { Header, Main, Page } from "../components/layout";
 import { ItemList } from "../components/List";
 import { NativeShareButton } from "../components/NativeShareButton";
@@ -27,14 +28,18 @@ const SideBySideButtons = styled.div`
   display: flex;
   flex-direction: row;
   gap: 24px;
-  & button {
+  & div {
     flex: 1;
     min-height: 160px;
     height: initial;
+  }
+  & button {
+    width: 100%;
+    height: 100%;
+    padding: 16px;
     overflow: auto;
     overflow-wrap: break-word;
-    padding: 16px;
-    ${({ theme }) => theme.shadows.primary.box}
+    ${({ theme }) => theme.shadows.primary.box};
   }
 `;
 
@@ -56,6 +61,42 @@ function ProgressBar({ value }: { value: number }) {
   );
 }
 
+const HintContainer = styled.div`
+  position: relative;
+  overflow: visible;
+  @media (hover: hover) {
+    &:hover span {
+      display: initial;
+    }
+  }
+`;
+const Hint = styled.span<{ pos: "right" | "left" }>`
+  display: none;
+  position: absolute;
+  top: 2px;
+  ${({ pos }) =>
+    ({
+      left: `left: 2px;`,
+      right: `right: 2px;`,
+    }[pos])};
+  z-index: 1;
+  transform-box: content-box;
+  color: ${({ theme }) => theme.colors.primary2};
+`;
+
+function SideHint({
+  children,
+  tip,
+  pos,
+}: PropsWithChildren<{ tip: ReactNode; pos: "left" | "right" }>) {
+  return (
+    <HintContainer>
+      <Hint pos={pos}>{tip}</Hint>
+      {children}
+    </HintContainer>
+  );
+}
+
 function SortLayout({ state }: { state: SortAppState }) {
   const { pick, status, addItems, removeItem, clearCache, undo, progress } =
     state;
@@ -73,8 +114,22 @@ function SortLayout({ state }: { state: SortAppState }) {
       <ProgressBar value={progress} />
       <H1>What&apos;s Better?</H1>
       <SideBySideButtons>
-        <Button onClick={() => pick(a)}>{a}</Button>
-        <Button onClick={() => pick(b)}>{b}</Button>
+        <SideHint
+          pos="left"
+          tip={
+            <LeftButton title="Use the left arrow key to select this item" />
+          }
+        >
+          <Button onClick={() => pick(a)}>{a}</Button>
+        </SideHint>
+        <SideHint
+          pos="right"
+          tip={
+            <RightButton title="Use the right arrow key to select this item" />
+          }
+        >
+          <Button onClick={() => pick(b)}>{b}</Button>
+        </SideHint>
       </SideBySideButtons>
       <UndoButton undo={undo} />
       <ItemList
