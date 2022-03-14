@@ -56,18 +56,10 @@ function ProgressBar({ value }: { value: number }) {
 }
 
 function SortLayout({ state }: { state: SortAppState }) {
-  const {
-    pick,
-    status,
-    addItems,
-    removeItem,
-    clearCache,
-    canUndo,
-    undo,
-    progress,
-  } = state;
+  const { pick, status, addItems, removeItem, clearCache, undo, progress } =
+    state;
 
-  useKeyboardSupport(status, undo, pick);
+  useKeyboardSupport({ status, undo, pick });
 
   if (status.done) {
     return null;
@@ -83,11 +75,7 @@ function SortLayout({ state }: { state: SortAppState }) {
         <Button onClick={() => pick(a)}>{a}</Button>
         <Button onClick={() => pick(b)}>{b}</Button>
       </SideBySideButtons>
-      {canUndo && (
-        <FullMobileSecondaryButton onClick={undo}>
-          Undo
-        </FullMobileSecondaryButton>
-      )}
+      <UndoButton undo={undo} />
       <ItemList
         header={<H3>Sorted items (best to worst)</H3>}
         items={status.sorted}
@@ -105,28 +93,27 @@ function SortLayout({ state }: { state: SortAppState }) {
   );
 }
 
-function useKeyboardSupport(
-  status: SortStatus,
-  undo: () => void,
-  pick?: (larger: string) => void
-) {
+type UseKeyboardSupportProps = {
+  status: SortStatus;
+  undo?: null | undefined | (() => void);
+  pick?: (larger: string) => void;
+};
+
+function useKeyboardSupport({ status, undo, pick }: UseKeyboardSupportProps) {
   useEffect(() => {
-    if (status.done) return;
-    const { a, b } = status.comparison;
     const listener = (e: KeyboardEvent) => {
       if ((e.target as HTMLElement)?.tagName === "INPUT") {
         return;
       }
       if (e.key === "ArrowLeft") {
-        pick && pick(a);
+        !status.done && pick && pick(status.comparison.a);
       } else if (e.key === "ArrowRight") {
-        pick && pick(b);
+        !status.done && pick && pick(status.comparison.b);
       } else if (e.key === "U" || e.key === "u") {
-        undo();
+        undo && undo();
       }
     };
     window.addEventListener("keydown", listener);
-
     return () => window.removeEventListener("keydown", listener);
   }, [pick, undo, status]);
 }
@@ -137,13 +124,12 @@ function DoneLayout({ state }: { state: SortAppState }) {
     addItems,
     removeItem,
     clearCache,
-    canUndo,
     restartLink,
     undo,
     isReady,
   } = state;
 
-  useKeyboardSupport(status, undo);
+  useKeyboardSupport({ status, undo });
 
   if (!status.done || !isReady) {
     return null;
@@ -158,11 +144,7 @@ function DoneLayout({ state }: { state: SortAppState }) {
           onClear={clearCache}
           onRemove={removeItem}
         />
-        {canUndo && (
-          <FullMobileSecondaryButton onClick={undo}>
-            Undo
-          </FullMobileSecondaryButton>
-        )}
+        <UndoButton undo={undo} />
         <H3>Share this list</H3>
         <SharePanel sorted={status.sorted} />
       </Page>
@@ -183,6 +165,12 @@ function DoneLayout({ state }: { state: SortAppState }) {
       </Page>
     </>
   );
+}
+
+function UndoButton({ undo }: { undo?: null | undefined | (() => void) }) {
+  return undo ? (
+    <FullMobileSecondaryButton onClick={undo}>Undo</FullMobileSecondaryButton>
+  ) : null;
 }
 
 function SharePanel({ sorted }: { sorted: readonly string[] }) {
