@@ -170,9 +170,11 @@ function DoneLayout({ state }: { state: SortAppState }) {
 
 function UndoButton({ undo }: { undo?: null | undefined | (() => void) }) {
   return undo ? (
-    <FullMobileSecondaryButton onClick={undo}>
-      <ShortcutHighlightUnderline>U</ShortcutHighlightUnderline>ndo
-    </FullMobileSecondaryButton>
+    <ShortcutHighlightUnderline>
+      <FullMobileSecondaryButton onClick={undo}>
+        <u>U</u>ndo
+      </FullMobileSecondaryButton>
+    </ShortcutHighlightUnderline>
   ) : null;
 }
 

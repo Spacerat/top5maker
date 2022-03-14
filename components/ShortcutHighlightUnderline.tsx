@@ -1,7 +1,13 @@
 import styled from "styled-components";
 
-export const ShortcutHighlightUnderline = styled.span`
+export const ShortcutHighlightUnderline = styled.div`
+  display: contents;
+  & u {
+    text-decoration: none;
+  }
   @media (hover: hover) {
-    text-decoration: underline;
+    &:hover u {
+      text-decoration: underline;
+    }
   }
 `;
