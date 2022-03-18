@@ -51,7 +51,7 @@ export function ListItem({
         onDragOver={draggable ? (e) => e.preventDefault() : undefined}
         onDragEnter={
           draggable
-            ? (e) => {
+            ? () => {
                 onDragEnter();
               }
             : undefined
