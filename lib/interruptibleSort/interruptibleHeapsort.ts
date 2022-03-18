@@ -98,6 +98,7 @@ function swap<T>(arr: T[], a: number, b: number) {
   [arr[a], arr[b]] = [arr[b], arr[a]];
 }
 
+/* Sort the items as best as possible using the information available in the sort cache */
 function bestPossibleSort(cache: SortCache, items: readonly string[]) {
   const copy = [...items];
   copy
