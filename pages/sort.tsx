@@ -56,8 +56,16 @@ function ProgressBar({ value }: { value: number }) {
 }
 
 function SortLayout({ state }: { state: SortAppState }) {
-  const { pick, status, addItems, removeItem, clearCache, undo, progress } =
-    state;
+  const {
+    pick,
+    status,
+    addItems,
+    removeItem,
+    clearCache,
+    insertBelow,
+    undo,
+    progress,
+  } = state;
 
   useKeyboardSupport({ status, undo, pick });
 
@@ -81,6 +89,7 @@ function SortLayout({ state }: { state: SortAppState }) {
         items={status.sorted}
         onClear={clearCache}
         onRemove={removeItem}
+        onReorder={insertBelow}
       />
       <ItemList
         header={<H3>Unsorted items</H3>}
@@ -125,6 +134,7 @@ function DoneLayout({ state }: { state: SortAppState }) {
     removeItem,
     clearCache,
     restartLink,
+    insertBelow,
     undo,
     isReady,
   } = state;
@@ -143,6 +153,7 @@ function DoneLayout({ state }: { state: SortAppState }) {
           items={status.sorted}
           onClear={clearCache}
           onRemove={removeItem}
+          onReorder={insertBelow}
         />
         <UndoButton undo={undo} />
         <H3>Share this list</H3>

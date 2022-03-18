@@ -59,9 +59,9 @@ export function withEdge(
 }
 
 /** Return all nodes which descend from 'root' */
-function dfs(graph: Graph, root: string): string[] {
+export function allDescendants(graph: Graph, root: string): string[] {
   const children = graph[root] ?? [];
-  return children.flatMap((child) => [child, ...dfs(graph, child)]);
+  return children.flatMap((child) => [child, ...allDescendants(graph, child)]);
 }
 
 /** Remove all 'items' in 'set' */
@@ -72,7 +72,7 @@ function subtract<T>(set: Set<T>, items: Iterable<T>) {
 }
 
 /**
- * Return a new grap with the node removed, and all of its parents
+ * Return a new graph with the node removed, and all of its parents
  * connected to its children.
  */
 export function withRemovedNode(graph: Graph, node: string): Graph {
@@ -113,7 +113,7 @@ export function transitiveReduction(graph: Graph) {
     for (const v of graph[u]) {
       if (u_nbrs.has(v)) {
         if (!descendants.has(v)) {
-          descendants.set(v, new Set(dfs(graph, v)));
+          descendants.set(v, new Set(allDescendants(graph, v)));
         }
         subtract(u_nbrs, descendants.get(v) ?? []);
       }
@@ -143,6 +143,22 @@ export function inverse(graph: Graph) {
   return inverse;
 }
 
+export function connectedNodes(graph: Graph, start: string) {
+  const inverted = inverse(graph);
+
+  const found = new Set<string>();
+  const stack = [start];
+  while (stack.length > 0) {
+    const item = stack.pop();
+    if (item && !found.has(item)) {
+      found.add(item);
+      const connected = [...(graph[item] ?? []), ...(inverted[item] ?? [])];
+      stack.push(...connected);
+    }
+  }
+  return Array.from(found);
+}
+
 function nodeSet(graph: Graph) {
   return new Set(
     Object.entries(graph).flatMap(([parent, children]) => [parent, ...children])
@@ -155,8 +171,8 @@ export function sumFamilialConnections(graph: Graph) {
   const inverted = inverse(graph);
   let totalCount = 0;
   for (const node of allNodes) {
-    totalCount += new Set(dfs(graph, node)).size;
-    totalCount += new Set(dfs(inverted, node)).size;
+    totalCount += new Set(allDescendants(graph, node)).size;
+    totalCount += new Set(allDescendants(inverted, node)).size;
   }
   return totalCount;
 }

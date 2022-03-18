@@ -1,4 +1,11 @@
-import { Graph, isDescendant, transitiveReduction, withEdge } from "./graph";
+import {
+  connectedNodes,
+  Graph,
+  inverse,
+  isDescendant,
+  transitiveReduction,
+  withEdge,
+} from "./graph";
 
 export type SortCache = Graph;
 
@@ -46,6 +53,8 @@ export function cacheWithUpdate(
   cache: SortCache,
   { larger, smaller }: { larger: string; smaller: string }
 ): SortCache {
+  if (larger === smaller) return cache;
+
   if (isDescendant(cache, { parent: larger, target: smaller })) {
     return cache;
   }
@@ -91,12 +100,50 @@ function swap<T>(arr: T[], a: number, b: number) {
 
 function bestPossibleSort(cache: SortCache, items: readonly string[]) {
   const copy = [...items];
-  copy.sort((a, b) => {
-    if (isDescendant(cache, { parent: a, target: b })) return -1;
-    if (isDescendant(cache, { parent: b, target: a })) return 1;
-    return 0;
-  });
+  copy
+    .sort((a, b) => (a > b ? 1 : -1))
+    .sort((a, b) => {
+      if (isDescendant(cache, { parent: a, target: b })) return -1;
+      if (isDescendant(cache, { parent: b, target: a })) return 1;
+      return 0;
+    });
   return copy;
+}
+
+/** Return:
+ * - One sorted array of items where the final sort position is known
+ * - Another array of best-effort sorted items for which the sort information is complete
+ */
+function bestSorts(cache: SortCache, items: readonly string[]) {
+  // Check if the graph is fully connected.
+  if (connectedNodes(cache, items[0]).length !== items.length) {
+    // If it's not fully connected, then there are no items with complete information
+    return { sorted: [], incompleteSorted: bestPossibleSort(cache, items) };
+  }
+  const inverted = inverse(cache);
+
+  // Check if there is only one item with no parents
+  const top = items.find((item) => !inverted[item]);
+
+  const unsorted = new Set(items);
+
+  // If there is, start with that item and go down for as long as it only has single children
+  const results: string[] = [];
+  if (top) {
+    let item = top;
+    results.push(item);
+    unsorted.delete(item);
+    while ((cache[item] ?? []).length === 1) {
+      item = cache[item][0];
+      results.push(item);
+      unsorted.delete(item);
+    }
+  }
+
+  return {
+    sorted: results,
+    incompleteSorted: bestPossibleSort(cache, Array.from(unsorted)),
+  };
 }
 
 /**
@@ -116,34 +163,37 @@ export function heapSort(
   // Heapify
   const heapifyResult = heapify(cache, items);
   if (!heapifyResult.done) {
+    const { sorted, incompleteSorted } = bestSorts(cache, items);
     return {
       done: false,
       comparison: heapifyResult.comparison,
-      sorted: [],
-      incompleteSorted: bestPossibleSort(cache, heapifyResult.heap),
+      sorted,
+      incompleteSorted,
     };
   }
   heap = heapifyResult.heap;
 
   // Pop the top off until there's nothing left
-  const sorted: string[] = [];
+  const popped: string[] = [];
 
   while (heap.length > 0) {
     swap(heap, 0, heap.length - 1);
-    sorted.push(heap.pop() as string);
+    popped.push(heap.pop() as string);
     const downShiftResult = downHeap(cache, heap, 0);
+    const { sorted, incompleteSorted } = bestSorts(cache, items);
+
     if (!downShiftResult.done) {
       return {
         done: false,
         comparison: downShiftResult.comparison,
-        incompleteSorted: bestPossibleSort(cache, heap),
+        incompleteSorted,
         sorted,
       };
     }
     heap = downShiftResult.heap;
   }
 
-  return { done: true, sorted, incompleteSorted: heap };
+  return { done: true, sorted: popped, incompleteSorted: [] };
 }
 
 /**

@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import { RedoItemButton, RemoveItemButton } from "../components/IconButtons";
 import { Paper } from "../components/layout";
 
-const ItemContainer = styled.div`
+const ItemContainer = styled.div<{ draggedOver: boolean }>`
   display: flex;
   flex-direction: row;
   padding: 20px;
   align-items: center;
+  ${({ draggedOver }) => (draggedOver ? `` : "")}
   &:not(:last-child) {
     border-bottom: thin ${({ theme }) => theme.colors.primary3} solid;
   }
@@ -18,15 +19,51 @@ const ItemTextContainer = styled.div`
   overflow-wrap: break-word;
 `;
 
+const DragBar = styled.div`
+  // background-color: blue;
+  // height: 3px;
+  outline: thin blue solid;
+`;
+
+type ListItemProps = {
+  actions?: React.ReactNode;
+  isDraggedOver: boolean;
+  currentlyDragging: boolean;
+  onDragEnter?: () => void | undefined;
+  onDragStart?: () => void | undefined;
+  onDragEnd?: () => void | undefined;
+};
+
 export function ListItem({
   children,
   actions,
-}: React.PropsWithChildren<{ actions?: React.ReactNode }>) {
+  isDraggedOver,
+  onDragEnter,
+  onDragStart,
+  onDragEnd,
+}: React.PropsWithChildren<ListItemProps>) {
+  const draggable = !!(onDragEnter && onDragEnd && onDragStart);
   return (
-    <ItemContainer>
-      <ItemTextContainer>{children}</ItemTextContainer>
-      {actions}
-    </ItemContainer>
+    <>
+      <ItemContainer
+        draggable={draggable}
+        draggedOver={isDraggedOver}
+        onDragOver={draggable ? (e) => e.preventDefault() : undefined}
+        onDragEnter={
+          draggable
+            ? (e) => {
+                onDragEnter();
+              }
+            : undefined
+        }
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
+      >
+        <ItemTextContainer>{children}</ItemTextContainer>
+        {actions}
+      </ItemContainer>
+      {isDraggedOver && <DragBar></DragBar>}
+    </>
   );
 }
 
@@ -42,17 +79,45 @@ const NoSelect = styled.div`
   user-select: none;
 `;
 
+function useDragState() {
+  const [draggedItem, setDraggedItem] = useState<string | null>(null);
+  const [dragging, setDragging] = useState(false);
+
+  const onDragStart = useCallback(() => {
+    setDragging(true);
+  }, []);
+  const onDragEnter = useCallback(
+    (item: string) => {
+      if (dragging) setDraggedItem(item);
+    },
+    [dragging]
+  );
+  const onDragEnd = useCallback(() => {
+    setDraggedItem(null);
+    setDragging(false);
+  }, []);
+
+  return { onDragEnter, onDragEnd, onDragStart, dragging, draggedItem };
+}
+
+type ItemListProps = {
+  header?: React.ReactNode;
+  items: readonly string[];
+  onRemove?: null | ((item: string) => void);
+  onClear?: null | ((item: string) => void);
+  onReorder?: null | ((dragged: string, target: string) => void);
+};
+
 export function ItemList({
   header,
   items,
   onRemove,
   onClear,
-}: {
-  header?: React.ReactNode;
-  items: readonly string[];
-  onRemove?: null | ((item: string) => void);
-  onClear?: null | ((item: string) => void);
-}) {
+  onReorder,
+}: ItemListProps) {
+  const { onDragEnter, onDragEnd, onDragStart, dragging, draggedItem } =
+    useDragState();
+
   const actions = (item: string) => (
     <NoSelect>
       {onClear && <RedoItemButton item={item} onClick={onClear} />}
@@ -66,7 +131,22 @@ export function ItemList({
       {header}
       <Paper elevation="high">
         {items.map((item) => (
-          <ListItem key={item} actions={actions(item)}>
+          <ListItem
+            key={item}
+            actions={actions(item)}
+            currentlyDragging={dragging}
+            onDragEnter={onReorder ? () => onDragEnter(item) : undefined}
+            onDragStart={onDragStart}
+            onDragEnd={
+              onReorder
+                ? () => {
+                    onDragEnd();
+                    onReorder && draggedItem && onReorder(item, draggedItem);
+                  }
+                : undefined
+            }
+            isDraggedOver={draggedItem === item}
+          >
             {item}
           </ListItem>
         ))}

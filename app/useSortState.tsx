@@ -157,46 +157,73 @@ export function useSortState() {
 
   // User interactions - these all act on the query path
 
-  const { pick, addItems, removeItem, clearCache } = React.useMemo(() => {
-    const setState = ({ newCache = cache, newItems = items }: StateUpdate) => {
-      const newQuery = {
-        [itemsQueryKey]: serializeItems(newItems),
-        [cacheQueryKey]: serializeCache(newItems, newCache),
+  const { pick, addItems, removeItem, insertBelow, clearCache } =
+    React.useMemo(() => {
+      const setState = ({
+        newCache = cache,
+        newItems = items,
+      }: StateUpdate) => {
+        const newQuery = {
+          [itemsQueryKey]: serializeItems(newItems),
+          [cacheQueryKey]: serializeCache(newItems, newCache),
+        };
+        replaceQuery(newQuery);
+        setHistory((curr) => [...curr, newQuery]);
       };
-      replaceQuery(newQuery);
-      setHistory((curr) => [...curr, newQuery]);
-    };
 
-    return {
-      /** Called when the user clicks on the larger item */
-      pick(larger: string) {
-        if (status.done) return;
-        const { a, b } = status.comparison;
-        const smaller = larger === a ? b : a;
-        setState({ newCache: cacheWithUpdate(cache, { larger, smaller }) });
-      },
-      /** Called when the user adds an item while sorting */
-      addItems(newItems: readonly string[]) {
-        const updatedItems = stringSetUnion(items, newItems, MAX_ITEMS);
-        if (updatedItems.length > items.length) {
-          setState({ newItems: updatedItems });
-        }
-      },
-      /** Called when the user removes an item while sorting */
-      removeItem(item: string) {
-        setState({
-          newItems: stringSetRemove(items, item),
-          newCache: withRemovedNode(cache, item),
-        });
-      },
-      /** Called when the user resets an item while sorting */
-      clearCache(item: string) {
-        setState({
-          newCache: withRemovedNode(cache, item),
-        });
-      },
-    };
-  }, [cache, items, status, replaceQuery]);
+      return {
+        /** Called when the user clicks on the larger item */
+        pick(larger: string) {
+          if (status.done) return;
+          const { a, b } = status.comparison;
+          const smaller = larger === a ? b : a;
+          setState({ newCache: cacheWithUpdate(cache, { larger, smaller }) });
+        },
+        insertBelow(item: string, insertingBelow: string) {
+          if (item === insertingBelow) return;
+          // NOTE: this is probably only valid for a fully sorted graph
+          //       it was written with that usecase in mind specifically
+          // NOTE: this is inefficient because each 'cacheWithUpdate'
+          //       does another transitive reduction. Instead it could be done at the end.
+
+          let newCache = withRemovedNode(cache, item);
+
+          for (const child of newCache[insertingBelow] ?? []) {
+            newCache = cacheWithUpdate(newCache, {
+              larger: item,
+              smaller: child,
+            });
+          }
+
+          newCache = cacheWithUpdate(newCache, {
+            larger: insertingBelow,
+            smaller: item,
+          });
+
+          setState({ newCache });
+        },
+        /** Called when the user adds an item while sorting */
+        addItems(newItems: readonly string[]) {
+          const updatedItems = stringSetUnion(items, newItems, MAX_ITEMS);
+          if (updatedItems.length > items.length) {
+            setState({ newItems: updatedItems });
+          }
+        },
+        /** Called when the user removes an item while sorting */
+        removeItem(item: string) {
+          setState({
+            newItems: stringSetRemove(items, item),
+            newCache: withRemovedNode(cache, item),
+          });
+        },
+        /** Called when the user resets an item while sorting */
+        clearCache(item: string) {
+          setState({
+            newCache: withRemovedNode(cache, item),
+          });
+        },
+      };
+    }, [cache, items, status, replaceQuery]);
 
   /** Called when the user clicks the undo button */
   const undo = React.useCallback(() => {
@@ -216,6 +243,7 @@ export function useSortState() {
     undo: history.length > 1 ? undo : null,
     pick,
     addItems,
+    insertBelow,
     removeItem: items.length > 3 ? removeItem : null,
     clearCache,
   };
