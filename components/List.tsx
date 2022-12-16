@@ -46,7 +46,7 @@ export function ListItem({
   return (
     <>
       <ItemContainer
-        draggable={draggable}
+        // draggable={draggable}
         draggedOver={isDraggedOver}
         onDragOver={draggable ? (e) => e.preventDefault() : undefined}
         onDragEnter={
