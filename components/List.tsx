@@ -17,6 +17,7 @@ const ItemTextContainer = styled.div`
   flex: 1;
   overflow: auto;
   overflow-wrap: break-word;
+  user-select: text;
 `;
 
 const DragBar = styled.div`
@@ -46,16 +47,10 @@ export function ListItem({
   return (
     <>
       <ItemContainer
-        // draggable={draggable}
+        draggable={draggable}
         draggedOver={isDraggedOver}
         onDragOver={draggable ? (e) => e.preventDefault() : undefined}
-        onDragEnter={
-          draggable
-            ? () => {
-                onDragEnter();
-              }
-            : undefined
-        }
+        onDragEnter={draggable ? onDragEnter : undefined}
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
       >
