@@ -198,7 +198,7 @@ function SharePanel({ sorted }: { sorted: readonly string[] }) {
       <TwitterShareButton url={url} title={message} hashtags={["sortstar"]}>
         <TwitterIcon />
       </TwitterShareButton>
-      <FacebookShareButton url={url} quote={message} hashtag="sortstar">
+      <FacebookShareButton url={url} title={message} hashtag="sortstar">
         <FacebookIcon />
       </FacebookShareButton>
       <WhatsappShareButton url={url} title={message}>
