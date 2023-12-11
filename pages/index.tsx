@@ -1,8 +1,8 @@
 import Head from "next/head";
 import Link from "next/link";
 import React from "react";
-import { MAX_ITEMS } from "../app/config";
-import { makeSortUrl, useSortUrl } from "../app/useSortUrl";
+import { MAX_ITEMS } from "../sortState/config";
+import { makeSortUrl, useSortUrl } from "../sortState/useSortUrl";
 import { AddForm } from "../components/AddItemInput";
 import { Brand, Footer, Illustration, TagLine } from "../components/Brand";
 import { FullMobileButton } from "../components/Button";

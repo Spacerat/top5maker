@@ -12,7 +12,7 @@ import {
   WhatsappShareButton,
 } from "react-share";
 import styled from "styled-components";
-import { SortAppState, useSortState } from "../app/useSortState";
+import { SortAppState, useSortState } from "../sortState/useSortState";
 import { AddForm } from "../components/AddItemInput";
 import { Brand } from "../components/Brand";
 import { Button, FullMobileSecondaryButton } from "../components/Button";
