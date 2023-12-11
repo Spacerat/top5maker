@@ -1,15 +1,15 @@
 import Head from "next/head";
 import Link from "next/link";
 import React from "react";
-import { MAX_ITEMS } from "../sortState/config";
-import { makeSortUrl, useSortUrl } from "../sortState/useSortUrl";
-import { AddForm } from "../components/AddItemInput";
-import { Brand, Footer, Illustration, TagLine } from "../components/Brand";
-import { FullMobileButton } from "../components/Button";
-import { Card, CardGrid, Header, Main, Page } from "../components/layout";
-import { ItemList } from "../components/List";
-import { H3 } from "../components/text";
-import { stringSetRemove, stringSetUnion } from "../lib/immutableStringSet";
+import { MAX_ITEMS } from "@/sortState/config";
+import { makeSortUrl, useSortUrl } from "@/sortState/useSortUrl";
+import { AddForm } from "@/components/AddItemInput";
+import { Brand, Footer, Illustration, TagLine } from "@/components/Brand";
+import { FullMobileButton } from "@/components/Button";
+import { Card, CardGrid, Header, Main, Page } from "@/components/layout";
+import { ItemList } from "@/components/List";
+import { H3 } from "@/components/text";
+import { stringSetRemove, stringSetUnion } from "@/lib/immutableStringSet";
 
 function SetupItems() {
   const [items, setItems] = React.useState<readonly string[]>([]);

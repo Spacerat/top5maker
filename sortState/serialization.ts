@@ -1,5 +1,5 @@
-import { isSafeBase64, safe64decode, safe64encode } from "../lib/base64";
-import { Graph } from "../lib/interruptibleSort/graph";
+import { isSafeBase64, safe64decode, safe64encode } from "@/lib/base64";
+import { Graph } from "@/lib/interruptibleSort/graph";
 
 function isString(t: unknown): t is string {
   return typeof t === "string";

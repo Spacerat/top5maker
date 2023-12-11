@@ -12,15 +12,15 @@ import {
   WhatsappShareButton,
 } from "react-share";
 import styled from "styled-components";
-import { SortAppState, useSortState } from "../sortState/useSortState";
-import { AddForm } from "../components/AddItemInput";
-import { Brand } from "../components/Brand";
-import { Button, FullMobileSecondaryButton } from "../components/Button";
-import { Header, Main, Page } from "../components/layout";
-import { ItemList } from "../components/List";
-import { NativeShareButton } from "../components/NativeShareButton";
-import { H1, H3 } from "../components/text";
-import { SortStatus } from "../lib/interruptibleSort";
+import { SortAppState, useSortState } from "@/sortState/useSortState";
+import { AddForm } from "@/components/AddItemInput";
+import { Brand } from "@/components/Brand";
+import { Button, FullMobileSecondaryButton } from "@/components/Button";
+import { Header, Main, Page } from "@/components/layout";
+import { ItemList } from "@/components/List";
+import { NativeShareButton } from "@/components/NativeShareButton";
+import { H1, H3 } from "@/components/text";
+import { SortStatus } from "@/lib//interruptibleSort";
 
 const SideBySideButtons = styled.div`
   display: flex;

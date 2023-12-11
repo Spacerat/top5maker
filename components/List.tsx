@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import styled from "styled-components";
-import { RedoItemButton, RemoveItemButton } from "../components/IconButtons";
-import { Paper } from "../components/layout";
+import { RedoItemButton, RemoveItemButton } from "@/components/IconButtons";
+import { Paper } from "@/components/layout";
 
 const ItemContainer = styled.div<{ draggedOver: boolean }>`
   display: flex;
