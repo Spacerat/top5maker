@@ -1,19 +1,16 @@
 import Image from "next/image";
-import Link from "next/link";
 import styled from "styled-components";
 import { FooterSection } from "./layout";
-import { H1, H2, NoStyleAnchor } from "./text";
+import { H1, H2, NoStyleLink } from "./text";
 
 const AccentText = styled.span`
   color: ${({ theme }) => theme.colors.secondaryLight};
 `;
 
 export const Brand = () => (
-  <Link href="/" passHref>
-    <NoStyleAnchor tabIndex={-1}>
-      <H1>Sort Star</H1>
-    </NoStyleAnchor>
-  </Link>
+  <NoStyleLink href="/" passHref>
+    <H1>Sort Star</H1>
+  </NoStyleLink>
 );
 const ImageContainer = styled.div`
   align-self: center;

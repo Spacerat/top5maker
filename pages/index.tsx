@@ -32,7 +32,7 @@ function SetupItems() {
         keepInView
         disabled={items.length >= MAX_ITEMS}
       />
-      <Link passHref href={sortUrl}>
+      <Link passHref href={sortUrl} legacyBehavior>
         <FullMobileButton disabled={items.length < 3}>
           Start Sorting
         </FullMobileButton>

@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Link from "next/link";
 
 export const H1 = styled.h1`
   font-family: ${({ theme }) => theme.fonts.nunito};
@@ -20,7 +21,7 @@ export const NoColorAnchor = styled.a`
   color: inherit;
 `;
 
-export const NoStyleAnchor = styled.a`
+export const NoStyleLink = styled(Link)`
   color: inherit;
   text-decoration: none;
 `;
