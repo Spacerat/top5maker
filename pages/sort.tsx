@@ -218,8 +218,9 @@ export default function Sort() {
     <>
       <Head>
         <title>
-          {state.isReady && state.status.done ? "Results" : "Sorting"} - Sort
-          Star
+          {`${
+            state.isReady && state.status.done ? "Results" : "Sorting"
+          } - Sort Star`}
         </title>
       </Head>
       <Main>
