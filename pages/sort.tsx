@@ -41,17 +41,16 @@ const Centered = styled.div`
   text-align: center;
 `;
 
+const FullWidthProgress = styled.progress`
+  width: 100%;
+`;
+
 function ProgressBar({ value }: { value: number }) {
   const percentage = value * 100;
   return (
-    <progress
-      value={percentage}
-      max="100"
-      style={{ width: "100%" }}
-      aria-label={"Sort Progress"}
-    >
+    <FullWidthProgress value={percentage} max="100" aria-label="Sort Progress">
       {percentage}%
-    </progress>
+    </FullWidthProgress>
   );
 }
 
