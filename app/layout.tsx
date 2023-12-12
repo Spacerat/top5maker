@@ -7,7 +7,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>oi oi savaloy!{children}</body>
+      <body>{children}</body>
     </html>
   );
 }
