@@ -1,0 +1,64 @@
+.primary {
+  border: 1px solid var(--primary1);
+  color: var(--primary4);
+  background-color: var(--primary1);
+
+  &:hover {
+    background-color: var(--primaryHover);
+    border-color: var(--primaryHover);
+  }
+
+  &:active {
+    background-color: var(--primaryPressed);
+    border-color: var(--primaryPressed);
+  }
+
+  &:focus-visible {
+    outline: 1px solid var(--link);
+    border-color: var(--link);
+  }
+
+  &:disabled {
+    background-color: var(--primary3);
+    border-color: var(--primary3);
+  }
+}
+
+.secondary {
+  border: 1px solid var(--primary1);
+  color: var(--primary1);
+  background-color: var(--primary4);
+
+  &:hover {
+    background-color: var(--primary4Hover);
+  }
+
+  &:active {
+    background-color: var(--primary4Pressed);
+  }
+
+  &:focus-visible {
+    outline: 1px solid var(--link);
+    border-color: var(--link);
+  }
+
+  &:disabled {
+    background-color: var(--primary3);
+    border-color: var(--primary3);
+  }
+}
+
+.button,
+.fullMobileButton {
+  font-size: var(--bodyFontSize);
+  font-family: var(--fontRoboto);
+  font-weight: 500;
+  padding: 8px 18px;
+  border-radius: var(--borderRadius);
+}
+
+.fullMobileButton {
+  width: 100%;
+  max-width: 350px;
+  align-self: center;
+}

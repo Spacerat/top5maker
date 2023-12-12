@@ -29,6 +29,7 @@
     "paths": {
       "@/components/*": ["components/*"],
       "@/sortState/*": ["sortState/*"],
+      "@/app/*": ["app/*"],
       "@/lib/*": ["lib/*"]
     }
   },

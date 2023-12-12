@@ -1,6 +1,15 @@
+import { AddForm } from "@/components/AddItemInput";
+import { Brand } from "@/components/Brand";
+import { Button, FullMobileSecondaryButton } from "@/components/Button";
+import { ItemList } from "@/components/List";
+import { NativeShareButton } from "@/components/NativeShareButton";
+import { Header, Main, Page } from "@/components/layout";
+import { H1, H3 } from "@/components/text";
+import { SortStatus } from "@/lib//interruptibleSort";
+import { SortAppState, useSortState } from "@/sortState/useSortState";
 import Head from "next/head";
 import Link from "next/link";
-import { useEffect } from "react";
+import React, { ProgressHTMLAttributes, useEffect } from "react";
 import {
   FacebookIcon,
   FacebookShareButton,
@@ -11,39 +20,19 @@ import {
   WhatsappIcon,
   WhatsappShareButton,
 } from "react-share";
-import styled from "styled-components";
-import { SortAppState, useSortState } from "@/sortState/useSortState";
-import { AddForm } from "@/components/AddItemInput";
-import { Brand } from "@/components/Brand";
-import { Button, FullMobileSecondaryButton } from "@/components/Button";
-import { Header, Main, Page } from "@/components/layout";
-import { ItemList } from "@/components/List";
-import { NativeShareButton } from "@/components/NativeShareButton";
-import { H1, H3 } from "@/components/text";
-import { SortStatus } from "@/lib//interruptibleSort";
+import styles from "./sort.module.css";
 
-const SideBySideButtons = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: 24px;
-  & button {
-    flex: 1;
-    min-height: 160px;
-    height: initial;
-    overflow: auto;
-    overflow-wrap: break-word;
-    padding: 16px;
-    ${({ theme }) => theme.shadows.primary.box}
-  }
-`;
+export const SideBySideButtons = ({ children }: React.PropsWithChildren) => (
+  <div className={styles.sideBySideButtons}>{children}</div>
+);
 
-const Centered = styled.div`
-  text-align: center;
-`;
+export const Centered = ({ children }: React.PropsWithChildren) => (
+  <div className={styles.centered}>{children}</div>
+);
 
-const FullWidthProgress = styled.progress`
-  width: 100%;
-`;
+export const FullWidthProgress = (
+  props: ProgressHTMLAttributes<HTMLProgressElement>
+) => <progress className={styles.fullWidthProgress} {...props} />;
 
 function ProgressBar({ value }: { value: number }) {
   const percentage = value * 100;

@@ -1,32 +1,24 @@
-import styled from "styled-components";
-import Link from "next/link";
+import React from "react";
+import styles from "./text.module.css";
+import Link, { LinkProps } from "next/link";
 
-export const H1 = styled.h1`
-  font-family: ${({ theme }) => theme.fonts.nunito};
-  font-size: 27px;
-  font-weight: 400;
-  margin: 0;
-`;
+export const H1 = ({ children }: React.PropsWithChildren) => (
+  <h1 className={styles.h1}>{children}</h1>
+);
 
-export const H2 = styled.h2`
-  font-family: ${({ theme }) => theme.fonts.nunito};
-  font-size: 34px;
-  font-weight: 700;
-  margin: 0;
-  margin-top: 24px;
-  line-height: 38px;
-`;
+export const H2 = ({ children }: React.PropsWithChildren) => (
+  <h2 className={styles.h2}>{children}</h2>
+);
 
-export const NoColorAnchor = styled.a`
-  color: inherit;
-`;
+export const BrandLink = ({
+  children,
+  ...props
+}: React.PropsWithChildren<LinkProps>) => (
+  <Link {...props} className={styles.brandLink}>
+    <H1>{children}</H1>
+  </Link>
+);
 
-export const NoStyleLink = styled(Link)`
-  color: inherit;
-  text-decoration: none;
-`;
-
-export const H3 = styled.h3`
-  font-weight: 500;
-  margin: 0;
-`;
+export const H3 = ({ children }: React.PropsWithChildren) => (
+  <h3 className={styles.h3}>{children}</h3>
+);

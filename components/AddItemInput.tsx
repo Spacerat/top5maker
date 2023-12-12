@@ -1,13 +1,8 @@
 import React, { ClipboardEventHandler, useCallback } from "react";
-import styled from "styled-components";
 import { Button } from "./Button";
 import { TextInput } from "./TextInput";
-
-const FormLine = styled.form`
-  display: flex;
-  flex-direction: row;
-  gap: 16px;
-`;
+// import the formline class from additeminput.module.css
+import styles from "./additeminput.module.css";
 
 type AddFormProps = {
   onAddItems: (names: string[]) => void;
@@ -54,7 +49,7 @@ export function AddForm({ onAddItems, keepInView, disabled }: AddFormProps) {
   );
 
   return (
-    <FormLine onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} className={styles.formline}>
       <TextInput
         type="text"
         placeholder="Add your items to here"
@@ -66,6 +61,6 @@ export function AddForm({ onAddItems, keepInView, disabled }: AddFormProps) {
       <Button type="submit" disabled={disabled || value.length === 0}>
         Add
       </Button>
-    </FormLine>
+    </form>
   );
 }

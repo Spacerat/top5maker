@@ -1,0 +1,31 @@
+.h1 {
+  font-family: var(--fontNunito);
+  font-size: 27px;
+  font-weight: 400;
+  margin: 0;
+}
+
+.h2 {
+  font-family: var(--fontNunito);
+  font-size: 34px;
+  font-weight: 700;
+  margin: 0;
+  margin-top: 24px;
+  line-height: 38px;
+}
+
+.noColorAnchor {
+  color: inherit;
+}
+
+.brandLink {
+  text-decoration: none;
+  .h1 {
+    color: var(--primary4);
+  }
+}
+
+.h3 {
+  font-weight: 500;
+  margin: 0;
+}

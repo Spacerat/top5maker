@@ -1,30 +1,7 @@
 import React, { useCallback, useState } from "react";
-import styled from "styled-components";
 import { RedoItemButton, RemoveItemButton } from "@/components/IconButtons";
 import { Paper } from "@/components/layout";
-
-const ItemContainer = styled.div<{ draggedOver: boolean }>`
-  display: flex;
-  flex-direction: row;
-  padding: 20px;
-  align-items: center;
-  ${({ draggedOver }) => (draggedOver ? `` : "")}
-  &:not(:last-child) {
-    border-bottom: thin ${({ theme }) => theme.colors.primary3} solid;
-  }
-`;
-const ItemTextContainer = styled.div`
-  flex: 1;
-  overflow: auto;
-  overflow-wrap: break-word;
-  user-select: text;
-`;
-
-const DragBar = styled.div`
-  // background-color: blue;
-  // height: 3px;
-  outline: thin blue solid;
-`;
+import styles from "./List.module.css";
 
 type ListItemProps = {
   actions?: React.ReactNode;
@@ -46,33 +23,21 @@ export function ListItem({
   const draggable = !!(onDragEnter && onDragEnd && onDragStart);
   return (
     <>
-      <ItemContainer
+      <div
+        className={styles.itemContainer}
         draggable={draggable}
-        draggedOver={isDraggedOver}
         onDragOver={draggable ? (e) => e.preventDefault() : undefined}
         onDragEnter={draggable ? onDragEnter : undefined}
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
       >
-        <ItemTextContainer>{children}</ItemTextContainer>
+        <div className={styles.itemTextContainer}>{children}</div>
         {actions}
-      </ItemContainer>
-      {isDraggedOver && <DragBar></DragBar>}
+      </div>
+      {isDraggedOver && <div className={styles.dragbar}></div>}
     </>
   );
 }
-
-// TODO: this is a hack to make it easier for people to copy/paste the final list.
-// The better solution would be to restructure the page itself so that the list elements
-// are separate from the action button elements.
-const NoSelect = styled.div`
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-`;
 
 function useDragState() {
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
@@ -114,10 +79,10 @@ export function ItemList({
     useDragState();
 
   const actions = (item: string) => (
-    <NoSelect>
+    <div className={styles.noSelect}>
       {onClear && <RedoItemButton item={item} onClick={onClear} />}
       {onRemove && <RemoveItemButton item={item} onClick={onRemove} />}
-    </NoSelect>
+    </div>
   );
 
   if (items.length === 0) return null;

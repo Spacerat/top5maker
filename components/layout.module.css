@@ -1,0 +1,102 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-width: 320px;
+}
+
+.headerContainer {
+  color: var(--primary4);
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: var(--primary1);
+  background: var(--primaryGradient);
+  filter: var(--primaryShadowFilter);
+}
+
+.pageContainer {
+  max-width: var(--pageWidth);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.headerContent {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 40px;
+  row-gap: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.mainSectionContainer {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  flex: 1;
+  padding-left: 20px;
+  padding-right: 20px;
+  /* Background color will be dynamically set */
+}
+
+.footerSectionContainer {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  background-color: var(--primary4plusplus);
+  color: var(--gray2);
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.pageSection {
+  max-width: min(var(--pageWidth), 100%);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding-top: 24px;
+  padding-bottom: 24px;
+  gap: 24px;
+}
+
+.paper {
+  background-color: var(--page);
+  border-radius: var(--borderRadius);
+  /* Shadow will be dynamically set */
+}
+
+.cardGrid {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 24px;
+  row-gap: 24px;
+}
+
+.card {
+  padding: 24px;
+  min-width: 250px;
+  flex: 1;
+  /* Inherits paper styles, additional styles can be added here */
+}
+
+/* Elevation specific classes for Paper */
+.elevationHigh {
+  box-shadow: var(--paperShadowHigh);
+}
+
+.elevationLow {
+  box-shadow: var(--paperShadowLow);
+}
+
+.elevationNone {
+  /* No additional styles for 'none' */
+}
+
+/* Dynamic background color for MainSectionContainer */
+.kindMain {
+  background-color: var(--primary4);
+}
+
+.kindDarker {
+  background-color: var(--primary4plus);
+}

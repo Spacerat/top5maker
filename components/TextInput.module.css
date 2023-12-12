@@ -1,0 +1,17 @@
+.textInput {
+  font-size: var(--bodyFontSize);
+  font-family: var(--fontRoboto);
+  border-radius: var(--borderRadius);
+  border: 1px solid var(--primary2);
+  padding: 8px 12px 8px 12px;
+  flex: 1;
+
+  :focus-visible {
+    border: 1px solid var(--link);
+    outline: 1px solid var(--link);
+  }
+
+  ::placeholder {
+    color: var(--gray3);
+  }
+}

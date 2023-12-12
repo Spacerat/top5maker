@@ -1,0 +1,23 @@
+.sideBySideButtons {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+}
+
+.sideBySideButtons button {
+  flex: 1;
+  min-height: 160px;
+  height: initial;
+  overflow: auto;
+  overflow-wrap: break-word;
+  padding: 16px;
+  box-shadow: var(--primaryBoxShadow); /* Adjust with your CSS variable */
+}
+
+.centered {
+  text-align: center;
+}
+
+.fullWidthProgress {
+  width: 100%;
+}

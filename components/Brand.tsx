@@ -1,35 +1,25 @@
 import Image from "next/image";
-import styled from "styled-components";
 import { FooterSection } from "./layout";
-import { H1, H2, NoStyleLink } from "./text";
+import { H2, BrandLink } from "./text";
 
-const AccentText = styled.span`
-  color: ${({ theme }) => theme.colors.secondaryLight};
-`;
+import styles from "./Brand.module.css";
 
 export const Brand = () => (
-  <NoStyleLink href="/" passHref>
-    <H1>Sort Star</H1>
-  </NoStyleLink>
+  <BrandLink href="/" passHref>
+    Sort Star
+  </BrandLink>
 );
-const ImageContainer = styled.div`
-  align-self: center;
-  display: flex;
-  justify-content: center;
-  flex: 1;
-  min-width: 226px;
-`;
 
 export const TagLine = () => (
   <H2>
-    Sort <AccentText>anything</AccentText> from best to worst.
+    Sort <span className={styles.accentText}>anything</span> from best to worst.
   </H2>
 );
 
 export const Illustration = () => (
-  <ImageContainer>
+  <div className={styles.imageContainer}>
     <Image src="/Illustration.svg" width="226" height="124" alt="" />
-  </ImageContainer>
+  </div>
 );
 
 export const Footer = () => (

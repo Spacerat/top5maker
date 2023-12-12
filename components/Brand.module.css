@@ -1,0 +1,11 @@
+.imageContainer {
+  align-self: center;
+  display: flex;
+  justify-content: center;
+  flex: 1;
+  min-width: 226px;
+}
+
+.accentText {
+  color: var(--secondaryLight);
+}
