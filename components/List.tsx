@@ -34,7 +34,7 @@ export function ListItem({
         <div className={styles.itemTextContainer}>{children}</div>
         {actions}
       </div>
-      {isDraggedOver && <div className={styles.dragbar}></div>}
+      {isDraggedOver && <div className={styles.dragBar}> </div>}
     </>
   );
 }

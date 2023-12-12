@@ -18,7 +18,7 @@
 }
 
 .dragBar {
-  outline: thin blue solid;
+  outline: thin var(--link) solid;
 }
 
 /*
