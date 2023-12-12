@@ -68,7 +68,7 @@ function SortLayout({ state }: { state: SortAppState }) {
   return (
     <Page>
       <ProgressBar value={progress} />
-      <H1>What&apos;s Better?</H1>
+      <H1>{"What's Better?"}</H1>
       <SideBySideButtons>
         <Button onClick={() => pick(a)}>{a}</Button>
         <Button onClick={() => pick(b)}>{b}</Button>
