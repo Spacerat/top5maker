@@ -1,3 +1,5 @@
+"use client";
+
 import { AddForm } from "@/components/AddItemInput";
 import { Brand } from "@/components/Brand";
 import { Button, FullMobileSecondaryButton } from "@/components/Button";

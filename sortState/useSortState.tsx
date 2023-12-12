@@ -1,6 +1,9 @@
 import { produce } from "immer";
-import { useRouter } from "next/router";
-import { ParsedUrlQuery } from "querystring";
+import {
+  ReadonlyURLSearchParams,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import React from "react";
 import { stringSetRemove, stringSetUnion } from "@/lib/immutableStringSet";
 import {
@@ -23,6 +26,11 @@ import {
   serializeItems,
 } from "./serialization";
 import { useSortUrl } from "./useSortUrl";
+
+type QueryParams = {
+  [itemsQueryKey]: string;
+  [cacheQueryKey]: string;
+};
 
 function getSortedness(cache: Graph, maxItems: number) {
   // TODO: think a bit more than this
@@ -50,7 +58,7 @@ type SortState = {
   hydrated: boolean;
 };
 
-function sanitize(param: string | string[] | undefined) {
+function sanitize(param: unknown) {
   return typeof param === "string" ? param : "";
 }
 
@@ -77,7 +85,7 @@ function swapComparisonIfNeeded(currStatus: SortStatus, newStatus: SortStatus) {
 const initialState = (query: QueryState): SortState => {
   const items = deserializeItems(sanitize(query[itemsQueryKey]));
   return {
-    query: sanitizeQuery(query),
+    query: sanitizeQueryObject(query),
     items,
     cache: {},
     status: heapSort({}, items),
@@ -85,7 +93,14 @@ const initialState = (query: QueryState): SortState => {
   };
 };
 
-function sanitizeQuery(query: ParsedUrlQuery): QueryState {
+function sanitizeQuery(query: ReadonlyURLSearchParams): QueryState {
+  return {
+    [itemsQueryKey]: sanitize(query.get(itemsQueryKey)),
+    [cacheQueryKey]: sanitize(query.get(cacheQueryKey)),
+  };
+}
+
+function sanitizeQueryObject(query: Record<string, unknown>): QueryState {
   return {
     [itemsQueryKey]: sanitize(query[itemsQueryKey]),
     [cacheQueryKey]: sanitize(query[cacheQueryKey]),
@@ -97,11 +112,17 @@ function sanitizeQuery(query: ParsedUrlQuery): QueryState {
  * keeping it in sync with the current URL.
  */
 export function useSortState() {
-  const { query, isReady, replace } = useRouter();
+  const { replace } = useRouter();
+  const query = useSearchParams();
 
   const replaceQuery = React.useCallback(
     // Keep scroll position when updating app state in URL
-    (query) => replace({ query }, undefined, { scroll: false }),
+    (newQuery: QueryParams) => {
+      const queryString = new URLSearchParams(newQuery).toString();
+      replace(`sort?${queryString}`, {
+        scroll: false,
+      });
+    },
     [replace]
   );
 
@@ -114,7 +135,6 @@ export function useSortState() {
 
   React.useEffect(() => {
     setSortState((currentState) => {
-      if (!isReady) return currentState;
       // Set up the first history entry if needed
       if (currentState.hydrated == false) {
         setHistory((curr) =>
@@ -125,13 +145,13 @@ export function useSortState() {
         // Deserialize the query parameters
         curr.hydrated = true;
 
-        const queryItems = sanitize(query[itemsQueryKey]);
+        const queryItems = sanitize(query.get(itemsQueryKey));
         const queryChanged = queryItems != curr.query?.[itemsQueryKey];
         if (queryChanged) {
           curr.query[itemsQueryKey] = queryItems;
           curr.items = deserializeItems(queryItems);
         }
-        const queryCache = sanitize(query[cacheQueryKey]);
+        const queryCache = sanitize(query.get(cacheQueryKey));
         const cacheChanged = queryCache != curr.query[itemsQueryKey];
         if (cacheChanged) {
           curr.query[itemsQueryKey] = queryCache;
@@ -147,7 +167,7 @@ export function useSortState() {
         }
       });
     });
-  }, [query, isReady]);
+  }, [query]);
 
   React.useEffect(() => {
     if (hydrated && items.length === 0) {
