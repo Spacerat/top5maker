@@ -24,15 +24,15 @@ import {
 } from "react-share";
 import styles from "./sort.module.css";
 
-export const SideBySideButtons = ({ children }: React.PropsWithChildren) => (
+const SideBySideButtons = ({ children }: React.PropsWithChildren) => (
   <div className={styles.sideBySideButtons}>{children}</div>
 );
 
-export const Centered = ({ children }: React.PropsWithChildren) => (
+const Centered = ({ children }: React.PropsWithChildren) => (
   <div className={styles.centered}>{children}</div>
 );
 
-export const FullWidthProgress = (
+const FullWidthProgress = (
   props: ProgressHTMLAttributes<HTMLProgressElement>
 ) => <progress className={styles.fullWidthProgress} {...props} />;
 
