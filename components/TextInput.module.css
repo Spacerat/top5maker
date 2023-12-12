@@ -10,8 +10,8 @@
     border: 1px solid var(--link);
     outline: 1px solid var(--link);
   }
+}
 
-  ::placeholder {
-    color: var(--gray3);
-  }
+.textInput::placeholder {
+  color: var(--gray2);
 }
