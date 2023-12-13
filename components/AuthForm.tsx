@@ -33,7 +33,7 @@ export default function AuthForm({ view }: { view: ViewType }) {
         theme="light"
         showLinks={false}
         providers={[]}
-        redirectTo={`${origin}/auth/callback`}
+        redirectTo={`https://sortstar.app/auth/callback`}
       />
     </>
   );
