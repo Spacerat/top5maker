@@ -28,7 +28,7 @@ export default function AuthForm({ view }: { view: ViewType }) {
       theme="light"
       showLinks={false}
       providers={[]}
-      redirectTo="http://localhost:3000/auth/callback"
+      redirectTo={`${location.origin}/auth/callback`}
     />
   );
 }
