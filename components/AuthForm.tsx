@@ -3,9 +3,12 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa, ViewType } from "@supabase/auth-ui-shared";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/types/supabase";
+import { getAbsoluteUrl } from "@/lib/absoluteUrl";
 
 export default function AuthForm({ view }: { view: ViewType }) {
   const supabase = createClientComponentClient<Database>();
+
+  const origin = getAbsoluteUrl();
 
   return (
     <Auth
@@ -28,7 +31,7 @@ export default function AuthForm({ view }: { view: ViewType }) {
       theme="light"
       showLinks={false}
       providers={[]}
-      redirectTo={`${location.origin}/auth/callback`}
+      redirectTo={`${origin}/auth/callback`}
     />
   );
 }
