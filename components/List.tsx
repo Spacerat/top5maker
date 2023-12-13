@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { RedoItemButton, RemoveItemButton } from "@/components/IconButtons";
 import { Paper } from "@/components/layout";
 import styles from "./List.module.css";
@@ -43,21 +43,20 @@ function useDragState() {
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const [dragging, setDragging] = useState(false);
 
-  const onDragStart = useCallback(() => {
+  const dragStart = () => {
     setDragging(true);
-  }, []);
-  const onDragEnter = useCallback(
-    (item: string) => {
-      if (dragging) setDraggedItem(item);
-    },
-    [dragging]
-  );
-  const onDragEnd = useCallback(() => {
+  };
+
+  const dragEnter = (item: string) => {
+    if (dragging) setDraggedItem(item);
+  };
+
+  const resetDrag = () => {
     setDraggedItem(null);
     setDragging(false);
-  }, []);
+  };
 
-  return { onDragEnter, onDragEnd, onDragStart, dragging, draggedItem };
+  return { dragEnter, resetDrag, dragStart, dragging, draggedItem };
 }
 
 type ItemListProps = {
@@ -75,7 +74,7 @@ export function ItemList({
   onClear,
   onReorder,
 }: ItemListProps) {
-  const { onDragEnter, onDragEnd, onDragStart, dragging, draggedItem } =
+  const { dragEnter, resetDrag, dragStart, dragging, draggedItem } =
     useDragState();
 
   const actions = (item: string) => (
@@ -95,12 +94,12 @@ export function ItemList({
             key={item}
             actions={actions(item)}
             currentlyDragging={dragging}
-            onDragEnter={onReorder ? () => onDragEnter(item) : undefined}
-            onDragStart={onDragStart}
+            onDragEnter={onReorder ? () => dragEnter(item) : undefined}
+            onDragStart={dragStart}
             onDragEnd={
               onReorder
                 ? () => {
-                    onDragEnd();
+                    resetDrag();
                     onReorder && draggedItem && onReorder(item, draggedItem);
                   }
                 : undefined

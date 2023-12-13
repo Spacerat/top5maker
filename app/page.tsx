@@ -16,9 +16,9 @@ import { stringSetRemove, stringSetUnion } from "@/lib/immutableStringSet";
 function SetupItems() {
   const [items, setItems] = React.useState<readonly string[]>([]);
 
-  const addItems = React.useCallback((names: readonly string[]) => {
+  const addItems = (names: readonly string[]) => {
     setItems((curItems) => stringSetUnion(curItems, names, MAX_ITEMS));
-  }, []);
+  };
 
   const removeItem = (name: string) => {
     setItems((curItems) => stringSetRemove(curItems, name));

@@ -1,4 +1,4 @@
-import React, { ClipboardEventHandler, useCallback } from "react";
+import React, { ClipboardEventHandler } from "react";
 import { Button } from "./Button";
 import { TextInput } from "./TextInput";
 import styles from "./AddItemInput.module.css";
@@ -14,38 +14,32 @@ export function AddForm({ onAddItems, keepInView, disabled }: AddFormProps) {
 
   const textRef = React.useRef<HTMLInputElement>(null);
 
-  const onSubmit: React.FormEventHandler<HTMLFormElement> = React.useCallback(
-    (e) => {
-      e.preventDefault();
-      if (value.length > 0) {
-        onAddItems([value]);
-        setValue("");
-        textRef.current?.focus();
-        // HACK: keep the bottom of the list in view.
-        // scrollIntoView doesn't seem to work well for this on mobile.
-        // Is there a better way?
-        if (keepInView) setTimeout(() => window.scrollBy(0, 52), 1);
-      }
-    },
-    [onAddItems, value, keepInView]
-  );
+  const onSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    if (value.length > 0) {
+      onAddItems([value]);
+      setValue("");
+      textRef.current?.focus();
+      // HACK: keep the bottom of the list in view.
+      // scrollIntoView doesn't seem to work well for this on mobile.
+      // Is there a better way?
+      if (keepInView) setTimeout(() => window.scrollBy(0, 52), 1);
+    }
+  };
 
-  const onPaste: ClipboardEventHandler = useCallback(
-    (e) => {
-      const text = e.clipboardData?.getData("text");
-      if (text && text.includes("\n")) {
-        const toAdd = text
-          .split("\n")
-          .map((x) => x.trim())
-          .filter((x) => !!x);
-        if (toAdd.length > 1) {
-          onAddItems(toAdd);
-          e.preventDefault();
-        }
+  const onPaste: ClipboardEventHandler = (e) => {
+    const text = e.clipboardData?.getData("text");
+    if (text && text.includes("\n")) {
+      const toAdd = text
+        .split("\n")
+        .map((x) => x.trim())
+        .filter((x) => !!x);
+      if (toAdd.length > 1) {
+        onAddItems(toAdd);
+        e.preventDefault();
       }
-    },
-    [onAddItems]
-  );
+    }
+  };
 
   return (
     <form onSubmit={onSubmit} className={styles.formline}>

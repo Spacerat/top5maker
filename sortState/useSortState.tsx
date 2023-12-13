@@ -115,16 +115,13 @@ export function useSortState() {
   const { replace } = useRouter();
   const query = useSearchParams();
 
-  const replaceQuery = React.useCallback(
-    // Keep scroll position when updating app state in URL
-    (newQuery: QueryParams) => {
-      const queryString = new URLSearchParams(newQuery).toString();
-      replace(`sort?${queryString}`, {
-        scroll: false,
-      });
-    },
-    [replace]
-  );
+  // Keep scroll position when updating app state in URL
+  function replaceQuery(newQuery: QueryParams) {
+    const queryString = new URLSearchParams(newQuery).toString();
+    replace(`sort?${queryString}`, {
+      scroll: false,
+    });
+  }
 
   const [history, setHistory] = React.useState<QueryState[]>([]);
 
@@ -175,83 +172,73 @@ export function useSortState() {
     }
   }, [hydrated, items, replace]);
 
-  // User interactions - these all act on the query path
+  function setState({ newCache = cache, newItems = items }: StateUpdate) {
+    const newQuery = {
+      [itemsQueryKey]: serializeItems(newItems),
+      [cacheQueryKey]: serializeCache(newItems, newCache),
+    };
+    replaceQuery(newQuery);
+    setHistory((curr) => [...curr, newQuery]);
+  }
 
-  const { pick, addItems, removeItem, insertBelow, clearCache } =
-    React.useMemo(() => {
-      const setState = ({
-        newCache = cache,
-        newItems = items,
-      }: StateUpdate) => {
-        const newQuery = {
-          [itemsQueryKey]: serializeItems(newItems),
-          [cacheQueryKey]: serializeCache(newItems, newCache),
-        };
-        replaceQuery(newQuery);
-        setHistory((curr) => [...curr, newQuery]);
-      };
+  /** Called when the user clicks on the larger item */
+  function pick(larger: string) {
+    if (status.done) return;
+    const { a, b } = status.comparison;
+    const smaller = larger === a ? b : a;
+    setState({ newCache: cacheWithUpdate(cache, { larger, smaller }) });
+  }
+  function insertBelow(item: string, insertingBelow: string) {
+    if (item === insertingBelow) return;
+    // NOTE: this is probably only valid for a fully sorted graph
+    //       it was written with that usecase in mind specifically
+    // NOTE: this is inefficient because each 'cacheWithUpdate'
+    //       does another transitive reduction. Instead it could be done at the end.
 
-      return {
-        /** Called when the user clicks on the larger item */
-        pick(larger: string) {
-          if (status.done) return;
-          const { a, b } = status.comparison;
-          const smaller = larger === a ? b : a;
-          setState({ newCache: cacheWithUpdate(cache, { larger, smaller }) });
-        },
-        insertBelow(item: string, insertingBelow: string) {
-          if (item === insertingBelow) return;
-          // NOTE: this is probably only valid for a fully sorted graph
-          //       it was written with that usecase in mind specifically
-          // NOTE: this is inefficient because each 'cacheWithUpdate'
-          //       does another transitive reduction. Instead it could be done at the end.
+    let newCache = withRemovedNode(cache, item);
 
-          let newCache = withRemovedNode(cache, item);
+    for (const child of newCache[insertingBelow] ?? []) {
+      newCache = cacheWithUpdate(newCache, {
+        larger: item,
+        smaller: child,
+      });
+    }
 
-          for (const child of newCache[insertingBelow] ?? []) {
-            newCache = cacheWithUpdate(newCache, {
-              larger: item,
-              smaller: child,
-            });
-          }
+    newCache = cacheWithUpdate(newCache, {
+      larger: insertingBelow,
+      smaller: item,
+    });
 
-          newCache = cacheWithUpdate(newCache, {
-            larger: insertingBelow,
-            smaller: item,
-          });
-
-          setState({ newCache });
-        },
-        /** Called when the user adds an item while sorting */
-        addItems(newItems: readonly string[]) {
-          const updatedItems = stringSetUnion(items, newItems, MAX_ITEMS);
-          if (updatedItems.length > items.length) {
-            setState({ newItems: updatedItems });
-          }
-        },
-        /** Called when the user removes an item while sorting */
-        removeItem(item: string) {
-          setState({
-            newItems: stringSetRemove(items, item),
-            newCache: withRemovedNode(cache, item),
-          });
-        },
-        /** Called when the user resets an item while sorting */
-        clearCache(item: string) {
-          setState({
-            newCache: withRemovedNode(cache, item),
-          });
-        },
-      };
-    }, [cache, items, status, replaceQuery]);
+    setState({ newCache });
+  }
+  /** Called when the user adds an item while sorting */
+  function addItems(newItems: readonly string[]) {
+    const updatedItems = stringSetUnion(items, newItems, MAX_ITEMS);
+    if (updatedItems.length > items.length) {
+      setState({ newItems: updatedItems });
+    }
+  }
+  /** Called when the user removes an item while sorting */
+  function removeItem(item: string) {
+    setState({
+      newItems: stringSetRemove(items, item),
+      newCache: withRemovedNode(cache, item),
+    });
+  }
+  /** Called when the user resets an item while sorting */
+  function clearCache(item: string) {
+    setState({
+      newCache: withRemovedNode(cache, item),
+    });
+  }
 
   /** Called when the user clicks the undo button */
-  const undo = React.useCallback(() => {
+  function undo() {
     if (history.length > 1) {
       replaceQuery(history[history.length - 2]);
       setHistory((curr) => curr.slice(0, -1));
     }
-  }, [history, replaceQuery]);
+  }
 
   return {
     progress: getSortedness(cache, items.length),
