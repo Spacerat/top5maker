@@ -11,30 +11,27 @@ export default function AuthForm({ view }: { view: ViewType }) {
   const origin = getAbsoluteUrl();
 
   return (
-    <>
-      {origin}
-      <Auth
-        supabaseClient={supabase}
-        view={view}
-        appearance={{
-          theme: ThemeSupa,
-          variables: {
-            default: {
-              colors: {
-                brand: "var(--primary1)",
-                brandAccent: "var(--primary2)",
-                messageBackground: "var(--primary4plusplus)",
-                messageBorder: "var(--primary3)",
-                messageText: "var(--primary2)",
-              },
+    <Auth
+      supabaseClient={supabase}
+      view={view}
+      appearance={{
+        theme: ThemeSupa,
+        variables: {
+          default: {
+            colors: {
+              brand: "var(--primary1)",
+              brandAccent: "var(--primary2)",
+              messageBackground: "var(--primary4plusplus)",
+              messageBorder: "var(--primary3)",
+              messageText: "var(--primary2)",
             },
           },
-        }}
-        theme="light"
-        showLinks={false}
-        providers={[]}
-        redirectTo={`https://sortstar.app/auth/callback`}
-      />
-    </>
+        },
+      }}
+      theme="light"
+      showLinks={false}
+      providers={[]}
+      redirectTo={`${origin}/auth/callback`}
+    />
   );
 }
