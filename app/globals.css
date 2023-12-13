@@ -32,6 +32,7 @@
 
   /* Sizes */
   --pageWidth: 880px;
+  --pageWidthSlim: 480px;
 
   /* Typography */
   --bodyFontSize: 18px;

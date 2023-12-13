@@ -23,15 +23,21 @@ export function Header({ children }: React.PropsWithChildren) {
   );
 }
 
-type PageProps = { kind?: "main" | "darker" };
+type KindProp = { kind?: "main" | "darker" };
+type SlimProp = { slim?: boolean };
+type PageProps = KindProp & SlimProp;
+
+const kindClasses = {
+  main: styles.kindMain,
+  darker: styles.kindDarker,
+};
 
 const MainSectionContainer = ({
   children,
-  kind,
-}: React.PropsWithChildren<PageProps>) => {
-  const kindClass = kind === "darker" ? styles.kindDarker : styles.kindMain;
+  kind = "main",
+}: React.PropsWithChildren<KindProp>) => {
   return (
-    <div className={`${styles.mainSectionContainer} ${kindClass}`}>
+    <div className={`${styles.mainSectionContainer} ${kindClasses[kind]} `}>
       {children}
     </div>
   );
@@ -41,16 +47,24 @@ const FooterSectionContainer = ({ children }: React.PropsWithChildren) => (
   <footer className={styles.footerSectionContainer}>{children}</footer>
 );
 
-const PageSection = ({ children }: React.PropsWithChildren) => (
-  <div className={`${styles.pageContainer} ${styles.pageSection}`}>
+const PageSection = ({ children, slim }: React.PropsWithChildren<SlimProp>) => (
+  <div
+    className={`${styles.pageContainer} ${styles.pageSection} ${
+      slim ? styles.slim : ""
+    }`}
+  >
     {children}
   </div>
 );
 
-export function Page({ children, kind }: React.PropsWithChildren<PageProps>) {
+export function Page({
+  children,
+  kind,
+  slim = false,
+}: React.PropsWithChildren<PageProps>) {
   return (
     <MainSectionContainer kind={kind}>
-      <PageSection>{children}</PageSection>
+      <PageSection slim={slim}>{children}</PageSection>
     </MainSectionContainer>
   );
 }

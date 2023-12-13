@@ -100,3 +100,7 @@
 .kindDarker {
   background-color: var(--primary4plus);
 }
+
+.slim {
+  max-width: var(--pageWidthSlim);
+}
