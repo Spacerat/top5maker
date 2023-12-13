@@ -30,7 +30,9 @@
       "@/components/*": ["components/*"],
       "@/sortState/*": ["sortState/*"],
       "@/app/*": ["app/*"],
-      "@/lib/*": ["lib/*"]
+      "@/lib/*": ["lib/*"],
+      "@/utils/*": ["utils/*"],
+      "@/types/*": ["types/*"]
     }
   },
 
