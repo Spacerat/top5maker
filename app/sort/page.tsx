@@ -5,6 +5,7 @@ import { Brand } from "@/components/Brand";
 import { Button, FullMobileSecondaryButton } from "@/components/Button";
 import { ItemList } from "@/components/List";
 import { NativeShareButton } from "@/components/NativeShareButton";
+import { SideBySideButtons } from "@/components/SideBySideButtons";
 import { Header, Main, Page } from "@/components/layout";
 import { H1, H3 } from "@/components/text";
 import { SortStatus } from "@/lib//interruptibleSort";
@@ -23,10 +24,6 @@ import {
   WhatsappShareButton,
 } from "react-share";
 import styles from "./sort.module.css";
-
-const SideBySideButtons = ({ children }: React.PropsWithChildren) => (
-  <div className={styles.sideBySideButtons}>{children}</div>
-);
 
 const Centered = ({ children }: React.PropsWithChildren) => (
   <div className={styles.centered}>{children}</div>

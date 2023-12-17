@@ -1,0 +1,21 @@
+.sideBySideButtons {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+}
+
+.sideBySideButtons > button,
+.sideBySideButtons > a > button {
+  display: block;
+  flex: 1;
+  min-height: 160px;
+  height: initial;
+  overflow: auto;
+  overflow-wrap: break-word;
+  padding: 16px;
+  box-shadow: var(--primaryBoxShadow); /* Adjust with your CSS variable */
+}
+
+.sideBySideButtons > a {
+  display: contents;
+}
