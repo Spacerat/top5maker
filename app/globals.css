@@ -64,3 +64,15 @@ a:visited {
 ul {
   margin-bottom: 0;
 }
+
+dialog {
+  border-radius: var(--borderRadius);
+  border: var(--primaryDark) 1px solid;
+}
+
+/* border box */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
