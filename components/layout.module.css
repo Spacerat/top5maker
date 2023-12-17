@@ -22,11 +22,13 @@
 
 .headerContent {
   display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   flex-wrap: wrap;
   column-gap: 40px;
   row-gap: 20px;
-  padding-top: 20px;
-  padding-bottom: 20px;
+  min-height: 70px;
 }
 
 .mainSectionContainer {

@@ -4,11 +4,21 @@ import { ThemeSupa, ViewType } from "@supabase/auth-ui-shared";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/types/supabase";
 import { getAbsoluteUrl } from "@/utils/absoluteUrl";
+import { useRouter } from "next/navigation";
 
 export default function AuthForm({ view }: { view: ViewType }) {
   const supabase = createClientComponentClient<Database>();
 
   const origin = getAbsoluteUrl();
+
+  const { push } = useRouter();
+
+  supabase.auth.onAuthStateChange(async (event, session) => {
+    console.log(event, session);
+    if (session) {
+      push("/account");
+    }
+  });
 
   return (
     <Auth
@@ -29,7 +39,7 @@ export default function AuthForm({ view }: { view: ViewType }) {
         },
       }}
       theme="light"
-      showLinks={false}
+      magicLink
       providers={[]}
       redirectTo={`${origin}/auth/callback`}
     />

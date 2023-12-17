@@ -10,6 +10,12 @@ export const Brand = () => (
   </BrandLink>
 );
 
+export const ProBrand = () => (
+  <BrandLink href="/pro" passHref>
+    Sort Star <Text color="secondaryLight">Pro</Text>
+  </BrandLink>
+);
+
 export const TagLine = () => (
   <H2>
     Sort <Text color="secondaryLight">anything</Text> from best to worst.
