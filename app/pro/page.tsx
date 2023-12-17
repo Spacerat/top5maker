@@ -5,7 +5,7 @@ import Dialog from "@/components/Dialog";
 import DialogButton from "@/components/DialogButton";
 import { SideBySideButtons } from "@/components/SideBySideButtons";
 import { Header, Main, Page } from "@/components/layout";
-import { Text, H2, H3 } from "@/components/text";
+import { Text, H2 } from "@/components/text";
 import { Database } from "@/types/supabase";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
