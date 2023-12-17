@@ -29,3 +29,19 @@
   font-weight: 500;
   margin: 0;
 }
+
+.secondaryLight {
+  color: var(--secondaryLight);
+}
+
+.secondaryDark {
+  color: var(--secondaryDark);
+}
+
+.primary1 {
+  color: var(--primary1);
+}
+
+.primaryDark {
+  color: var(--primaryDark);
+}

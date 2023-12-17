@@ -14,6 +14,7 @@
   --primary4Hover: hsl(328, 70%, 98%);
   --primary4Pressed: hsl(328, 70%, 97%);
   --secondaryLight: hsl(58, 80%, 70%);
+  --secondaryDark: hsl(58, 80%, 32%);
   --link: hsl(223, 60%, 50%);
   --linkVisited: hsl(295, 60%, 50%);
   --primaryGradient: linear-gradient(172.38deg, #e61a86 36.31%, #e0529e 115.99%),
