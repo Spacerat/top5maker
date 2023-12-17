@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { FooterSection } from "./layout";
-import { H2, BrandLink } from "./text";
+import { H2, BrandLink, Text } from "./text";
 
 import styles from "./Brand.module.css";
 
@@ -12,7 +12,7 @@ export const Brand = () => (
 
 export const TagLine = () => (
   <H2>
-    Sort <span className={styles.accentText}>anything</span> from best to worst.
+    Sort <Text color="secondaryLight">anything</Text> from best to worst.
   </H2>
 );
 
