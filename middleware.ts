@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { Database } from "./types/supabase";
 
-const unprotectedPaths = ["/pro", "/sort", "/login", "/_next", "/auth"];
+const protectedPaths = ["/account", "/list"];
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
@@ -17,7 +17,7 @@ export async function middleware(req: NextRequest) {
   // Redirect to login when trying to access protected pages
   if (
     !user &&
-    !unprotectedPaths.some((path) => req.nextUrl.pathname.startsWith(path))
+    protectedPaths.some((path) => req.nextUrl.pathname.startsWith(path))
   ) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
