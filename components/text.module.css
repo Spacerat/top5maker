@@ -17,9 +17,9 @@
   color: inherit;
 }
 
-.brandLink {
+.noStyleLink {
   text-decoration: none;
-  .h1 {
+  * {
     color: var(--primary4);
   }
 }

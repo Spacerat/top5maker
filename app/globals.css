@@ -1,4 +1,6 @@
-@import "normalize/opinionated";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   /* Colors */

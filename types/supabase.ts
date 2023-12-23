@@ -9,33 +9,164 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      testtable: {
+      Decision: {
         Row: {
           created_at: string
-          id: number
-          name: string | null
-          numbers: number[] | null
+          created_by: string
+          decision_id: string
+          greater_item_id: string
+          lesser_item_id: string
+          sort_id: string
         }
         Insert: {
           created_at?: string
-          id?: number
-          name?: string | null
-          numbers?: number[] | null
+          created_by: string
+          decision_id?: string
+          greater_item_id: string
+          lesser_item_id: string
+          sort_id: string
         }
         Update: {
           created_at?: string
-          id?: number
-          name?: string | null
-          numbers?: number[] | null
+          created_by?: string
+          decision_id?: string
+          greater_item_id?: string
+          lesser_item_id?: string
+          sort_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "Decision_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Decision_greater_item_id_fkey"
+            columns: ["greater_item_id"]
+            isOneToOne: false
+            referencedRelation: "ListItem"
+            referencedColumns: ["list_item_id"]
+          },
+          {
+            foreignKeyName: "Decision_lesser_item_id_fkey"
+            columns: ["lesser_item_id"]
+            isOneToOne: false
+            referencedRelation: "ListItem"
+            referencedColumns: ["list_item_id"]
+          }
+        ]
+      }
+      List: {
+        Row: {
+          created_at: string
+          created_by: string
+          list_id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string
+          list_id?: string
+          name?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          list_id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "List_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      ListItem: {
+        Row: {
+          created_at: string
+          created_by: string
+          list_id: string
+          list_item_id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string
+          list_id: string
+          list_item_id?: string
+          name?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          list_id?: string
+          list_item_id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ListItem_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      Sort: {
+        Row: {
+          created_at: string
+          created_by: string
+          list_id: string
+          name: string
+          sort_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string
+          list_id: string
+          name?: string
+          sort_id?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          list_id?: string
+          name?: string
+          sort_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Sort_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Sort_list_id_fkey"
+            columns: ["list_id"]
+            isOneToOne: false
+            referencedRelation: "List"
+            referencedColumns: ["list_id"]
+          }
+        ]
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      uuid_generate_v7: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

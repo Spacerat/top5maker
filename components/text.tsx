@@ -23,8 +23,17 @@ export const BrandLink = ({
   children,
   ...props
 }: React.PropsWithChildren<LinkProps>) => (
-  <Link {...props} className={styles.brandLink}>
+  <Link {...props} className={styles.noStyleLink}>
     <H1>{children}</H1>
+  </Link>
+);
+
+export const NavLink = ({
+  children,
+  ...props
+}: React.PropsWithChildren<LinkProps>) => (
+  <Link {...props} className={styles.noStyleLink}>
+    <H3>{children}</H3>
   </Link>
 );
 
