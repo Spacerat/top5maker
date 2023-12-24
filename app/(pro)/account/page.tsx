@@ -1,6 +1,5 @@
 import AuthForm from "@/components/AuthForm";
-import { Brand } from "@/components/Brand";
-import { Header, Main, Page } from "@/components/layout";
+import { Page } from "@/components/layout";
 import { H1, H3 } from "@/components/text";
 import { Database } from "@/types/supabase";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
