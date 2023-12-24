@@ -5,6 +5,8 @@ import { NewListButton } from "./NewListButton";
 import Link from "next/link";
 import { encodeId } from "@/utils/ids";
 
+export const dynamic = "force-dynamic";
+
 async function getLists() {
   return await serverClient()
     .from("List")

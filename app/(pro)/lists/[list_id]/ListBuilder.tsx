@@ -41,6 +41,7 @@ function optimisticListUpdate(state: ListItemType[], action: Action) {
   } else if (action.type === "remove") {
     return state.filter((item) => item.list_item_id !== action.itemId);
   }
+
   return state;
 }
 
@@ -73,7 +74,7 @@ export function ListBuilder({
 
   async function removeItemOptimistic(itemId: string) {
     updateOptimistic({ type: "remove", itemId });
-    const removedId = await removeListItem(itemId);
+    const removedId = await removeListItem(listId, itemId);
     setState((curr) => curr.filter((item) => item.list_item_id !== removedId));
   }
 

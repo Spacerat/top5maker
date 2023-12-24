@@ -2,6 +2,8 @@
 
 import { serverClient } from "@/utils/client";
 import { checkPostgresError } from "@/utils/errors";
+import { encodeId } from "@/utils/ids";
+import { revalidatePath } from "next/cache";
 
 export async function newList() {
   const client = serverClient();
@@ -35,11 +37,12 @@ export async function addListItems(
     .select();
 
   checkPostgresError(data, error);
+  revalidatePath(`/lists/${encodeId(listId)}`);
 
   return data;
 }
 
-export async function removeListItem(id: string) {
+export async function removeListItem(listId: string, id: string) {
   const client = serverClient();
 
   const { data, error } = await client
@@ -50,6 +53,8 @@ export async function removeListItem(id: string) {
     .single();
 
   checkPostgresError(data, error);
+
+  revalidatePath(`/lists/${encodeId(listId)}`);
 
   return data.list_item_id;
 }
