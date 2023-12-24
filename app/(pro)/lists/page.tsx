@@ -11,7 +11,7 @@ async function getLists() {
   return await serverClient()
     .from("List")
     .select("*, ListItem (name, list_item_id)")
-    .limit(10);
+    .limit(4, { referencedTable: "ListItem" });
 }
 
 export default async function Lists() {
