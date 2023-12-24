@@ -91,6 +91,7 @@ export interface Database {
         Row: {
           created_at: string
           created_by: string
+          idempotencyKey: string | null
           list_id: string
           list_item_id: string
           name: string
@@ -98,6 +99,7 @@ export interface Database {
         Insert: {
           created_at?: string
           created_by?: string
+          idempotencyKey?: string | null
           list_id: string
           list_item_id?: string
           name?: string
@@ -105,6 +107,7 @@ export interface Database {
         Update: {
           created_at?: string
           created_by?: string
+          idempotencyKey?: string | null
           list_id?: string
           list_item_id?: string
           name?: string
@@ -116,6 +119,13 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ListItem_list_id_fkey"
+            columns: ["list_id"]
+            isOneToOne: false
+            referencedRelation: "List"
+            referencedColumns: ["list_id"]
           }
         ]
       }

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { RedoItemButton, RemoveItemButton } from "@/components/IconButtons";
 import { Paper } from "@/components/layout";
@@ -5,8 +7,9 @@ import styles from "./List.module.css";
 
 type ListItemProps = {
   actions?: React.ReactNode;
-  isDraggedOver: boolean;
-  currentlyDragging: boolean;
+  isDraggedOver?: boolean;
+  currentlyDragging?: boolean;
+  loading?: boolean;
   onDragEnter?: () => void | undefined;
   onDragStart?: () => void | undefined;
   onDragEnd?: () => void | undefined;
@@ -16,6 +19,7 @@ export function ListItem({
   children,
   actions,
   isDraggedOver,
+  loading,
   onDragEnter,
   onDragStart,
   onDragEnd,
@@ -24,7 +28,7 @@ export function ListItem({
   return (
     <>
       <div
-        className={styles.itemContainer}
+        className={`${styles.itemContainer} ${loading && "opacity-50"}`}
         draggable={draggable}
         onDragOver={draggable ? (e) => e.preventDefault() : undefined}
         onDragEnter={draggable ? onDragEnter : undefined}

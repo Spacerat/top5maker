@@ -15,19 +15,14 @@ export default async function Account() {
   const user = session?.user;
 
   return (
-    <Main>
-      <Header>
-        <Brand />
-      </Header>
-      <Page slim>
-        <H1>Your account</H1>
-        <H3>Email</H3>
-        <span>{user?.email}</span>
-        <H3>Update Password</H3>
-        <AuthForm view="update_password" />
-        <H3>Forgotten Password</H3>
-        <AuthForm view="forgotten_password" />
-      </Page>
-    </Main>
+    <Page slim>
+      <H1>Your account</H1>
+      <H3>Email</H3>
+      <span>{user?.email}</span>
+      <H3>Update Password</H3>
+      <AuthForm view="update_password" />
+      <H3>Forgotten Password</H3>
+      <AuthForm view="forgotten_password" />
+    </Page>
   );
 }
