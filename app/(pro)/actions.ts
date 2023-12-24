@@ -29,16 +29,12 @@ export async function addListItems(
 ): Promise<ListItem[]> {
   const client = serverClient();
 
-  // await new Promise((res) => setTimeout(res, 3000));
-
   const { data, error } = await client
     .from("ListItem")
     .insert(items.map((item) => ({ ...item, list_id: listId })))
     .select();
 
   checkPostgresError(data, error);
-
-  console.log("ADD", { listId, items, data });
 
   return data;
 }

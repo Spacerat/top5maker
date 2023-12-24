@@ -27,7 +27,6 @@ type Action =
     };
 
 function optimisticListUpdate(state: ListItemType[], action: Action) {
-  let result: ListItemType[] = [];
   if (action.type === "add") {
     const currentKeys = new Set(state.map((x) => x.idempotencyKey));
     const itemsToAdd = action.items
@@ -38,12 +37,11 @@ function optimisticListUpdate(state: ListItemType[], action: Action) {
         loading: true,
       }));
 
-    result = itemsToAdd.length > 0 ? [...state, ...itemsToAdd] : state;
+    return itemsToAdd.length > 0 ? [...state, ...itemsToAdd] : state;
   } else if (action.type === "remove") {
-    result = state.filter((item) => item.list_item_id !== action.itemId);
+    return state.filter((item) => item.list_item_id !== action.itemId);
   }
-  console.log({ event: "optimisitc", state, action, result });
-  return result;
+  return state;
 }
 
 export function ListBuilder({
@@ -70,21 +68,13 @@ export function ListBuilder({
 
     updateOptimistic({ type: "add", items });
     const newItems = await addListItems(listId, items);
-    setState((curr) => {
-      const result = [...curr, ...newItems];
-      console.log({ event: "stateupdate", curr, action: "add", result });
-      return result;
-    });
+    setState((curr) => [...curr, ...newItems]);
   }
 
   async function removeItemOptimistic(itemId: string) {
     updateOptimistic({ type: "remove", itemId });
     const removedId = await removeListItem(itemId);
-    setState((curr) => {
-      const result = curr.filter((item) => item.list_item_id !== removedId);
-      console.log({ event: "stateupdate", curr, action: "remove", result });
-      return result;
-    });
+    setState((curr) => curr.filter((item) => item.list_item_id !== removedId));
   }
 
   return (
