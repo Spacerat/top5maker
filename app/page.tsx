@@ -60,12 +60,14 @@ const names = example("Baby Names", [
 function ExampleCard(example: Example) {
   return (
     <Card elevation="low">
-      <Link href={example.url}>{example.name}</Link>, including:
-      <ul>
-        {example.display.map((x) => (
-          <li key={x}>{x}</li>
-        ))}
-      </ul>
+      <span>
+        <Link href={example.url}>{example.name}</Link>, including:
+        <ul className="list-disc list-inside">
+          {example.display.map((x) => (
+            <li key={x}>{x}</li>
+          ))}
+        </ul>
+      </span>
     </Card>
   );
 }

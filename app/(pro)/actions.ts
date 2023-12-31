@@ -43,6 +43,25 @@ export async function addListItems(
   return data;
 }
 
+export async function updateListName(
+  listId: string,
+  name: string
+): Promise<string> {
+  const client = serverClient();
+
+  const { data, error } = await client
+    .from("List")
+    .update({ name })
+    .eq("list_id", listId)
+    .select("name")
+    .single();
+
+  checkAndAssertData(data, error);
+  revalidatePath(`/lists/${encodeId(listId)}`);
+
+  return data.name;
+}
+
 export async function removeListItem(listId: string, listItemId: string) {
   const client = serverClient();
 

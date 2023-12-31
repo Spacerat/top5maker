@@ -1,6 +1,4 @@
-import React from "react";
 import styles from "./SideBySideButtons.module.css";
+import { styled } from "./withStyle";
 
-export const SideBySideButtons = ({ children }: React.PropsWithChildren) => (
-  <div className={styles.sideBySideButtons}>{children}</div>
-);
+export const SideBySideButtons = styled.div(styles.sideBySideButton);

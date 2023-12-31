@@ -7,6 +7,9 @@ import { H3 } from "@/components/text";
 import { removeList } from "../../actions";
 
 export function DeleteListButton({ listId }: { listId: string }) {
+  async function onDelete() {
+    await removeList(listId);
+  }
   return (
     <DialogButton
       button={"Delete"}
@@ -18,13 +21,7 @@ export function DeleteListButton({ listId }: { listId: string }) {
             <Button variant="secondary" onClick={close}>
               Cancel
             </Button>
-            <Button
-              onClick={async () => {
-                await removeList(listId);
-              }}
-            >
-              Delete list
-            </Button>
+            <Button onClick={onDelete}>Delete list</Button>
           </div>
         </Card>
       )}

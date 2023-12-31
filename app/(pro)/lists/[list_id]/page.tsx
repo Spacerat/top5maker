@@ -1,10 +1,10 @@
 import { Page } from "@/components/layout";
-import { H1 } from "@/components/text";
 import { serverClient } from "@/utils/client";
 import { checkDecodeId } from "@/utils/ids";
 import { checkAndAssertData } from "@/utils/errors";
 import { ListBuilder } from "./ListBuilder";
 import { DeleteListButton } from "./DeleteListButton";
+import { ListName } from "./ListName";
 
 type ListParams = {
   params: { list_id?: string };
@@ -26,7 +26,7 @@ export default async function List({ params: { list_id } }: ListParams) {
   return (
     <Page kind="main">
       <div className="justify-between flex flex-row">
-        <H1>{data.name}</H1>
+        <ListName listId={listId} name={data.name} />
         <DeleteListButton listId={listId} />
       </div>
       <ListBuilder listId={listId} items={data.ListItem} />

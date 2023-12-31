@@ -2,7 +2,7 @@
 
 import { AddForm } from "@/components/AddItemInput";
 import { Brand } from "@/components/Brand";
-import { Button, FullMobileSecondaryButton } from "@/components/Button";
+import { Button, FullMobileButton } from "@/components/Button";
 import { ItemList } from "@/components/List";
 import { NativeShareButton } from "@/components/NativeShareButton";
 import { SideBySideButtons } from "@/components/SideBySideButtons";
@@ -167,7 +167,9 @@ function DoneLayout({ state }: { state: SortAppState }) {
 
 function UndoButton({ undo }: { undo?: null | undefined | (() => void) }) {
   return undo ? (
-    <FullMobileSecondaryButton onClick={undo}>Undo</FullMobileSecondaryButton>
+    <FullMobileButton variant="secondary" onClick={undo}>
+      Undo
+    </FullMobileButton>
   ) : null;
 }
 
