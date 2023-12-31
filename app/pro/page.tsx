@@ -20,7 +20,7 @@ export default async function Home() {
     data: { session },
   } = await supabase.auth.getSession();
   if (session?.user) {
-    redirect("/account");
+    redirect("/lists");
   }
 
   return (
