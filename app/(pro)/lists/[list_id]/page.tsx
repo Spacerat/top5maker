@@ -2,8 +2,10 @@ import { Page } from "@/components/layout";
 import { H1 } from "@/components/text";
 import { serverClient } from "@/utils/client";
 import { checkDecodeId } from "@/utils/ids";
-import { checkPostgresError } from "@/utils/errors";
+import { checkAndAssertData } from "@/utils/errors";
 import { ListBuilder } from "./ListBuilder";
+import { redirect } from "next/navigation";
+import { DeleteListButton } from "./DeleteListButton";
 
 type ListParams = {
   params: { list_id?: string };
@@ -20,11 +22,14 @@ export default async function List({ params: { list_id } }: ListParams) {
     .eq("list_id", listId)
     .single();
 
-  checkPostgresError(data, error);
+  checkAndAssertData(data, error);
 
   return (
     <Page kind="main">
-      <H1>{data.name}</H1>
+      <div className="justify-between flex flex-row">
+        <H1>{data.name}</H1>
+        <DeleteListButton listId={listId} />
+      </div>
       <ListBuilder listId={listId} items={data.ListItem} />
     </Page>
   );

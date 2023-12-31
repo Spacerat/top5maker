@@ -2,11 +2,13 @@
 
 import React from "react";
 import Dialog from "./Dialog";
-import { Button, SecondaryButton } from "./Button";
+import { Button } from "./Button";
 
 type DialogButton = {
   button: React.ReactNode;
-  contents: React.ReactNode;
+  contents:
+    | React.ReactNode
+    | (({ close }: { close: () => void }) => React.ReactNode);
   kind?: "primary" | "secondary";
 };
 
@@ -26,9 +28,15 @@ export default function DialogButton({
       {kind === "primary" ? (
         <Button onClick={onClick}>{button}</Button>
       ) : (
-        <SecondaryButton onClick={onClick}>{button}</SecondaryButton>
+        <Button variant="secondary" onClick={onClick}>
+          {button}
+        </Button>
       )}
-      <Dialog ref={ref}>{contents}</Dialog>
+      <Dialog ref={ref}>
+        {typeof contents === "function"
+          ? contents({ close: () => ref.current?.close() })
+          : contents}
+      </Dialog>
     </>
   );
 }

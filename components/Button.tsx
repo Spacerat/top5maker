@@ -4,10 +4,16 @@ import styles from "./Button.module.css";
 type ButtonProps = DetailedHTMLProps<
   ButtonHTMLAttributes<HTMLButtonElement>,
   HTMLButtonElement
->;
+> & {
+  variant?: "primary" | "secondary" | "danger";
+};
 
-export const Button = ({ children, ...props }: ButtonProps) => (
-  <button className={`${styles.button} ${styles.primary}`} {...props}>
+export const Button = ({
+  children,
+  variant = "primary",
+  ...props
+}: ButtonProps) => (
+  <button className={`${styles.button} ${styles[variant]}`} {...props}>
     {children}
   </button>
 );

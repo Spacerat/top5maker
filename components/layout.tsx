@@ -49,9 +49,11 @@ const FooterSectionContainer = ({ children }: React.PropsWithChildren) => (
 
 const PageSection = ({ children, slim }: React.PropsWithChildren<SlimProp>) => (
   <div
-    className={`${styles.pageContainer} ${styles.pageSection} ${
-      slim ? styles.slim : ""
-    }`}
+    className={`
+    ${styles.pageContainer}
+    ${styles.pageSection}
+    ${styles.section}
+    ${slim ? styles.slim : ""}`}
   >
     {children}
   </div>
@@ -100,7 +102,9 @@ export const Card = ({
 }: React.PropsWithChildren<PaperProps>) => {
   const elevationClass = getElevationClass(elevation);
   return (
-    <div className={`${styles.paper} ${styles.card} ${elevationClass}`}>
+    <div
+      className={`${styles.paper} ${styles.card} ${styles.section} ${elevationClass}`}
+    >
       {children}
     </div>
   );

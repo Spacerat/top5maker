@@ -53,12 +53,15 @@
 
 .pageSection {
   max-width: min(var(--pageWidth), 100%);
-  display: flex;
-  flex-direction: column;
-  flex: 1;
   padding-top: 24px;
   padding-bottom: 24px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
   gap: 24px;
+  flex: 1;
 }
 
 .paper {

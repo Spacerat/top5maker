@@ -1,9 +1,10 @@
 "use server";
 
 import { serverClient } from "@/utils/client";
-import { checkPostgresError } from "@/utils/errors";
+import { checkAndAssertData, checkPostgresError } from "@/utils/errors";
 import { encodeId } from "@/utils/ids";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 export async function newList() {
   const client = serverClient();
@@ -13,7 +14,7 @@ export async function newList() {
     .select()
     .single();
 
-  checkPostgresError(data, error);
+  checkAndAssertData(data, error);
 
   return data.list_id;
 }
@@ -36,25 +37,46 @@ export async function addListItems(
     .insert(items.map((item) => ({ ...item, list_id: listId })))
     .select();
 
-  checkPostgresError(data, error);
+  checkAndAssertData(data, error);
   revalidatePath(`/lists/${encodeId(listId)}`);
 
   return data;
 }
 
-export async function removeListItem(listId: string, id: string) {
+export async function removeListItem(listId: string, listItemId: string) {
   const client = serverClient();
 
   const { data, error } = await client
     .from("ListItem")
     .delete()
-    .eq("list_item_id", id)
+    .eq("list_item_id", listItemId)
     .select("name, list_item_id, idempotencyKey")
     .single();
 
-  checkPostgresError(data, error);
+  checkPostgresError(error);
 
   revalidatePath(`/lists/${encodeId(listId)}`);
 
-  return data.list_item_id;
+  return data?.list_item_id;
+}
+
+export async function removeList(listId: string) {
+  const client = serverClient();
+
+  const { data, error } = await client
+    .from("List")
+    .delete()
+    .eq("list_id", listId)
+    .select("list_id")
+    .maybeSingle();
+
+  console.log({ data, error });
+
+  checkPostgresError(error);
+
+  revalidatePath(`/lists/${encodeId(listId)}`);
+
+  redirect("/lists");
+
+  return data?.list_id;
 }
