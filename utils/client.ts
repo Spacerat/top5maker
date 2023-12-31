@@ -6,9 +6,11 @@ import {
 import { cookies } from "next/headers";
 
 export function serverClient() {
-  return createServerComponentClient<Database>({ cookies });
+  const cookieStore = cookies();
+  return createServerComponentClient<Database>({ cookies: () => cookieStore });
 }
 
 export function routeClient() {
-  return createRouteHandlerClient<Database>({ cookies });
+  const cookieStore = cookies();
+  return createRouteHandlerClient<Database>({ cookies: () => cookieStore });
 }

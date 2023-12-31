@@ -13,7 +13,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
-  const supabase = createServerComponentClient<Database>({ cookies });
+  const supabase = createServerComponentClient<Database>({
+    cookies: () => cookies(),
+  });
   const {
     data: { session },
   } = await supabase.auth.getSession();

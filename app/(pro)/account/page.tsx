@@ -7,7 +7,9 @@ import { cookies } from "next/headers";
 import React from "react";
 
 export default async function Account() {
-  const supabase = createServerComponentClient<Database>({ cookies });
+  const supabase = createServerComponentClient<Database>({
+    cookies: () => cookies(),
+  });
   const {
     data: { session },
   } = await supabase.auth.getSession();

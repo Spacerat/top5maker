@@ -1,10 +1,8 @@
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+import { routeClient } from "@/utils/client";
 import { type NextRequest, NextResponse } from "next/server";
 
 async function signout(req: NextRequest) {
-  const cookieStore = cookies();
-  const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+  const supabase = routeClient();
 
   // Check if we have a session
   const {
