@@ -102,7 +102,12 @@ export function ListBuilder({
       </Paper>
       <form action={addItemOptimistic} ref={formRef} className="contents">
         <div className="flex flex-row gap-4">
-          <TextInput name="name" placeholder="Add another item" required />
+          <TextInput
+            name="name"
+            placeholder="Add another item"
+            required
+            data-1p-ignore
+          />
           <Button type="submit">Add</Button>
         </div>
       </form>

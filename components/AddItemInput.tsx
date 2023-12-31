@@ -50,6 +50,7 @@ export function AddForm({ onAddItems, keepInView, disabled }: AddFormProps) {
         onChange={(e) => setValue(e.target.value)}
         onPaste={onPaste}
         ref={textRef}
+        data-1p-ignore
       />
       <Button type="submit" disabled={disabled || value.length === 0}>
         Add
