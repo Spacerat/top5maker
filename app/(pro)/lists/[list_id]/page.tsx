@@ -4,7 +4,6 @@ import { serverClient } from "@/utils/client";
 import { checkDecodeId } from "@/utils/ids";
 import { checkAndAssertData } from "@/utils/errors";
 import { ListBuilder } from "./ListBuilder";
-import { redirect } from "next/navigation";
 import { DeleteListButton } from "./DeleteListButton";
 
 type ListParams = {
