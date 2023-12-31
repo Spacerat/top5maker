@@ -11,6 +11,8 @@ async function getLists() {
   return await serverClient()
     .from("List")
     .select("*, ListItem (name, list_item_id)")
+    .order("created_at", { ascending: false })
+    .order("list_item_id", { referencedTable: "ListItem", ascending: true })
     .limit(4, { referencedTable: "ListItem" });
 }
 

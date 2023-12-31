@@ -18,6 +18,7 @@ export default async function List({ params: { list_id } }: ListParams) {
   const { data, error } = await client
     .from("List")
     .select("name, ListItem ( name, list_item_id, idempotencyKey )")
+    .order("list_item_id", { ascending: true, referencedTable: "ListItem" })
     .eq("list_id", listId)
     .single();
 
