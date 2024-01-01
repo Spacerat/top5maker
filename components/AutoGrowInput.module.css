@@ -26,8 +26,7 @@
 
 .grow-wrap > input,
 .grow-wrap::after {
-  /* Identical styling required!! */
-  padding: 0.5rem;
+  /* Identical styling required! */
   font: inherit;
 
   /* Place on top of each other */
