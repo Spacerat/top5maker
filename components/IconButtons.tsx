@@ -4,17 +4,17 @@ import { CrossIcon, RedoIcon } from "./Icons";
 import styles from "./IconButtons.module.css";
 
 type IconButtonProps = {
-  item: string;
-  onClick: (name: string) => void;
+  name: string;
+  onClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 
-export function RemoveItemButton({ item, onClick }: IconButtonProps) {
+export function RemoveItemButton({ name, onClick }: IconButtonProps) {
   return (
     <button
+      type="button"
       className={styles.iconButton}
-      value={item}
-      onClick={() => onClick(item)}
-      aria-label={`Remove item: ${item}`}
+      onClick={onClick}
+      aria-label={`Remove item: ${name}`}
       title="Remove item"
     >
       <CrossIcon />
@@ -22,13 +22,13 @@ export function RemoveItemButton({ item, onClick }: IconButtonProps) {
   );
 }
 
-export function RedoItemButton({ item, onClick }: IconButtonProps) {
+export function RedoItemButton({ name, onClick }: IconButtonProps) {
   return (
     <button
+      type="button"
       className={styles.iconButton}
-      value={item}
-      onClick={() => onClick(item)}
-      aria-label={`Re-sort item: ${item}`}
+      onClick={onClick}
+      aria-label={`Re-sort item: ${name}`}
       title="Re-sort item"
     >
       <RedoIcon />

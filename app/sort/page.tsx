@@ -25,6 +25,10 @@ import {
 } from "react-share";
 import styles from "./sort.module.css";
 
+function ident<T>(x: T) {
+  return x;
+}
+
 const Centered = ({ children }: React.PropsWithChildren) => (
   <div className={styles.centered}>{children}</div>
 );
@@ -73,6 +77,8 @@ function SortLayout({ state }: { state: SortAppState }) {
       <UndoButton undo={undo} />
       <ItemList
         header={<H3>Sorted items (best to worst)</H3>}
+        getKey={ident}
+        getName={ident}
         items={status.sorted}
         onClear={clearCache}
         onRemove={removeItem}
@@ -80,6 +86,8 @@ function SortLayout({ state }: { state: SortAppState }) {
       />
       <ItemList
         header={<H3>Unsorted items</H3>}
+        getKey={ident}
+        getName={ident}
         items={status.incompleteSorted}
         onRemove={removeItem}
       />
@@ -137,6 +145,8 @@ function DoneLayout({ state }: { state: SortAppState }) {
       <Page>
         <ItemList
           header={<H1>Here&apos;s your list, sorted best first</H1>}
+          getKey={ident}
+          getName={ident}
           items={status.sorted}
           onClear={clearCache}
           onRemove={removeItem}

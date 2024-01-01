@@ -43,15 +43,15 @@ export function ListItem({
   );
 }
 
-function useDragState() {
-  const [draggedItem, setDraggedItem] = useState<string | null>(null);
+function useDragState<T>() {
+  const [draggedItem, setDraggedItem] = useState<T | null>(null);
   const [dragging, setDragging] = useState(false);
 
   const dragStart = () => {
     setDragging(true);
   };
 
-  const dragEnter = (item: string) => {
+  const dragEnter = (item: T) => {
     if (dragging) setDraggedItem(item);
   };
 
@@ -63,56 +63,69 @@ function useDragState() {
   return { dragEnter, resetDrag, dragStart, dragging, draggedItem };
 }
 
-type ItemListProps = {
+type ItemListProps<T> = {
   header?: React.ReactNode;
-  items: readonly string[];
-  onRemove?: null | ((item: string) => void);
-  onClear?: null | ((item: string) => void);
-  onReorder?: null | ((dragged: string, target: string) => void);
+  items: readonly T[];
+  getName: (item: T) => string;
+  getKey: (item: T) => string;
+  onRemove?: null | ((item: T) => void);
+  onClear?: null | ((item: T) => void);
+  onReorder?: null | ((dragged: T, target: T) => void);
 };
 
-export function ItemList({
+export function ItemList<T>({
   header,
   items,
+  getName,
+  getKey,
   onRemove,
   onClear,
   onReorder,
-}: ItemListProps) {
+}: ItemListProps<T>) {
   const { dragEnter, resetDrag, dragStart, dragging, draggedItem } =
-    useDragState();
-
-  const actions = (item: string) => (
-    <div className={styles.noSelect}>
-      {onClear && <RedoItemButton item={item} onClick={onClear} />}
-      {onRemove && <RemoveItemButton item={item} onClick={onRemove} />}
-    </div>
-  );
+    useDragState<T>();
 
   if (items.length === 0) return null;
   return (
     <>
       {header}
       <Paper elevation="high">
-        {items.map((item) => (
-          <ListItem
-            key={item}
-            actions={actions(item)}
-            currentlyDragging={dragging}
-            onDragEnter={onReorder ? () => dragEnter(item) : undefined}
-            onDragStart={dragStart}
-            onDragEnd={
-              onReorder
-                ? () => {
-                    resetDrag();
-                    onReorder && draggedItem && onReorder(item, draggedItem);
-                  }
-                : undefined
-            }
-            isDraggedOver={draggedItem === item}
-          >
-            {item}
-          </ListItem>
-        ))}
+        {items.map((item) => {
+          const name = getName(item);
+          const key = getKey(item);
+          return (
+            <ListItem
+              key={key}
+              actions={
+                <div className={styles.noSelect}>
+                  {onClear && (
+                    <RedoItemButton name={name} onClick={() => onClear(item)} />
+                  )}
+                  {onRemove && (
+                    <RemoveItemButton
+                      name={name}
+                      onClick={() => onRemove(item)}
+                    />
+                  )}
+                </div>
+              }
+              currentlyDragging={dragging}
+              onDragEnter={onReorder ? () => dragEnter(item) : undefined}
+              onDragStart={dragStart}
+              onDragEnd={
+                onReorder
+                  ? () => {
+                      resetDrag();
+                      onReorder && draggedItem && onReorder(item, draggedItem);
+                    }
+                  : undefined
+              }
+              isDraggedOver={draggedItem === item}
+            >
+              {name}
+            </ListItem>
+          );
+        })}
       </Paper>
     </>
   );
