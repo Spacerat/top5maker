@@ -13,6 +13,7 @@ export function ListName({ listId, name }: { listId: string; name: string }) {
     const newName = form.get("name") as string | null;
     if (newName) {
       await updateListName(listId, newName);
+      inputRef.current?.blur();
     }
   };
 
