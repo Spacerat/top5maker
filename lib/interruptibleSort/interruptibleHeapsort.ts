@@ -36,7 +36,7 @@ type SortItemsState = IncompleteSortState & {
 };
 
 export type InProgressSortStatus = NextComparison & SortItemsState;
-export type DoneSortStatus = { done: true } & SortItemsState;
+export type DoneSortStatus = { done: true; comparison: null } & SortItemsState;
 export type SortStatus = InProgressSortStatus | DoneSortStatus;
 
 /** Compute the index of the parent of a node in an array-heap */
@@ -194,7 +194,7 @@ export function heapSort(
     heap = downShiftResult.heap;
   }
 
-  return { done: true, sorted: popped, incompleteSorted: [] };
+  return { done: true, sorted: popped, incompleteSorted: [], comparison: null };
 }
 
 /**
@@ -208,6 +208,7 @@ type SortStep = {
   | {
       /** True when the sort step is done */
       done: true;
+      comparison: null;
     }
   | NextComparison
 );
@@ -228,7 +229,7 @@ export function heapify(cache: SortCache, items: readonly string[]): SortStep {
     heap = result.heap;
   }
 
-  return { done: true, heap };
+  return { done: true, heap, comparison: null };
 }
 
 /**
@@ -283,7 +284,7 @@ function downHeap(
 
     // If there's no swap needed, the item is in the correct place
     if (swapWith === root) {
-      return { done: true, heap };
+      return { done: true, heap, comparison: null };
     }
 
     // Otherwise do the swap
@@ -292,5 +293,5 @@ function downHeap(
 
     [leftChild, rightChild] = childIndices(root);
   }
-  return { done: true, heap };
+  return { done: true, heap, comparison: null };
 }
