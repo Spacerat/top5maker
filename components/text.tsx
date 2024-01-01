@@ -12,6 +12,15 @@ export const H1 = styled.h1(styles.h1);
 export const H2 = styled.h2(styles.h2);
 export const H3 = styled.h3(styles.h3);
 
+export const NoStyleLink = ({
+  children,
+  ...props
+}: React.PropsWithChildren<LinkProps>) => (
+  <Link {...props} className={styles.noStyleLink}>
+    {children}
+  </Link>
+);
+
 export const BrandLink = ({
   children,
   ...props
