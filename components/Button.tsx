@@ -1,8 +1,10 @@
 import styles from "./Button.module.css";
 import { styled } from "./withStyle";
 
+export type ButtonVariant = "primary" | "secondary" | "danger";
+
 type ButtonProps = {
-  variant?: "primary" | "secondary" | "danger";
+  variant?: ButtonVariant;
 };
 
 export const Button = styled.button<ButtonProps>(

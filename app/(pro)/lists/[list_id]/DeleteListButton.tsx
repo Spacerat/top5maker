@@ -13,7 +13,7 @@ export function DeleteListButton({ listId }: { listId: string }) {
   return (
     <DialogButton
       button={"Delete"}
-      kind="secondary"
+      variant="secondary"
       contents={({ close }) => (
         <Card elevation="high">
           <H3>Are you sure you want delete this list?</H3>

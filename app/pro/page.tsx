@@ -28,7 +28,7 @@ export default async function Home() {
       <Header>
         <ProBrand />
         <DialogButton
-          kind="secondary"
+          variant="secondary"
           button="Get Started"
           contents={<AuthForm view="sign_up" />}
         />
