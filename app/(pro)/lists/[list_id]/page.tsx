@@ -5,6 +5,8 @@ import { checkAndAssertData } from "@/utils/errors";
 import { ListBuilder } from "./ListBuilder";
 import { DeleteListButton } from "./DeleteListButton";
 import { ListName } from "./ListName";
+import { FullMobileButton } from "@/components/Button";
+import Link from "next/link";
 
 type ListParams = {
   params: { list_id?: string };
@@ -26,11 +28,14 @@ export default async function List({ params: { list_id } }: ListParams) {
 
   return (
     <Page kind="main">
-      <div className="justify-between flex flex-row">
+      <div className="justify-between flex flex-row items-center">
         <ListName listId={listId} name={data.name} />
         <DeleteListButton listId={listId} />
       </div>
       <ListBuilder listId={listId} items={data.ListItem} />
+      <Link href={`/lists/${list_id}/sort`} className="contents">
+        <FullMobileButton type="button">Start Sorting</FullMobileButton>
+      </Link>
     </Page>
   );
 }

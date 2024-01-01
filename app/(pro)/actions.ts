@@ -16,6 +16,13 @@ export async function newList() {
 
   checkAndAssertData(data, error);
 
+  const { data: sortData, error: sortError } = await client
+    .from("Sort")
+    .insert({ list_id: data.list_id })
+    .select()
+    .single();
+
+  checkAndAssertData(sortData, sortError);
   return data.list_id;
 }
 
@@ -98,4 +105,25 @@ export async function removeList(listId: string) {
   redirect("/lists");
 
   return data?.list_id;
+}
+
+export async function newDecision(
+  list_id: string,
+  sort_id: string,
+  greater_item_id: string,
+  lesser_item_id: string
+) {
+  const client = serverClient();
+  const { data, error } = await client
+    .from("Decision")
+    .insert({ sort_id, greater_item_id, lesser_item_id })
+    .select()
+    .single();
+
+  checkAndAssertData(data, error);
+
+  // TODO: for now, assume sort/list are 1:1
+  revalidatePath(`/lists/${encodeId(list_id)}`);
+
+  return data;
 }
