@@ -20,7 +20,7 @@ export interface Database {
         }
         Insert: {
           created_at?: string
-          created_by: string
+          created_by?: string
           decision_id?: string
           greater_item_id: string
           lesser_item_id: string
@@ -36,13 +36,6 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "Decision_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "Decision_greater_item_id_fkey"
             columns: ["greater_item_id"]
             isOneToOne: false
@@ -55,6 +48,13 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "ListItem"
             referencedColumns: ["list_item_id"]
+          },
+          {
+            foreignKeyName: "Decision_sort_id_fkey"
+            columns: ["sort_id"]
+            isOneToOne: false
+            referencedRelation: "Sort"
+            referencedColumns: ["sort_id"]
           }
         ]
       }
