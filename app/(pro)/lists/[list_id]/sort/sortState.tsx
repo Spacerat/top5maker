@@ -1,6 +1,6 @@
 import { SortCache, cacheWithUpdate, heapSort } from "@/lib/interruptibleSort";
 
-type Item = {
+export type Item = {
   name: string;
   list_item_id: string;
 };
@@ -8,14 +8,17 @@ type Item = {
 type Decision = {
   greater_item_id: string;
   lesser_item_id: string;
+  decision_id: string;
 };
 
+export type Comparison = { a: Item; b: Item };
 type DoneResult = { done: true; comparison: null };
-type IncompleteResult = { done: false; comparison: { a: Item; b: Item } };
+type IncompleteResult = { done: false; comparison: Comparison };
 
 export type SortResult = {
   sorted: Item[];
   incompleteSorted: Item[];
+  lastDecision: { id: string; greater: Item; lesser: Item } | null;
 } & (DoneResult | IncompleteResult);
 
 export function getSort(items: Item[], decision: Decision[]): SortResult {
@@ -44,10 +47,20 @@ export function getSort(items: Item[], decision: Decision[]): SortResult {
     (id) => itemMap.get(id)!
   );
 
+  const lastDecisionIds = decision[decision.length - 1];
+  const lastDecision = lastDecisionIds
+    ? {
+        id: lastDecisionIds.decision_id,
+        greater: itemMap.get(lastDecisionIds.greater_item_id)!,
+        lesser: itemMap.get(lastDecisionIds.lesser_item_id)!,
+      }
+    : null;
+
   if (sortStatus.done) {
     return {
       sorted,
       incompleteSorted,
+      lastDecision,
       done: sortStatus.done,
       comparison: null,
     };
@@ -55,6 +68,7 @@ export function getSort(items: Item[], decision: Decision[]): SortResult {
   return {
     sorted,
     incompleteSorted,
+    lastDecision,
     done: sortStatus.done,
     comparison: {
       a: itemMap.get(sortStatus.comparison.a)!,

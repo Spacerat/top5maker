@@ -4,8 +4,7 @@
   gap: 24px;
 }
 
-.sideBySideButtons > button,
-.sideBySideButtons > a > button {
+.sideBySideButtons button {
   display: block;
   flex: 1;
   min-height: 160px;

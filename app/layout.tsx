@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Roboto, Nunito } from "next/font/google";
 import "./globals.css";
 import Head from "next/head";
+import "react-tooltip/dist/react-tooltip.css";
 
 const roboto = Roboto({
   subsets: ["latin"],

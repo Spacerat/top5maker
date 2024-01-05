@@ -37,7 +37,7 @@ export default async function Sort({ params: { list_id } }: ListParams) {
 
   const { data: decisionData, error: decisionError } = await client
     .from("Decision")
-    .select("greater_item_id, lesser_item_id")
+    .select("decision_id, greater_item_id, lesser_item_id")
     .eq("sort_id", sort.sort_id);
   checkAndAssertData(decisionData, decisionError);
 
@@ -46,10 +46,9 @@ export default async function Sort({ params: { list_id } }: ListParams) {
   return (
     <Page kind="main">
       <H1>
+        Sorting{": "}
         <NoStyleLink href={`/lists/${list_id}`}>{listData.name}</NoStyleLink>
-        {" - "}Sorting
       </H1>
-
       <SortLayout sortState={sortState} listId={listId} sortId={sort.sort_id} />
     </Page>
   );

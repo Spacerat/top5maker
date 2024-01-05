@@ -127,3 +127,43 @@ export async function newDecision(
 
   return data;
 }
+
+export async function deleteDecision(list_id: string, decision_id: string) {
+  const client = serverClient();
+  const { error } = await client
+    .from("Decision")
+    .delete()
+    .eq("decision_id", decision_id)
+    .select("decision_id")
+    .single();
+
+  revalidatePath(`/lists/${encodeId(list_id)}`);
+  revalidatePath(`/lists/${encodeId(list_id)}/sort`);
+
+  checkPostgresError(error);
+}
+
+export async function resetListItem(list_id: string, item_id: string) {
+  const client = serverClient();
+
+  // TODO: delete using a single OR condition
+  // for some reason .or didn't work for me.
+  const { error: errorGreater } = await client
+    .from("Decision")
+    .delete()
+    .eq("greater_item_id", item_id)
+    .select("decision_id");
+
+  checkPostgresError(errorGreater);
+
+  const { error: errorLesser } = await client
+    .from("Decision")
+    .delete()
+    .eq("lesser_item_id", item_id)
+    .select("decision_id");
+
+  checkPostgresError(errorLesser);
+
+  revalidatePath(`/lists/${encodeId(list_id)}`);
+  revalidatePath(`/lists/${encodeId(list_id)}/sort`);
+}
