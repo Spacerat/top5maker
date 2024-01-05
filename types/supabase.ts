@@ -91,6 +91,7 @@ export interface Database {
         Row: {
           created_at: string
           created_by: string
+          deleted_at: string | null
           idempotencyKey: string | null
           list_id: string
           list_item_id: string
@@ -99,6 +100,7 @@ export interface Database {
         Insert: {
           created_at?: string
           created_by?: string
+          deleted_at?: string | null
           idempotencyKey?: string | null
           list_id: string
           list_item_id?: string
@@ -107,6 +109,7 @@ export interface Database {
         Update: {
           created_at?: string
           created_by?: string
+          deleted_at?: string | null
           idempotencyKey?: string | null
           list_id?: string
           list_item_id?: string

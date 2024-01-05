@@ -6,10 +6,10 @@ import { ItemList } from "@/components/List";
 import { Button, FullMobileButton } from "@/components/Button";
 import { SideBySideButtons } from "@/components/SideBySideButtons";
 import {
-  deleteDecision,
   newDecision,
-  removeListItem,
+  deleteListItem,
   resetListItem,
+  undo,
 } from "@/app/(pro)/actions";
 import { Tooltip } from "react-tooltip";
 
@@ -29,16 +29,17 @@ export function SortLayout({
   listId: string;
   sortId: string;
 }) {
-  const { comparison, sorted, incompleteSorted } = sortState;
-
-  const lastDecision = sortState.lastDecision;
+  const { comparison, sorted, incompleteSorted, lastAction } = sortState;
 
   const onRemove = async (item: Item) =>
-    removeListItem(listId, item.list_item_id);
+    deleteListItem(listId, item.list_item_id);
 
   const onClear = async (item: Item) =>
     resetListItem(listId, item.list_item_id);
 
+  const onUndo = async () => {
+    lastAction && undo(listId, lastAction);
+  };
   return (
     <>
       {comparison && (
@@ -87,23 +88,30 @@ export function SortLayout({
         getName={getItemName}
         onRemove={onRemove}
       />
-      {lastDecision && (
+      {lastAction && (
         <>
           <FullMobileButton
             data-tooltip-id="undoTooltip"
             variant="secondary"
-            onClick={async () => {
-              await deleteDecision(listId, lastDecision.id);
-            }}
+            onClick={onUndo}
           >
             Undo
           </FullMobileButton>
           <Tooltip id="undoTooltip" className="max-w-full" place="right">
             <div className="flex flex-row gap-2 items-center text-center">
               <div>Undo:</div>
-              <div>{lastDecision.greater.name}</div>
-              <div>{" > "}</div>
-              <div>{lastDecision.lesser.name}</div>
+              {lastAction.type === "decision" && (
+                <>
+                  <div>{`"${lastAction.decision.greater_item.name}"`}</div>
+                  <div>{" > "}</div>
+                  <div>{`"${lastAction.decision.lesser_item.name}"`}</div>
+                </>
+              )}
+              {lastAction.type === "delete" && (
+                <>
+                  <div>{`Delete "${lastAction.item.name}"`}</div>
+                </>
+              )}
             </div>
           </Tooltip>
         </>

@@ -19,8 +19,9 @@ export default async function List({ params: { list_id } }: ListParams) {
 
   const { data, error } = await client
     .from("List")
-    .select("name, ListItem ( name, list_item_id, idempotencyKey )")
+    .select("name, ListItem( name, list_item_id, idempotencyKey, deleted_at )")
     .order("list_item_id", { ascending: true, referencedTable: "ListItem" })
+    .is("ListItem.deleted_at", null)
     .eq("list_id", listId)
     .single();
 
@@ -32,7 +33,10 @@ export default async function List({ params: { list_id } }: ListParams) {
         <ListName listId={listId} name={data.name} />
         <DeleteListButton listId={listId} />
       </div>
-      <ListBuilder listId={listId} items={data.ListItem} />
+      <ListBuilder
+        listId={listId}
+        items={data.ListItem.filter((x) => !x.deleted_at)}
+      />
       <Link href={`/lists/${list_id}/sort`} className="contents">
         <FullMobileButton type="button">Start Sorting</FullMobileButton>
       </Link>

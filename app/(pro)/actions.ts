@@ -5,6 +5,7 @@ import { checkAndAssertData, checkPostgresError } from "@/utils/errors";
 import { encodeId } from "@/utils/ids";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { Action } from "./lists/[list_id]/sort/sortState";
 
 export async function newList() {
   const client = serverClient();
@@ -69,21 +70,34 @@ export async function updateListName(
   return data.name;
 }
 
-export async function removeListItem(listId: string, listItemId: string) {
+export async function deleteListItem(listId: string, listItemId: string) {
   const client = serverClient();
 
   const { data, error } = await client
     .from("ListItem")
-    .delete()
+    .update({ deleted_at: "now()" })
     .eq("list_item_id", listItemId)
-    .select("name, list_item_id, idempotencyKey")
+    .select("list_item_id")
     .single();
+
+  checkAndAssertData(data, error);
+
+  revalidatePath(`/lists/${encodeId(listId)}`);
+
+  return data.list_item_id;
+}
+
+export async function undeleteListItem(listId: string, listItemId: string) {
+  const client = serverClient();
+
+  const { error } = await client
+    .from("ListItem")
+    .update({ deleted_at: null })
+    .eq("list_item_id", listItemId);
 
   checkPostgresError(error);
 
   revalidatePath(`/lists/${encodeId(listId)}`);
-
-  return data?.list_item_id;
 }
 
 export async function removeList(listId: string) {
@@ -141,6 +155,14 @@ export async function deleteDecision(list_id: string, decision_id: string) {
   revalidatePath(`/lists/${encodeId(list_id)}/sort`);
 
   checkPostgresError(error);
+}
+
+export async function undo(list_id: string, action: Action) {
+  if (action.type === "decision") {
+    await deleteDecision(list_id, action.decision.decision_id);
+  } else if (action.type === "delete") {
+    await undeleteListItem(list_id, action.item.list_item_id);
+  }
 }
 
 export async function resetListItem(list_id: string, item_id: string) {

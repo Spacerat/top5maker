@@ -7,7 +7,7 @@ import { useOptimistic, useRef, useState } from "react";
 import {
   ListItem as ListItemType,
   addListItems,
-  removeListItem,
+  deleteListItem,
 } from "../../actions";
 import { Paper } from "@/components/layout";
 import { CrossIcon } from "@/components/Icons";
@@ -74,7 +74,7 @@ export function ListBuilder({
 
   async function removeItemOptimistic(itemId: string) {
     updateOptimistic({ type: "remove", itemId });
-    const removedId = await removeListItem(listId, itemId);
+    const removedId = await deleteListItem(listId, itemId);
     setState((curr) => curr.filter((item) => item.list_item_id !== removedId));
   }
 

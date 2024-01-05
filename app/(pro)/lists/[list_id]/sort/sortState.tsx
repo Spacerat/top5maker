@@ -1,15 +1,28 @@
+import { Decision } from "@/app/(pro)/queries";
 import { SortCache, cacheWithUpdate, heapSort } from "@/lib/interruptibleSort";
+import { withRemovedNode } from "@/lib/interruptibleSort/graph";
 
 export type Item = {
   name: string;
   list_item_id: string;
+  deleted_at: string | null;
 };
 
-type Decision = {
-  greater_item_id: string;
-  lesser_item_id: string;
-  decision_id: string;
-};
+export type Action =
+  | {
+      type: "delete";
+      time: string;
+      item: Item;
+    }
+  | {
+      type: "decision";
+      time: string;
+      decision: Decision;
+    };
+
+function isDeletedItem(item: Item): item is Item & { deleted_at: string } {
+  return item.deleted_at !== null;
+}
 
 export type Comparison = { a: Item; b: Item };
 type DoneResult = { done: true; comparison: null };
@@ -18,49 +31,65 @@ type IncompleteResult = { done: false; comparison: Comparison };
 export type SortResult = {
   sorted: Item[];
   incompleteSorted: Item[];
-  lastDecision: { id: string; greater: Item; lesser: Item } | null;
+  lastAction: Action | null;
 } & (DoneResult | IncompleteResult);
 
 export function getSort(items: Item[], decision: Decision[]): SortResult {
+  const filtered = items.filter((item) => !isDeletedItem(item));
+
+  const deleteActions: Action[] = items.filter(isDeletedItem).map((item) => ({
+    type: "delete" as const,
+    time: item.deleted_at,
+    item,
+  }));
+
+  const decisionAction = decision.map((decision) => ({
+    type: "decision" as const,
+    time: decision.created_at,
+    decision,
+  }));
+
+  const allActions = [...deleteActions, ...decisionAction].sort((a, b) =>
+    a.time.localeCompare(b.time)
+  );
+
   // Sort using item IDs
 
   let cache: SortCache = {};
-  for (const { greater_item_id, lesser_item_id } of decision) {
-    // TODO: this is slow but probably not a huge deal for now
-    cache = cacheWithUpdate(cache, {
-      larger: greater_item_id,
-      smaller: lesser_item_id,
-    });
+  for (const action of allActions) {
+    if (action.type === "delete") {
+      cache = withRemovedNode(cache, action.item.list_item_id);
+    } else if (action.type === "decision") {
+      const { greater_item, lesser_item } = action.decision;
+      cache = cacheWithUpdate(cache, {
+        larger: greater_item.list_item_id,
+        smaller: lesser_item.list_item_id,
+      });
+    }
   }
 
-  const allItemIds = items.map((items) => items.list_item_id);
+  const allItemIds = filtered.map((item) => item.list_item_id);
   const sortStatus = heapSort(cache, allItemIds);
 
   // Create a map from item ID to item
 
-  const itemMap = new Map(items.map((item) => [item.list_item_id, item]));
+  const itemMap = new Map(filtered.map((item) => [item.list_item_id, item]));
 
   // Map back to named items
 
   const sorted = sortStatus.sorted.map((id) => itemMap.get(id)!);
+
   const incompleteSorted = sortStatus.incompleteSorted.map(
     (id) => itemMap.get(id)!
   );
 
-  const lastDecisionIds = decision[decision.length - 1];
-  const lastDecision = lastDecisionIds
-    ? {
-        id: lastDecisionIds.decision_id,
-        greater: itemMap.get(lastDecisionIds.greater_item_id)!,
-        lesser: itemMap.get(lastDecisionIds.lesser_item_id)!,
-      }
-    : null;
+  const lastAction = allActions.at(-1) ?? null;
 
   if (sortStatus.done) {
     return {
       sorted,
       incompleteSorted,
-      lastDecision,
+      lastAction,
       done: sortStatus.done,
       comparison: null,
     };
@@ -68,8 +97,8 @@ export function getSort(items: Item[], decision: Decision[]): SortResult {
   return {
     sorted,
     incompleteSorted,
-    lastDecision,
     done: sortStatus.done,
+    lastAction,
     comparison: {
       a: itemMap.get(sortStatus.comparison.a)!,
       b: itemMap.get(sortStatus.comparison.b)!,

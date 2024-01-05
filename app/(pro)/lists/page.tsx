@@ -4,6 +4,7 @@ import { serverClient } from "@/utils/client";
 import { NewListButton } from "./NewListButton";
 import Link from "next/link";
 import { encodeId } from "@/utils/ids";
+import { checkAndAssertData } from "@/utils/errors";
 
 export const dynamic = "force-dynamic";
 
@@ -11,13 +12,15 @@ async function getLists() {
   return await serverClient()
     .from("List")
     .select("*, ListItem (name, list_item_id)")
+    .is("ListItem.deleted_at", null)
     .order("created_at", { ascending: false })
     .order("list_item_id", { referencedTable: "ListItem", ascending: true })
     .limit(4, { referencedTable: "ListItem" });
 }
 
 export default async function Lists() {
-  const lists = await getLists();
+  const { data, error } = await getLists();
+  checkAndAssertData(data, error);
 
   return (
     <Page>
@@ -26,7 +29,7 @@ export default async function Lists() {
         <NewListButton />
       </div>
       <CardGrid>
-        {lists?.data?.map((list) => (
+        {data.map((list) => (
           <Card key={list.list_id} elevation="low">
             <Link href={`/lists/${encodeId(list.list_id)}`}>{list.name}</Link>
             <ul className="list-disc list-inside">
