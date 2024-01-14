@@ -24,10 +24,7 @@ import {
   WhatsappShareButton,
 } from "react-share";
 import styles from "./sort.module.css";
-
-function ident<T>(x: T) {
-  return x;
-}
+import { ident } from "@/utils/ident";
 
 const Centered = ({ children }: React.PropsWithChildren) => (
   <div className={styles.centered}>{children}</div>

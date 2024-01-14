@@ -8,6 +8,7 @@ import { AddForm } from "@/components/AddItemInput";
 import { FullMobileButton } from "@/components/Button";
 import { ItemList } from "@/components/List";
 import { stringSetRemove, stringSetUnion } from "@/lib/immutableStringSet";
+import { ident } from "@/utils/ident";
 
 export function SetupItems() {
   const [items, setItems] = React.useState<readonly string[]>([]);
@@ -24,7 +25,12 @@ export function SetupItems() {
 
   return (
     <>
-      <ItemList items={items} onRemove={removeItem} />
+      <ItemList
+        items={items}
+        onRemove={removeItem}
+        getKey={ident}
+        getName={ident}
+      />
       <AddForm
         onAddItems={addItems}
         keepInView
