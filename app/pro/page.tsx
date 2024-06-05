@@ -22,7 +22,7 @@ export default async function Home() {
     redirect("/lists");
   }
 
-  let dialog = (
+  const dialog = (
     <Card>
       <AuthForm view="magic_link" />
     </Card>
