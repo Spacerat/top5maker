@@ -12,9 +12,8 @@ export default async function Account() {
     cookies: () => cookies(),
   });
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  const user = session?.user;
+    data: { user },
+  } = await supabase.auth.getUser();
 
   return (
     <Page slim>

@@ -6,10 +6,10 @@ async function signout(req: NextRequest) {
 
   // Check if we have a session
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (session) {
+  if (user) {
     await supabase.auth.signOut();
   }
 
