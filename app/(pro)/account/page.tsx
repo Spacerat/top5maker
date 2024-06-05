@@ -1,5 +1,6 @@
 import AuthForm from "@/components/AuthForm";
-import { Page } from "@/components/layout";
+import DialogButton from "@/components/DialogButton";
+import { Card, Page } from "@/components/layout";
 import { H1, H3 } from "@/components/text";
 import { Database } from "@/types/supabase";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
@@ -18,12 +19,18 @@ export default async function Account() {
   return (
     <Page slim>
       <H1>Your account</H1>
-      <H3>Email</H3>
-      <span>{user?.email}</span>
-      <H3>Update Password</H3>
-      <AuthForm view="update_password" />
-      <H3>Forgotten Password</H3>
-      <AuthForm view="forgotten_password" />
+      <H3>Email: {user?.email}</H3>
+      <div>
+        <DialogButton
+          button="Update password"
+          variant="primary"
+          contents={
+            <Card>
+              <AuthForm view="update_password" />
+            </Card>
+          }
+        />
+      </div>
     </Page>
   );
 }
