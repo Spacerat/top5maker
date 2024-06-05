@@ -12,7 +12,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <NavLink href={"/lists"}>Your Lists</NavLink>
           </div>
         </div>
-        <NavLink href={"/lists"}>Account</NavLink>
+        <NavLink href={"/account"}>Account</NavLink>
       </Header>
       {children}
     </Main>
