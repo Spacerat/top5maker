@@ -14,8 +14,10 @@ const nunito = Nunito({ subsets: ["latin"], variable: "--fontNunito" });
 
 export const metadata: Metadata = {
   title: "Sort Star",
-  description: `Sort anything with SortStar.app! Favourite superhero?
-  Best holiday destination? Next restaurant trip? SortStar has you covered.`,
+  description: `
+  Sort anything with SortStar.app! Favourite superhero?
+  Best holiday destination? Next restaurant trip? SortStar has you covered.
+  `,
 };
 
 export default function RootLayout({
