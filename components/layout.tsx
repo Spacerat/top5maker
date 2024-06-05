@@ -34,7 +34,7 @@ export const MainSectionContainer = styled.div<KindProp>(
 const FooterSectionContainer = styled.footer(styles.footerSectionContainer);
 
 export const PageSection = styled.div<SlimProp>(
-  ({ slim = false }) =>
+  ({ slim = undefined }) =>
     `${styles.pageContainer} ${styles.pageSection} ${styles.section} ${
       slim ? styles.slim : ""
     }`
@@ -43,7 +43,7 @@ export const PageSection = styled.div<SlimProp>(
 export function Page({
   children,
   kind,
-  slim = false,
+  slim = undefined,
 }: React.PropsWithChildren<PageProps>) {
   return (
     <MainSectionContainer kind={kind}>
