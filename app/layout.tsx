@@ -3,6 +3,7 @@ import { Roboto, Nunito } from "next/font/google";
 import "./globals.css";
 import Head from "next/head";
 import "react-tooltip/dist/react-tooltip.css";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -30,7 +31,10 @@ export default function RootLayout({
           content="width=device-width, initial-scale=1, maximum-scale=1"
         />
       </Head>
-      <body>{children}</body>
+      <body>
+        <SpeedInsights />
+        {children}
+      </body>
     </html>
   );
 }
