@@ -9,6 +9,7 @@ import {
   HeaderProps,
   InputProps,
   SpanProps,
+  AProps,
 } from "react-html-props";
 
 type StyleProp<T> = string | ((props: T) => string);
@@ -61,5 +62,8 @@ export const styled = {
   },
   button<T>(style: StyleProp<T>) {
     return withStyle<ButtonProps & T>("button", style);
+  },
+  a<T>(style: StyleProp<T>) {
+    return withStyle<AProps & T>("a", style);
   },
 };

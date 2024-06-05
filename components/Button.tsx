@@ -11,6 +11,10 @@ export const Button = styled.button<ButtonProps>(
   ({ variant = "primary" }) => `${styles.button} ${styles[variant]}`
 );
 
+export const LinkButton = styled.a<ButtonProps>(
+  ({ variant = "primary" }) => `${styles.button} ${styles[variant]}`
+);
+
 export const FullMobileButton = styled.button<ButtonProps>(
   ({ variant = "primary" }) => `${styles.fullMobileButton} ${styles[variant]}`
 );
