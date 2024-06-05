@@ -1,7 +1,6 @@
 import AuthForm from "@/components/AuthForm";
 import { Footer, ProBrand } from "@/components/Brand";
-import { Button, LinkButton } from "@/components/Button";
-import Dialog from "@/components/Dialog";
+import { LinkButton } from "@/components/Button";
 import DialogButton from "@/components/DialogButton";
 import { SideBySideButtons } from "@/components/SideBySideButtons";
 import { Card, Header, Main, Page } from "@/components/layout";
