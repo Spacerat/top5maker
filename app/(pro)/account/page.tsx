@@ -8,8 +8,9 @@ import { cookies } from "next/headers";
 import React from "react";
 
 export default async function Account() {
+  const cookieStore = cookies();
   const supabase = createServerComponentClient<Database>({
-    cookies: () => cookies(),
+    cookies: () => cookieStore,
   });
   const {
     data: { user },
