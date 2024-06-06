@@ -24,7 +24,7 @@ export const TagLine = () => (
 
 export const Illustration = () => (
   <div className={styles.imageContainer}>
-    <Image src="/Illustration.svg" width="226" height="124" alt="" />
+    <Image src="/Illustration.svg" width="226" height="124" alt="" priority />
   </div>
 );
 
