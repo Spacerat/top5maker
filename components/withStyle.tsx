@@ -15,21 +15,27 @@ import {
 type StyleProp<T> = string | ((props: T) => string);
 
 export function withStyle<T>(element: string, style: StyleProp<T>) {
-  const result = ({
-    className,
-    children,
-    ...rest
-  }: PropsWithChildren<T & { className?: string | undefined }>) =>
-    React.createElement(
-      element,
+  const result = React.forwardRef(
+    (
       {
-        ...rest,
-        className: `${
-          typeof style === "function" ? style(rest as T) : style
-        } ${className}`,
-      },
-      children
-    );
+        className,
+        children,
+        ...rest
+      }: PropsWithChildren<T & { className?: string | undefined }>,
+      ref
+    ) =>
+      React.createElement(
+        element,
+        {
+          ...rest,
+          ref,
+          className: `${
+            typeof style === "function" ? style(rest as T) : style
+          } ${className}`,
+        },
+        children
+      )
+  );
   const styleName = typeof style === "function" ? "function" : style;
   result.displayName = `withStyle(${element}, ${styleName})`;
   return result;
