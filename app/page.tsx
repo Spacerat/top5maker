@@ -1,3 +1,5 @@
+"use server";
+
 import Link from "next/link";
 import React from "react";
 import { makeSortUrl } from "@/sortState/useSortUrl";
@@ -72,7 +74,7 @@ function ExampleCard(example: Example) {
   );
 }
 
-export default function Home() {
+export default async function Home() {
   return (
     <Main>
       <Header>
