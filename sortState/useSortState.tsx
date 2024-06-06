@@ -115,10 +115,10 @@ export function useSortState() {
   const { replace } = useRouter();
   const query = useSearchParams();
 
-  // Keep scroll position when updating app state in URL
   function replaceQuery(newQuery: QueryParams) {
     const queryString = new URLSearchParams(newQuery).toString();
     replace(`sort?${queryString}`, {
+      // Keep scroll position when updating app state in URL
       scroll: false,
     });
   }
