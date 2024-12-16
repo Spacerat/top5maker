@@ -2,19 +2,25 @@ import React from "react";
 import { CrossIcon, RedoIcon } from "./Icons";
 
 import styles from "./IconButtons.module.css";
+import { twMerge } from "tailwind-merge";
 
 type IconButtonProps = {
-  name: string;
+  name?: string;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
+  className?: string;
 };
 
-export function RemoveItemButton({ name, onClick }: IconButtonProps) {
+export function RemoveItemButton({
+  name,
+  onClick,
+  className,
+}: IconButtonProps) {
   return (
     <button
       type="button"
-      className={styles.iconButton}
+      className={twMerge(styles.iconButton, className)}
       onClick={onClick}
-      aria-label={`Remove item: ${name}`}
+      aria-label={name ? `Remove item: ${name}` : "Remove item"}
       title="Remove item"
     >
       <CrossIcon />

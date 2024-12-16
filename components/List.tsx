@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { RedoItemButton, RemoveItemButton } from "@/components/IconButtons";
 import { Paper } from "@/components/layout";
 import styles from "./List.module.css";
+import { styled } from "./withStyle";
 
 type ListItemProps = {
   actions?: React.ReactNode;
@@ -14,6 +15,9 @@ type ListItemProps = {
   onDragStart?: () => void | undefined;
   onDragEnd?: () => void | undefined;
 };
+
+export const ListItemContainer = styled.div(styles.itemContainer);
+export const ListItemTextContainer = styled.div(styles.itemTextContainer);
 
 export function ListItem({
   children,
@@ -27,7 +31,7 @@ export function ListItem({
   const draggable = !!(onDragEnter && onDragEnd && onDragStart);
   return (
     <>
-      <div
+      <ListItemContainer
         className={`${styles.itemContainer} ${loading && "opacity-50"}`}
         draggable={draggable}
         onDragOver={draggable ? (e) => e.preventDefault() : undefined}
@@ -35,9 +39,11 @@ export function ListItem({
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
       >
-        <div className={styles.itemTextContainer}>{children}</div>
+        <ListItemTextContainer className={styles.itemTextContainer}>
+          {children}
+        </ListItemTextContainer>
         {actions}
-      </div>
+      </ListItemContainer>
       {isDraggedOver && <div className={styles.dragBar}> </div>}
     </>
   );

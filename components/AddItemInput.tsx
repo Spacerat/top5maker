@@ -1,7 +1,7 @@
 import React, { ClipboardEventHandler } from "react";
 import { Button } from "./Button";
 import { TextInput } from "./TextInput";
-import styles from "./AddItemInput.module.css";
+import styles from "./FormLine.module.css";
 
 type AddFormProps = {
   onAddItems: (names: string[]) => void;

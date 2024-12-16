@@ -1,7 +1,7 @@
-import { Brand } from "@/components/Brand";
+import { Brand, Footer } from "@/components/Brand";
 import { Header, Main } from "@/components/layout";
 import React, { Suspense } from "react";
-import { Sorter } from "./sort";
+import { LoadingLayout, Sorter } from "./sort";
 
 export default async function Sort() {
   return (
@@ -9,9 +9,10 @@ export default async function Sort() {
       <Header>
         <Brand />
       </Header>
-      <Suspense>
+      <Suspense fallback={<LoadingLayout />}>
         <Sorter />
       </Suspense>
+      <Footer />
     </Main>
   );
 }

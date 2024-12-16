@@ -1,5 +1,6 @@
 export const itemsQueryKey = "i";
 export const cacheQueryKey = "c";
+export const rankingsQueryKey = "r";
 
 // NOTE: There is a bug which causes exceptions when too many items are added,
 // which results in the need for this limit. If the bug can be solved, perhaps

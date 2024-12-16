@@ -10,7 +10,9 @@ import {
   InputProps,
   SpanProps,
   AProps,
+  TextAreaProps,
 } from "react-html-props";
+import { twMerge } from "tailwind-merge";
 
 type StyleProp<T> = string | ((props: T) => string);
 
@@ -29,9 +31,10 @@ export function withStyle<T>(element: string, style: StyleProp<T>) {
         {
           ...rest,
           ref,
-          className: `${
-            typeof style === "function" ? style(rest as T) : style
-          } ${className}`,
+          className: twMerge(
+            typeof style === "function" ? style(rest as T) : style,
+            className
+          ),
         },
         children
       )
@@ -56,6 +59,9 @@ export const styled = {
   },
   input<T>(style: StyleProp<T>) {
     return withStyle<InputProps & T>("input", style);
+  },
+  textarea<T>(style: StyleProp<T>) {
+    return withStyle<TextAreaProps & T>("textarea", style);
   },
   div<T>(style: StyleProp<T>) {
     return withStyle<DivProps & T>("div", style);
