@@ -8,8 +8,8 @@ import { serializeItems, deserializeItems } from "@/sortState/serialization";
 import { safe64encode, safe64decode } from "@/lib/base64";
 import { itemsQueryKey, rankingsQueryKey } from "@/sortState/config";
 import { RemoveItemButton } from "@/components/IconButtons";
-import { Borda } from "votes";
-import { useMemo, useState } from "react";
+import { Borda as VoteMethod } from "votes";
+import { useMemo } from "react";
 import { ListItemContainer, ListItemTextContainer } from "@/components/List";
 
 function serializeRankings(
@@ -92,7 +92,7 @@ function useVoteState() {
   }
 
   const { ranking, scores } = useMemo(() => {
-    const borda = new Borda({
+    const election = new VoteMethod({
       candidates: items,
       ballots: rankings.map(({ ranking }) => ({
         ranking: ranking.map((x) => [x]),
@@ -101,8 +101,11 @@ function useVoteState() {
     });
 
     return {
-      ranking: borda.ranking().map((x) => x[0]),
-      scores: borda.scores(),
+      ranking: election.ranking().flatMap((i) => i),
+      scores:
+        "scores" in election && typeof election.scores === "function"
+          ? election.scores()
+          : {},
     };
   }, [items, rankings]);
 

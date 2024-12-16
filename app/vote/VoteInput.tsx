@@ -41,6 +41,7 @@ export function VoteInput({
           .filter((item) => item.length > 0);
         onReceiveRanking?.(ranking, name);
         textArea.setCustomValidity("");
+        e.currentTarget.reset();
       } else if (text.includes(itemsQueryKey)) {
         try {
           const url = new URL(text);
