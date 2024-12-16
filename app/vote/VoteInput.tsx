@@ -1,24 +1,25 @@
 "use client";
 
-import { TextArea } from "@/components/TextInput";
+import { TextArea, TextInput } from "@/components/TextInput";
 import { Button } from "@/components/Button";
-import { FormEventHandler, KeyboardEventHandler, useState } from "react";
+import { FormEventHandler, KeyboardEventHandler } from "react";
 import { deserializeItems, deserializeCache } from "@/sortState/serialization";
 import { itemsQueryKey, cacheQueryKey } from "@/sortState/config";
 import { heapSort } from "@/lib/interruptibleSort";
 import styles from "@/components/FormLine.module.css";
 import { useMetaKey } from "./useMetaKey";
+import { twMerge } from "tailwind-merge";
 
 export function VoteInput({
   onReceiveRanking,
 }: {
-  onReceiveRanking?: (ranking: string[]) => void;
+  onReceiveRanking?: (ranking: string[], name: string) => void;
 }) {
-  const [value, setValue] = useState("");
-
   const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    const text = value.trim();
+    const formData = new FormData(e.currentTarget);
+    const text = (formData.get("item") as string).trim();
+    const name = formData.get("name") as string;
     const textArea = e.currentTarget.querySelector("textarea");
     if (!textArea) {
       return;
@@ -38,7 +39,7 @@ export function VoteInput({
           .split("\n")
           .map((item) => item.trim())
           .filter((item) => item.length > 0);
-        onReceiveRanking?.(ranking);
+        onReceiveRanking?.(ranking, name);
         textArea.setCustomValidity("");
       } else if (text.includes(itemsQueryKey)) {
         try {
@@ -57,8 +58,9 @@ export function VoteInput({
             );
 
             if (done) {
-              onReceiveRanking?.(sorted);
+              onReceiveRanking?.(sorted, name);
               textArea.setCustomValidity("");
+              e.currentTarget.reset();
               return;
             } else {
               textArea.setCustomValidity("Incomplete SortStar ranking");
@@ -86,16 +88,16 @@ export function VoteInput({
   const metaKey = useMetaKey();
 
   return (
-    <form onSubmit={onSubmit} className={styles.formline}>
+    <form
+      onSubmit={onSubmit}
+      className={twMerge(styles.formline, "items-center")}
+    >
+      <TextInput name="name" placeholder="Name (optional)" />
       <TextArea
+        name="item"
         placeholder="Paste completed SortStar URL, or list of sorted items"
-        className="min-h-11"
-        value={value}
+        className="min-h-11 !flex-[3]"
         rows={1}
-        onChange={(e) => {
-          setValue(e.target.value);
-          e.target.setCustomValidity("");
-        }}
         onKeyDown={onKeyDown}
         required
       />

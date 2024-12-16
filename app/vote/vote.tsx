@@ -1,6 +1,6 @@
 "use client";
 
-import { CardGrid, Card, Page, Paper } from "@/components/layout";
+import { Card, CardGrid, Page, Paper } from "@/components/layout";
 import { H1 } from "@/components/text";
 import { VoteInput } from "./VoteInput";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -9,20 +9,21 @@ import { safe64encode, safe64decode } from "@/lib/base64";
 import { itemsQueryKey, rankingsQueryKey } from "@/sortState/config";
 import { RemoveItemButton } from "@/components/IconButtons";
 import { Borda } from "votes";
-import { useMemo } from "react";
-import {
-  ItemList,
-  ListItem,
-  ListItemContainer,
-  ListItemTextContainer,
-} from "@/components/List";
+import { useMemo, useState } from "react";
+import { ListItemContainer, ListItemTextContainer } from "@/components/List";
 
-function serializeRankings(items: string[], ranked: string[][]) {
+function serializeRankings(
+  items: string[],
+  ranked: { name: string; ranking: string[] }[]
+) {
   const indexMap = new Map(
     items.map((item, index) => [item, String.fromCharCode(index + 65)])
   );
   const serializedRankings = ranked
-    .map((ranking) => ranking.map((item) => indexMap.get(item) || "").join(""))
+    .map(
+      ({ name, ranking }) =>
+        `${name}:${ranking.map((item) => indexMap.get(item) || "").join("")}`
+    )
     .join(",");
   return safe64encode(serializedRankings);
 }
@@ -33,15 +34,18 @@ function deserializeRankings(data: string, items: string[]) {
     const nameMap = new Map(
       items.map((item, index) => [String.fromCharCode(index + 65), item])
     );
-    return decoded
-      .split(",")
-      .map((ranking) =>
-        ranking.split("").map((char) => nameMap.get(char) || "")
-      );
+    return decoded.split(",").map((entry) => {
+      const [name, ranking] = entry.split(":");
+      return {
+        name,
+        ranking: ranking.split("").map((char) => nameMap.get(char) || ""),
+      };
+    });
   } catch {
     return [];
   }
 }
+
 function useVoteState() {
   const { replace } = useRouter();
   const query = useSearchParams();
@@ -52,7 +56,10 @@ function useVoteState() {
     items
   );
 
-  const updateQuery = (newItems: string[], newRankings: string[][]) => {
+  const updateQuery = (
+    newItems: string[],
+    newRankings: { name: string; ranking: string[] }[]
+  ) => {
     const newQuery = {
       [itemsQueryKey]: serializeItems(newItems),
       [rankingsQueryKey]: serializeRankings(newItems, newRankings),
@@ -63,10 +70,11 @@ function useVoteState() {
     });
   };
 
-  const addRanking = (newRanking: string[]) => {
-    const updatedRankings = [...rankings, newRanking].filter(
-      (x) => x.length > 0
-    );
+  const addRanking = (newRanking: string[], voterName: string) => {
+    const updatedRankings = [
+      ...rankings,
+      { name: voterName, ranking: newRanking },
+    ].filter((x) => x.ranking.length > 0);
 
     const allItems = [
       ...items,
@@ -78,7 +86,7 @@ function useVoteState() {
 
   function removeRanking(index: number) {
     const updatedRankings = rankings.filter((_, i) => i !== index);
-    const rankedItems = new Set(updatedRankings.flat());
+    const rankedItems = new Set(updatedRankings.flatMap((x) => x.ranking));
     const remainingItems = items.filter((item) => rankedItems.has(item));
     updateQuery(remainingItems, updatedRankings);
   }
@@ -86,7 +94,7 @@ function useVoteState() {
   const { ranking, scores } = useMemo(() => {
     const borda = new Borda({
       candidates: items,
-      ballots: rankings.map((ranking) => ({
+      ballots: rankings.map(({ ranking }) => ({
         ranking: ranking.map((x) => [x]),
         weight: 1,
       })),
@@ -118,13 +126,14 @@ export function Vote() {
       <VoteInput onReceiveRanking={addRanking} />
       <H1>Votes</H1>
       <CardGrid>
-        {rankings.map((ranking, index) => (
+        {rankings.map(({ name, ranking }, index) => (
           <Paper elevation="low" className="relative pl-4" key={index}>
             <RemoveItemButton
               onClick={() => removeRanking(index)}
               className="absolute -right-2 top-3"
             />
             <div className="max-h-52 overflow-y-auto py-4">
+              <div className="font-bold">{name}</div>
               <ol className="list-decimal list-inside whitespace-nowrap ">
                 {ranking.map((item) => (
                   <li key={item} className="text-ellipsis overflow-x-hidden">
@@ -135,6 +144,11 @@ export function Vote() {
             </div>
           </Paper>
         ))}
+        {rankings.length === 0 && (
+          <Card elevation="low">
+            <em className="opacity-50 font-light">No votes yet</em>
+          </Card>
+        )}
       </CardGrid>
       <div>
         <H1>Final ranking</H1>
@@ -143,10 +157,7 @@ export function Vote() {
             <div>Item Name</div>
             <div>Score</div>
           </div>
-          <Paper
-            className="grid-cols-subgrid col-span-2 !grid"
-            elevation="high"
-          >
+          <Paper className="grid-cols-subgrid col-span-2 !grid" elevation="low">
             {ranking.map((item) => (
               <ListItemContainer
                 key={item}
@@ -156,6 +167,13 @@ export function Vote() {
                 <div>{scores[item]}</div>
               </ListItemContainer>
             ))}
+            {ranking.length === 0 && (
+              <ListItemContainer className="col-span-2">
+                <em className="opacity-50 font-light">
+                  The final results will appear here
+                </em>
+              </ListItemContainer>
+            )}
           </Paper>
         </div>
       </div>
