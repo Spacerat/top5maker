@@ -86,7 +86,7 @@ function SortLayout({ state }: { state: SortAppState }) {
       </SideBySideButtons>
       <UndoButton undo={undo} />
       <ItemList
-        header={<H3>Sorted items (best to worst)</H3>}
+        header={<H3>Fully sorted (best to worst)</H3>}
         getKey={ident}
         getName={ident}
         items={status.sorted}
@@ -95,10 +95,18 @@ function SortLayout({ state }: { state: SortAppState }) {
         onReorder={insertBelow}
       />
       <ItemList
-        header={<H3>Unsorted items</H3>}
+        header={<H3>Partially sorted</H3>}
         getKey={ident}
         getName={ident}
         items={status.incompleteSorted}
+        onRemove={removeItem}
+        onClear={clearCache}
+      />
+      <ItemList
+        header={<H3>Not sorted</H3>}
+        getKey={ident}
+        getName={ident}
+        items={status.notSorted}
         onRemove={removeItem}
       />
       <H3>Add another item</H3>

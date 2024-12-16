@@ -20,6 +20,7 @@ export type Comparison = {
 type IncompleteSortState = {
   /** The current sort-order of the unsorted items */
   incompleteSorted: string[];
+  notSorted: string[];
 };
 
 type NextComparison = {
@@ -99,16 +100,33 @@ function swap<T>(arr: T[], a: number, b: number) {
 }
 
 /* Sort the items as best as possible using the information available in the sort cache */
-function bestPossibleSort(cache: SortCache, items: readonly string[]) {
-  const copy = [...items];
-  copy
+function bestPossibleSort(
+  cache: SortCache,
+  items: readonly string[],
+  invertedCache?: Graph
+): { incompleteSorted: string[]; notSorted: string[] } {
+  const inverted = invertedCache ?? inverse(cache);
+
+  // Split 'unsorted' into items which have at least some information, and items with none
+
+  const unsorted = new Set(items);
+  const notSorted = new Set<string>();
+  for (const item of unsorted) {
+    if (!inverted[item]?.length && !cache[item]?.length) {
+      notSorted.add(item);
+      unsorted.delete(item);
+    }
+  }
+
+  const incompleteSorted = Array.from(unsorted);
+  incompleteSorted
     .sort((a, b) => (a > b ? 1 : -1))
     .sort((a, b) => {
       if (isDescendant(cache, { parent: a, target: b })) return -1;
       if (isDescendant(cache, { parent: b, target: a })) return 1;
       return 0;
     });
-  return copy;
+  return { incompleteSorted, notSorted: Array.from(notSorted) };
 }
 
 /** Return:
@@ -119,7 +137,7 @@ function bestSorts(cache: SortCache, items: readonly string[]) {
   // Check if the graph is fully connected.
   if (connectedNodes(cache, items[0]).length !== items.length) {
     // If it's not fully connected, then there are no items with complete information
-    return { sorted: [], incompleteSorted: bestPossibleSort(cache, items) };
+    return { sorted: [], ...bestPossibleSort(cache, items) };
   }
   const inverted = inverse(cache);
 
@@ -143,7 +161,7 @@ function bestSorts(cache: SortCache, items: readonly string[]) {
 
   return {
     sorted: results,
-    incompleteSorted: bestPossibleSort(cache, Array.from(unsorted)),
+    ...bestPossibleSort(cache, Array.from(unsorted), inverted),
   };
 }
 
@@ -164,12 +182,13 @@ export function heapSort(
   // Heapify
   const heapifyResult = heapify(cache, items);
   if (!heapifyResult.done) {
-    const { sorted, incompleteSorted } = bestSorts(cache, items);
+    const { sorted, incompleteSorted, notSorted } = bestSorts(cache, items);
     return {
       done: false,
       comparison: heapifyResult.comparison,
       sorted,
       incompleteSorted,
+      notSorted,
     };
   }
   heap = heapifyResult.heap;
@@ -181,20 +200,27 @@ export function heapSort(
     swap(heap, 0, heap.length - 1);
     popped.push(heap.pop() as string);
     const downShiftResult = downHeap(cache, heap, 0);
-    const { sorted, incompleteSorted } = bestSorts(cache, items);
+    const { sorted, incompleteSorted, notSorted } = bestSorts(cache, items);
 
     if (!downShiftResult.done) {
       return {
         done: false,
         comparison: downShiftResult.comparison,
         incompleteSorted,
+        notSorted,
         sorted,
       };
     }
     heap = downShiftResult.heap;
   }
 
-  return { done: true, sorted: popped, incompleteSorted: [], comparison: null };
+  return {
+    done: true,
+    sorted: popped,
+    incompleteSorted: [],
+    notSorted: [],
+    comparison: null,
+  };
 }
 
 /**
