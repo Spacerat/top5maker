@@ -31,7 +31,7 @@ export const Illustration = () => (
 export const Footer = () => (
   <FooterSection>
     <small>
-      Website &copy; Copyright 2022{" "}
+      Copyright &copy; 2022{" "}
       <a href="https://veryjoe.com">Joseph Atkins-Turkish</a>
     </small>
   </FooterSection>

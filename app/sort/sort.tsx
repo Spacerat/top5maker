@@ -24,6 +24,7 @@ import {
 } from "react-share";
 import styles from "./sort.module.css";
 import { ident } from "@/utils/ident";
+import { Footer } from "@/components/Brand";
 
 const Centered = ({ children }: React.PropsWithChildren) => (
   <div className={styles.centered}>{children}</div>
@@ -242,6 +243,7 @@ export function Sorter() {
       ) : (
         <SortLayout state={state} />
       )}
+      <Footer />
     </>
   );
 }
