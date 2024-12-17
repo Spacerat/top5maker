@@ -126,6 +126,8 @@ export function Vote() {
 
   return (
     <Page>
+      Vote with your friends and colleagues! Combine the results of multipe Sort
+      Star sessions into a single ranking.
       <H1>Per-person rankings</H1>
       <VoteInput onReceiveRanking={addRanking} />
       <H1>Votes</H1>
