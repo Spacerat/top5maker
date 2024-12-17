@@ -11,6 +11,7 @@ import { RemoveItemButton } from "@/components/IconButtons";
 import { Borda as VoteMethod } from "votes";
 import { useMemo } from "react";
 import { ListItemContainer, ListItemTextContainer } from "@/components/List";
+import { Tooltip } from "react-tooltip";
 
 function serializeRankings(
   items: string[],
@@ -154,7 +155,18 @@ export function Vote() {
         )}
       </CardGrid>
       <div>
-        <H1>Final ranking</H1>
+        <H1>
+          Final ranking{" "}
+          <span
+            data-tooltip-id="ranking-tooltip"
+            className="text-xs border border-black border-opacity-60 opacity-60 rounded-full w-4 h-4 inline-block text-center align-super box-content"
+          >
+            i
+          </span>
+        </H1>
+        <Tooltip id="ranking-tooltip">
+          Ranked using the Borda Count method
+        </Tooltip>
         <div className="grid grid-cols-[1fr,auto] flex-1">
           <div className="p-5 grid-cols-subgrid col-span-2 grid font-light">
             <div>Item Name</div>

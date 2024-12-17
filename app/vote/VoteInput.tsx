@@ -6,15 +6,57 @@ import { FormEventHandler, KeyboardEventHandler } from "react";
 import { deserializeItems, deserializeCache } from "@/sortState/serialization";
 import { itemsQueryKey, cacheQueryKey } from "@/sortState/config";
 import { heapSort } from "@/lib/interruptibleSort";
-import styles from "@/components/FormLine.module.css";
 import { useMetaKey } from "./useMetaKey";
 import { twMerge } from "tailwind-merge";
 
-export function VoteInput({
-  onReceiveRanking,
-}: {
+const VoteNameInput = ({ className }: { className?: string }) => (
+  <TextInput
+    name="name"
+    placeholder="Voter name (optional)"
+    className={className}
+  />
+);
+
+const VoteItemInput = ({ className }: { className?: string }) => {
+  const onKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
+    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      (e.target as HTMLTextAreaElement).form?.requestSubmit();
+    }
+  };
+
+  return (
+    <TextArea
+      name="item"
+      placeholder="Paste completed SortStar URL, or list of sorted items"
+      className={className}
+      rows={1}
+      onKeyDown={onKeyDown}
+      required
+    />
+  );
+};
+
+const VoteSubmitButton = ({ className }: { className?: string }) => {
+  const metaKey = useMetaKey();
+
+  return (
+    <Button type="submit" className={twMerge("flex flex-col", className)}>
+      <div>Submit</div>
+      <small className="opacity-80">
+        {metaKey ? `(${metaKey} + Enter)` : <>&nbsp;</>}
+      </small>
+    </Button>
+  );
+};
+
+interface VoteFormProps {
   onReceiveRanking?: (ranking: string[], name: string) => void;
-}) {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+function VoteForm({ onReceiveRanking, children, className }: VoteFormProps) {
   const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -79,35 +121,24 @@ export function VoteInput({
     }
   };
 
-  const onKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
-    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-      e.preventDefault();
-      (e.target as HTMLTextAreaElement).form?.requestSubmit();
-    }
-  };
-
-  const metaKey = useMetaKey();
-
   return (
-    <form
-      onSubmit={onSubmit}
-      className={twMerge(styles.formline, "items-center")}
-    >
-      <TextInput name="name" placeholder="Name (optional)" />
-      <TextArea
-        name="item"
-        placeholder="Paste completed SortStar URL, or list of sorted items"
-        className="min-h-11 !flex-[3]"
-        rows={1}
-        onKeyDown={onKeyDown}
-        required
-      />
-      <Button type="submit" className="flex flex-col">
-        <div>Submit</div>
-        <small className="opacity-80">
-          {metaKey ? `(${metaKey} + Enter)` : <>&nbsp;</>}
-        </small>
-      </Button>
+    <form onSubmit={onSubmit} className={className}>
+      {children}
     </form>
+  );
+}
+
+export function VoteInput({ className, ...formProps }: VoteFormProps) {
+  return (
+    <VoteForm
+      {...formProps}
+      className={twMerge(className, "flex flex-col flex-wrap gap-4")}
+    >
+      <VoteItemInput className="min-h-11 min-w-30" />
+      <div className="flex flex-row items-center gap-4 flex-wrap max-w-96">
+        <VoteNameInput className="min-w-30" />
+        <VoteSubmitButton />
+      </div>
+    </VoteForm>
   );
 }
