@@ -30,7 +30,6 @@ const VoteItemInput = ({ className }: { className?: string }) => {
       name="item"
       placeholder="Paste completed SortStar URL, or list of sorted items"
       className={className}
-      rows={1}
       onKeyDown={onKeyDown}
       required
     />
@@ -41,7 +40,7 @@ const VoteSubmitButton = ({ className }: { className?: string }) => {
   const metaKey = useMetaKey();
 
   return (
-    <Button type="submit" className={twMerge("flex flex-col", className)}>
+    <Button type="submit" className={twMerge("flex flex-row gap-2", className)}>
       <div>Submit</div>
       <small className="opacity-80">
         {metaKey ? `(${metaKey} + Enter)` : <>&nbsp;</>}
@@ -135,7 +134,7 @@ export function VoteInput({ className, ...formProps }: VoteFormProps) {
       className={twMerge(className, "flex flex-col flex-wrap gap-4")}
     >
       <VoteItemInput className="min-h-11 min-w-30" />
-      <div className="flex flex-row items-center gap-4 flex-wrap max-w-96">
+      <div className="flex flex-row items-center gap-4 flex-wrap max-w-lg">
         <VoteNameInput className="min-w-30" />
         <VoteSubmitButton />
       </div>
