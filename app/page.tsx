@@ -76,7 +76,7 @@ function ExampleCard(example: Example) {
 
 export default async function Home() {
   return (
-    <Main>
+    <>
       <Header>
         <div className={styles.taglineContainer}>
           <Brand />
@@ -100,6 +100,6 @@ export default async function Home() {
         </CardGrid>
       </Page>
       <Footer />
-    </Main>
+    </>
   );
 }

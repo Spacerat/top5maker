@@ -5,13 +5,13 @@ import React from "react";
 
 export default function Login() {
   return (
-    <Main>
+    <>
       <Header>
         <Brand />
       </Header>
       <Page slim>
         <AuthForm view="magic_link" />
       </Page>
-    </Main>
+    </>
   );
 }

@@ -4,6 +4,7 @@ import "./globals.css";
 import Head from "next/head";
 import "react-tooltip/dist/react-tooltip.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Main } from "@/components/layout";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -35,7 +36,7 @@ export default function RootLayout({
       </Head>
       <body>
         <SpeedInsights />
-        {children}
+        <Main>{children}</Main>
       </body>
     </html>
   );

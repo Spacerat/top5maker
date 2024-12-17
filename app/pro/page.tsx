@@ -29,7 +29,7 @@ export default async function Home() {
   );
 
   return (
-    <Main>
+    <>
       <Header>
         <ProBrand />
         <DialogButton
@@ -51,6 +51,6 @@ export default async function Home() {
         </SideBySideButtons>
       </Page>
       <Footer />
-    </Main>
+    </>
   );
 }
