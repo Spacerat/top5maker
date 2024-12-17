@@ -86,8 +86,10 @@ export default async function Home() {
       </Header>
 
       <Page>
-        <H3>Add three or more items to get started</H3>
-        You can add items one by one, or paste multiple lines
+        <p>
+          If you can choose between two things, you can sort any list with Sort
+          Star!
+        </p>
         <SetupItems />
       </Page>
       <Page kind="darker">
