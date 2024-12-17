@@ -1,6 +1,6 @@
 import AuthForm from "@/components/AuthForm";
 import { Brand } from "@/components/Brand";
-import { Header, Main, Page } from "@/components/layout";
+import { Header, Page } from "@/components/layout";
 import React from "react";
 
 export default function Login() {

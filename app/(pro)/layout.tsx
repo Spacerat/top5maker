@@ -1,5 +1,5 @@
 import { ProBrand } from "@/components/Brand";
-import { Header, Main, NavLinks } from "@/components/layout";
+import { Header, NavLinks } from "@/components/layout";
 import { NavLink } from "@/components/text";
 
 export default function Layout({ children }: { children: React.ReactNode }) {

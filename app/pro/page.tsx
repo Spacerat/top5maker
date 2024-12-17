@@ -3,7 +3,7 @@ import { Footer, ProBrand } from "@/components/Brand";
 import { LinkButton } from "@/components/Button";
 import DialogButton from "@/components/DialogButton";
 import { SideBySideButtons } from "@/components/SideBySideButtons";
-import { Card, Header, Main, Page } from "@/components/layout";
+import { Card, Header, Page } from "@/components/layout";
 import { Text, H2 } from "@/components/text";
 import { Database } from "@/types/supabase";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
