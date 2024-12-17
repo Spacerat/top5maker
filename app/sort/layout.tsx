@@ -12,7 +12,7 @@ export default async function Sort({
   return (
     <>
       <Header>
-        <TopNav active="sort" />
+        <TopNav active="sort" className="p-4" />
       </Header>
       <Suspense fallback={<LoadingLayout />}>{children}</Suspense>
       <Footer />

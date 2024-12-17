@@ -34,7 +34,11 @@ export const NavLink = ({
   children,
   ...props
 }: React.PropsWithChildren<LinkProps & { active?: boolean }>) => (
-  <Link {...props} className={styles.noStyleLink} data-active={props.active}>
+  <Link
+    {...props}
+    className={styles.noStyleLink}
+    data-active={props.active ? "true" : "false"}
+  >
     <H3>{children}</H3>
   </Link>
 );

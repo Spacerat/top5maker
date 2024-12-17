@@ -93,7 +93,7 @@ export default async function Home() {
   return (
     <>
       <Header>
-        <TaglineContainer>
+        <TaglineContainer className="p-4">
           <TopNav active="sort" />
           <TagLine />
         </TaglineContainer>

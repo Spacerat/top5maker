@@ -22,7 +22,7 @@ export function Header({
   );
 }
 
-export const NavLinks = styled.div("flex flex-row items-baseline gap-4 ");
+export const NavLinks = styled.div("flex flex-row items-baseline gap-4");
 
 type KindProp = { kind?: "main" | "darker" };
 type SlimProp = { slim?: boolean };

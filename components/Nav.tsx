@@ -1,9 +1,15 @@
 import { NavLinks } from "@/components/layout";
 import { NavLink } from "@/components/text";
 
-export function TopNav({ active }: { active: "sort" | "vote" }) {
+export function TopNav({
+  active,
+  className,
+}: {
+  active: "sort" | "vote";
+  className?: string;
+}) {
   return (
-    <NavLinks>
+    <NavLinks className={className}>
       <NavLink href="/" active={active === "sort"}>
         Sort Star
       </NavLink>
