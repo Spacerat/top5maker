@@ -16,6 +16,15 @@ function example(name: string, items: readonly string[]) {
 
 type Example = ReturnType<typeof example>;
 
+const tasks = example("Project features", [
+  "Sorting lists of items",
+  "Social sharing links",
+  "Cute redesign",
+  "Dark mode",
+  "Saved lists",
+  "Ranked voting",
+]);
+
 const powers = example("Super Powers", [
   "Invisibility",
   "Super Strength",
@@ -99,6 +108,7 @@ export default async function Home() {
           <ExampleCard {...names} />
           <ExampleCard {...business} />
           <ExampleCard {...powers} />
+          <ExampleCard {...tasks} />
         </CardGrid>
       </Page>
       <Footer />
