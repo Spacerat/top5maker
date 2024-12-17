@@ -45,7 +45,7 @@ export function AddForm({ onAddItems, keepInView, disabled }: AddFormProps) {
     <form onSubmit={onSubmit} className={styles.formline}>
       <TextInput
         type="text"
-        placeholder="Add items to sort"
+        placeholder="Add items to sort, or paste multiple lines"
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onPaste={onPaste}
