@@ -72,7 +72,7 @@ function ExampleCard(example: Example) {
   return (
     <Card elevation="low">
       <span>
-        <Link href={example.url}>{example.name}</Link>, including:
+        <Link href={example.url}>{example.name}</Link>:
         <ul className="list-disc list-inside">
           {example.display.map((x) => (
             <li key={x}>{x}</li>
