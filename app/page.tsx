@@ -3,12 +3,18 @@
 import Link from "next/link";
 import React from "react";
 import { makeSortUrl } from "@/sortState/useSortUrl";
-import { Brand, Footer, Illustration, TagLine } from "@/components/Brand";
-import { Card, CardGrid, Header, Main, Page } from "@/components/layout";
+import { Footer, Illustration, TagLine } from "@/components/Brand";
+import {
+  Card,
+  CardGrid,
+  Header,
+  Page,
+  TaglineContainer,
+} from "@/components/layout";
 import { H3 } from "@/components/text";
 import { SetupItems } from "./SetupItems";
 
-import styles from "./page.module.css";
+import { TopNav } from "@/components/Nav";
 
 function example(name: string, items: readonly string[]) {
   return { items, url: makeSortUrl(items), display: items.slice(0, 3), name };
@@ -87,10 +93,10 @@ export default async function Home() {
   return (
     <>
       <Header>
-        <div className={styles.taglineContainer}>
-          <Brand />
+        <TaglineContainer>
+          <TopNav active="sort" />
           <TagLine />
-        </div>
+        </TaglineContainer>
         <Illustration />
       </Header>
 

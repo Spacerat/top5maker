@@ -9,14 +9,20 @@ export const HeaderContent = styled.div(
 );
 
 export const HeaderContainer = styled.header(styles.headerContainer);
+export const TaglineContainer = styled.header(styles.taglineContainer);
 
-export function Header({ children }: React.PropsWithChildren) {
+export function Header({
+  children,
+  className,
+}: React.PropsWithChildren<{ className?: string }>) {
   return (
-    <HeaderContainer>
+    <HeaderContainer className={className}>
       <HeaderContent>{children}</HeaderContent>
     </HeaderContainer>
   );
 }
+
+export const NavLinks = styled.div("flex flex-row items-baseline gap-4 ");
 
 type KindProp = { kind?: "main" | "darker" };
 type SlimProp = { slim?: boolean };

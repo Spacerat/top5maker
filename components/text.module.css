@@ -20,12 +20,19 @@
 .noStyleLink {
   text-decoration: none;
   color: inherit;
+  padding: 0 0.5rem;
+  border-radius: 10px;
   &:visited {
     color: inherit;
   }
   &:hover {
     text-decoration: underline;
   }
+}
+
+.noStyleLink[data-active="true"] {
+  background-color: white;
+  color: var(--primary1);
 }
 
 .h3 {

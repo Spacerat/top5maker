@@ -3,11 +3,14 @@ import { FooterSection } from "./layout";
 import { H2, BrandLink, Text } from "./text";
 
 import styles from "./Brand.module.css";
+import { twMerge } from "tailwind-merge";
 
 export const Brand = () => (
-  <BrandLink href="/" passHref>
-    Sort Star
-  </BrandLink>
+  <div className="flex flex-row items-center gap-16">
+    <BrandLink href="/" passHref>
+      Sort Star
+    </BrandLink>
+  </div>
 );
 
 export const ProBrand = () => (
@@ -23,7 +26,7 @@ export const TagLine = () => (
 );
 
 export const Illustration = () => (
-  <div className={styles.imageContainer}>
+  <div className={twMerge(styles.imageContainer, "max-md:!hidden")}>
     <Image src="/Illustration.svg" width="226" height="124" alt="" priority />
   </div>
 );

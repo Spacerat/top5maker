@@ -33,8 +33,8 @@ export const BrandLink = ({
 export const NavLink = ({
   children,
   ...props
-}: React.PropsWithChildren<LinkProps>) => (
-  <Link {...props} className={styles.noStyleLink}>
+}: React.PropsWithChildren<LinkProps & { active?: boolean }>) => (
+  <Link {...props} className={styles.noStyleLink} data-active={props.active}>
     <H3>{children}</H3>
   </Link>
 );
