@@ -8,7 +8,7 @@ import { serializeItems, deserializeItems } from "@/sortState/serialization";
 import { safe64encode, safe64decode } from "@/lib/base64";
 import { itemsQueryKey, rankingsQueryKey } from "@/sortState/config";
 import { RemoveItemButton } from "@/components/IconButtons";
-import { Borda as VoteMethod } from "votes";
+import { Borda, Schulze, Kemeny, utils, InstantRunoff, Nanson } from "votes";
 import { useMemo } from "react";
 import { ListItemContainer, ListItemTextContainer } from "@/components/List";
 import { Tooltip } from "react-tooltip";
@@ -47,6 +47,40 @@ function deserializeRankings(data: string, items: string[]) {
   }
 }
 
+function runVote(
+  method: string,
+  candidates: string[],
+  rankings: { name: string; ranking: string[] }[]
+) {
+  const ballots = rankings.map(({ ranking }) => ({
+    ranking: ranking.map((x) => [x]),
+    weight: 1,
+  }));
+  switch (method) {
+    case "borda":
+      return new Borda({
+        candidates,
+        ballots,
+      });
+    case "schulze":
+      return new Schulze(utils.matrixFromBallots(ballots, candidates));
+    case "kemeny":
+      return new Kemeny(utils.matrixFromBallots(ballots, candidates));
+    case "nanson":
+      return new Nanson({
+        candidates,
+        ballots,
+      });
+    case "instant-runoff":
+      return new InstantRunoff({
+        candidates,
+        ballots,
+      });
+    default:
+      return new Schulze(utils.matrixFromBallots(ballots, candidates));
+  }
+}
+
 function useVoteState() {
   const { replace } = useRouter();
   const query = useSearchParams();
@@ -56,14 +90,17 @@ function useVoteState() {
     query.get(rankingsQueryKey) || "",
     items
   );
+  const method = query.get("method") || "shulze";
 
   const updateQuery = (
     newItems: string[],
-    newRankings: { name: string; ranking: string[] }[]
+    newRankings: { name: string; ranking: string[] }[],
+    method: string
   ) => {
     const newQuery = {
       [itemsQueryKey]: serializeItems(newItems),
       [rankingsQueryKey]: serializeRankings(newItems, newRankings),
+      method: method,
     };
     const queryString = new URLSearchParams(newQuery).toString();
     replace(`vote?${queryString}`, {
@@ -82,38 +119,51 @@ function useVoteState() {
       ...newRanking.filter((item) => !items.includes(item)),
     ];
 
-    updateQuery(allItems, updatedRankings);
+    updateQuery(allItems, updatedRankings, method);
   };
 
   function removeRanking(index: number) {
     const updatedRankings = rankings.filter((_, i) => i !== index);
     const rankedItems = new Set(updatedRankings.flatMap((x) => x.ranking));
     const remainingItems = items.filter((item) => rankedItems.has(item));
-    updateQuery(remainingItems, updatedRankings);
+    updateQuery(remainingItems, updatedRankings, method);
   }
 
-  const { ranking, scores } = useMemo(() => {
-    const election = new VoteMethod({
-      candidates: items,
-      ballots: rankings.map(({ ranking }) => ({
-        ranking: ranking.map((x) => [x]),
-        weight: 1,
-      })),
-    });
+  const { ranking, scores, scoreType } = useMemo(() => {
+    const election = runVote(method, items, rankings);
+
+    const providedScores = "scores" in election ? election.scores() : null;
+    const rankScores = election
+      .ranking()
+      .flatMap((level, levelIndex) =>
+        level.map((item) => ({ item, levelIndex }))
+      )
+      .reduce(
+        (acc, { item, levelIndex }) => {
+          acc[item] = levelIndex + 1;
+          return acc;
+        },
+        {} as Record<string, number>
+      );
 
     return {
       ranking: election.ranking().flatMap((i) => i),
-      scores:
-        "scores" in election && typeof election.scores === "function"
-          ? election.scores()
-          : {},
+      scores: providedScores ?? rankScores,
+      scoreType: "scores" in election ? "Score" : "Rank",
     };
   }, [items, rankings]);
+
+  function setMethod(newMethod: string) {
+    updateQuery(items, rankings, newMethod);
+  }
 
   return {
     items,
     rankings,
+    method,
+    scoreType,
     addRanking,
+    setMethod,
     removeRanking,
     ranking,
     scores,
@@ -121,8 +171,16 @@ function useVoteState() {
 }
 
 export function Vote() {
-  const { addRanking, removeRanking, rankings, ranking, scores } =
-    useVoteState();
+  const {
+    addRanking,
+    removeRanking,
+    setMethod,
+    method,
+    rankings,
+    ranking,
+    scores,
+    scoreType,
+  } = useVoteState();
 
   return (
     <Page>
@@ -156,23 +214,93 @@ export function Vote() {
           </Card>
         )}
       </CardGrid>
-      <div>
-        <H1>
-          Final ranking{" "}
-          <span
-            data-tooltip-id="ranking-tooltip"
-            className="text-xs border border-black border-opacity-60 opacity-60 rounded-full w-4 h-4 inline-block text-center align-super box-content"
+      <H1>Ranking method</H1>
+      <div className="flex flex-col gap-4">
+        <label className="inline-flex items-center gap-2">
+          Voting Method:
+          <select
+            value={method}
+            onChange={(e) => setMethod(e.target.value)}
+            className="ml-2 p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            i
-          </span>
-        </H1>
+            <optgroup label="Condorcet Methods">
+              <option value="schulze">Schulze Method</option>
+              <option value="kemeny">Kemeny-Young Method</option>
+            </optgroup>
+            <optgroup label="Elimination Methods">
+              <option value="instant-runoff">Instant Runoff</option>
+              <option value="nanson">Nanson's Method</option>
+            </optgroup>
+            <optgroup label="Tabulation Methods">
+              <option value="borda">Borda Count</option>
+            </optgroup>
+          </select>
+        </label>
+        <div className="opacity-70">
+          {method === "schulze" && (
+            <p>
+              <a href="https://en.wikipedia.org/wiki/Schulze_method">
+                Schulze Method
+              </a>{" "}
+              chooses the{" "}
+              <a href="https://en.wikipedia.org/wiki/Condorcet_winner_criterion">
+                Condorcet Winner.
+              </a>{" "}
+              Breaks ties by using indirect victories.
+            </p>
+          )}
+          {method === "borda" && (
+            <p>
+              <a href="https://en.wikipedia.org/wiki/Borda_count">
+                Borda Count
+              </a>{" "}
+              simply sums the positions of candidates in each ballot.
+            </p>
+          )}
+          {method === "kemeny" && (
+            <p>
+              <a href="https://en.wikipedia.org/wiki/Kemeny-Young_method">
+                Kemeny-Young Method
+              </a>{" "}
+              chooses the{" "}
+              <a href="https://en.wikipedia.org/wiki/Condorcet_winner_criterion">
+                Condorcet Winner.
+              </a>{" "}
+              Minimizes dissatisfaction.
+            </p>
+          )}
+          {method === "instant-runoff" && (
+            <p>
+              <a href="https://en.wikipedia.org/wiki/Instant-runoff_voting">
+                Instant Runoff
+              </a>{" "}
+              prioritizes first-place votes. Repeatedly eliminates top-place
+              losers.
+            </p>
+          )}
+          {method === "nanson" && (
+            <p>
+              <a href="https://en.wikipedia.org/wiki/Nanson%27s_method">
+                Nanson's Method
+              </a>{" "}
+              chooses the{" "}
+              <a href="https://en.wikipedia.org/wiki/Condorcet_winner_criterion">
+                Condorcet Winner.
+              </a>{" "}
+              Repeatedly eliminates the bottom half candiates of a Borda count.
+            </p>
+          )}
+        </div>
+      </div>
+      <div>
+        <H1>Final ranking</H1>
         <Tooltip id="ranking-tooltip">
           Ranked using the Borda Count method
         </Tooltip>
         <div className="grid grid-cols-[1fr,auto] flex-1">
           <div className="p-5 grid-cols-subgrid col-span-2 grid font-light">
             <div>Item Name</div>
-            <div>Score</div>
+            <div>{scoreType}</div>
           </div>
           <Paper className="grid-cols-subgrid col-span-2 !grid" elevation="low">
             {ranking.map((item) => (
