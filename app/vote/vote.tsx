@@ -151,7 +151,7 @@ function useVoteState() {
       scores: providedScores ?? rankScores,
       scoreType: "scores" in election ? "Score" : "Rank",
     };
-  }, [items, rankings]);
+  }, [items, rankings, method]);
 
   function setMethod(newMethod: string) {
     updateQuery(items, rankings, newMethod);
@@ -229,7 +229,7 @@ export function Vote() {
             </optgroup>
             <optgroup label="Elimination Methods">
               <option value="instant-runoff">Instant Runoff</option>
-              <option value="nanson">Nanson's Method</option>
+              <option value="nanson">{`Nanson's Method`}</option>
             </optgroup>
             <optgroup label="Tabulation Methods">
               <option value="borda">Borda Count</option>
@@ -281,7 +281,7 @@ export function Vote() {
           {method === "nanson" && (
             <p>
               <a href="https://en.wikipedia.org/wiki/Nanson%27s_method">
-                Nanson's Method
+                {`Nanson's Method`}
               </a>{" "}
               chooses the{" "}
               <a href="https://en.wikipedia.org/wiki/Condorcet_winner_criterion">
