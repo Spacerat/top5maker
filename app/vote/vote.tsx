@@ -217,7 +217,7 @@ export function Vote() {
       <H1>Ranking method</H1>
       <div className="flex flex-col gap-4">
         <label className="inline-flex items-center gap-2">
-          Voting Method:
+          Method:
           <select
             value={method}
             onChange={(e) => setMethod(e.target.value)}
