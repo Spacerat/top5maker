@@ -69,9 +69,9 @@ function runVote(
   }
 }
 
-function useVoteState() {
+function useVoteState(initialParams: { [key: string]: string }) {
   const { replace } = useRouter();
-  const query = useSearchParams();
+  const query = useSearchParams() ?? initialParams;
 
   const items = deserializeItems(query.get(itemsQueryKey) || "");
   const rankings = deserializeRankings(
@@ -158,7 +158,11 @@ function useVoteState() {
   };
 }
 
-export function Vote() {
+export function Vote({
+  initialParams,
+}: {
+  initialParams: { [key: string]: string };
+}) {
   const {
     addRanking,
     removeRanking,
@@ -168,7 +172,7 @@ export function Vote() {
     ranking,
     scores,
     scoreType,
-  } = useVoteState();
+  } = useVoteState(initialParams);
 
   return (
     <Page>
