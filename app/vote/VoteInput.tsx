@@ -139,7 +139,9 @@ export function VoteInput({ className, ...formProps }: VoteFormProps) {
       {...formProps}
       className={twMerge(className, "flex flex-col flex-wrap gap-4")}
     >
-      <VoteItemInput className="min-h-11 min-w-30" />
+      <div className="min-w-30">
+        <VoteItemInput className="min-h-11 w-full" />
+      </div>
       <div className="flex flex-row items-center gap-4 flex-wrap max-w-lg">
         <VoteNameInput className="min-w-30" />
         <VoteSubmitButton />
