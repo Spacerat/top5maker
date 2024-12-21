@@ -121,7 +121,11 @@ function VoteForm({ onReceiveRanking, children, className }: VoteFormProps) {
   };
 
   return (
-    <form onSubmit={onSubmit} className={className}>
+    <form
+      onSubmit={onSubmit}
+      className={className}
+      onChange={(e) => e.currentTarget.setCustomValidity("")}
+    >
       {children}
     </form>
   );
