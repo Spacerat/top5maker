@@ -78,7 +78,7 @@ function useVoteState(initialParams: { [key: string]: string }) {
     query.get(rankingsQueryKey) || "",
     items
   );
-  const method = query.get("method") || "shulze";
+  const method = query.get("method") || "schulze";
 
   const updateQuery = (
     newItems: string[],
