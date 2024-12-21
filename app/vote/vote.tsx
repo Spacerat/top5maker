@@ -8,7 +8,7 @@ import { serializeItems, deserializeItems } from "@/sortState/serialization";
 import { safe64encode, safe64decode } from "@/lib/base64";
 import { itemsQueryKey, rankingsQueryKey } from "@/sortState/config";
 import { RemoveItemButton } from "@/components/IconButtons";
-import { Borda, Schulze, Kemeny, utils, InstantRunoff, Nanson } from "votes";
+import { Schulze, utils, InstantRunoff } from "votes";
 import { useMemo } from "react";
 import { ListItemContainer, ListItemTextContainer } from "@/components/List";
 import { Tooltip } from "react-tooltip";
@@ -57,20 +57,8 @@ function runVote(
     weight: 1,
   }));
   switch (method) {
-    case "borda":
-      return new Borda({
-        candidates,
-        ballots,
-      });
     case "schulze":
       return new Schulze(utils.matrixFromBallots(ballots, candidates));
-    case "kemeny":
-      return new Kemeny(utils.matrixFromBallots(ballots, candidates));
-    case "nanson":
-      return new Nanson({
-        candidates,
-        ballots,
-      });
     case "instant-runoff":
       return new InstantRunoff({
         candidates,
@@ -151,7 +139,7 @@ function useVoteState() {
       scores: providedScores ?? rankScores,
       scoreType: "scores" in election ? "Score" : "Rank",
     };
-  }, [items, rankings, method]);
+  }, [items, rankings]);
 
   function setMethod(newMethod: string) {
     updateQuery(items, rankings, newMethod);
@@ -215,83 +203,66 @@ export function Vote() {
         )}
       </CardGrid>
       <H1>Ranking method</H1>
-      <div className="flex flex-col gap-4">
-        <label className="inline-flex items-center gap-2">
-          Method:
-          <select
-            value={method}
-            onChange={(e) => setMethod(e.target.value)}
-            className="ml-2 p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <optgroup label="Condorcet Methods">
-              <option value="schulze">Schulze Method</option>
-              <option value="kemeny">Kemeny-Young Method</option>
-            </optgroup>
-            <optgroup label="Elimination Methods">
-              <option value="instant-runoff">Instant Runoff</option>
-              <option value="nanson">{`Nanson's Method`}</option>
-            </optgroup>
-            <optgroup label="Tabulation Methods">
-              <option value="borda">Borda Count</option>
-            </optgroup>
-          </select>
-        </label>
-        <div className="opacity-70">
-          {method === "schulze" && (
-            <p>
-              <a href="https://en.wikipedia.org/wiki/Schulze_method">
+      <ol className="flex flex-col gap-2">
+        <li>
+          <label className="inline-flex items-center gap-2">
+            <input
+              type="radio"
+              name="method"
+              value="schulze"
+              checked={method === "schulze"}
+              onChange={() => setMethod("schulze")}
+            />
+            Prioritize broadly-liked items
+          </label>
+          <ol className="list-disc list-inside opacity-70 pl-6">
+            <li>
+              <a
+                href="https://en.wikipedia.org/wiki/Schulze_method"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Schulze Method
+              </a>
+              : Always selects an item that would{" "}
+              <a
+                href="https://en.wikipedia.org/wiki/Condorcet_winner_criterion"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                win against all others
               </a>{" "}
-              chooses the{" "}
-              <a href="https://en.wikipedia.org/wiki/Condorcet_winner_criterion">
-                Condorcet Winner.
-              </a>{" "}
-              Breaks ties by using indirect victories.
-            </p>
-          )}
-          {method === "borda" && (
-            <p>
-              <a href="https://en.wikipedia.org/wiki/Borda_count">
-                Borda Count
-              </a>{" "}
-              simply sums the positions of candidates in each ballot.
-            </p>
-          )}
-          {method === "kemeny" && (
-            <p>
-              <a href="https://en.wikipedia.org/wiki/Kemeny-Young_method">
-                Kemeny-Young Method
-              </a>{" "}
-              chooses the{" "}
-              <a href="https://en.wikipedia.org/wiki/Condorcet_winner_criterion">
-                Condorcet Winner.
-              </a>{" "}
-              Minimizes dissatisfaction.
-            </p>
-          )}
-          {method === "instant-runoff" && (
-            <p>
-              <a href="https://en.wikipedia.org/wiki/Instant-runoff_voting">
+              in a head-to-head matchup.
+            </li>
+          </ol>
+        </li>
+
+        <li>
+          <label className="inline-flex items-center gap-2">
+            <input
+              type="radio"
+              name="method"
+              value="instant-runoff"
+              checked={method === "instant-runoff"}
+              onChange={() => setMethod("instant-runoff")}
+            />
+            Prioritize top-ranked votes
+          </label>
+          <ol className="list-disc list-inside opacity-70 pl-6">
+            <li>
+              <a
+                href="https://en.wikipedia.org/wiki/Instant-runoff_voting"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Instant Runoff
-              </a>{" "}
-              prioritizes first-place votes. Repeatedly eliminates top-place
-              losers.
-            </p>
-          )}
-          {method === "nanson" && (
-            <p>
-              <a href="https://en.wikipedia.org/wiki/Nanson%27s_method">
-                {`Nanson's Method`}
-              </a>{" "}
-              chooses the{" "}
-              <a href="https://en.wikipedia.org/wiki/Condorcet_winner_criterion">
-                Condorcet Winner.
-              </a>{" "}
-              Repeatedly eliminates the bottom half candiates of a Borda count.
-            </p>
-          )}
-        </div>
-      </div>
+              </a>
+              : eliminates the weakest item until one has a majority of top
+              votes.
+            </li>
+          </ol>
+        </li>
+      </ol>
       <div>
         <H1>Final ranking</H1>
         <Tooltip id="ranking-tooltip">
