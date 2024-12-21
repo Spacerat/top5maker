@@ -32,6 +32,7 @@ const VoteItemInput = ({ className }: { className?: string }) => {
       className={className}
       onKeyDown={onKeyDown}
       required
+      onChange={(e) => e.currentTarget.setCustomValidity("")}
     />
   );
 };
@@ -126,11 +127,7 @@ function VoteForm({ onReceiveRanking, children, className }: VoteFormProps) {
   };
 
   return (
-    <form
-      onSubmit={onSubmit}
-      className={className}
-      onChange={(e) => e.currentTarget.setCustomValidity("")}
-    >
+    <form onSubmit={onSubmit} className={className}>
       {children}
     </form>
   );
