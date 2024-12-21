@@ -139,7 +139,7 @@ function useVoteState() {
       scores: providedScores ?? rankScores,
       scoreType: "scores" in election ? "Score" : "Rank",
     };
-  }, [items, rankings]);
+  }, [items, rankings, method]);
 
   function setMethod(newMethod: string) {
     updateQuery(items, rankings, newMethod);
