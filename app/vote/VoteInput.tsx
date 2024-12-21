@@ -80,6 +80,11 @@ function VoteForm({ onReceiveRanking, children, className }: VoteFormProps) {
           .split("\n")
           .map((item) => item.trim())
           .filter((item) => item.length > 0);
+        if (new Set(ranking).size !== ranking.length) {
+          textArea.setCustomValidity("Duplicate items in ranking");
+          e.currentTarget.reportValidity();
+          return;
+        }
         onReceiveRanking?.(ranking, name);
         textArea.setCustomValidity("");
         e.currentTarget.reset();
