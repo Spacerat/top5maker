@@ -32,12 +32,13 @@ export const BrandLink = ({
 
 export const NavLink = ({
   children,
+  active,
   ...props
 }: React.PropsWithChildren<LinkProps & { active?: boolean }>) => (
   <Link
     {...props}
     className={styles.noStyleLink}
-    data-active={props.active ? "true" : "false"}
+    data-active={active ? "true" : "false"}
   >
     <H3>{children}</H3>
   </Link>
