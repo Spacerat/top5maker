@@ -19,7 +19,7 @@ export function serializeItemsOld(items: readonly string[]): string {
 }
 
 export function serializeItemsCompressed(items: readonly string[]): string {
-  return compressToEncodedURIComponent(JSON.stringify(items));
+  return compressToEncodedURIComponent(items.join(String.fromCharCode(30)));
 }
 
 export function serializeItems(
@@ -76,8 +76,6 @@ function readCacheRepr(items: readonly string[], decoded: string): Graph {
   const nameMap = new Map(
     items.map((item, index) => [String.fromCharCode(index + 65), item])
   );
-
-  console.log({ decoded, nameMap });
 
   return Object.fromEntries(
     (decoded ?? "")
@@ -146,21 +144,11 @@ export function deserializeItemsOld(data: Data) {
 }
 
 export function deserializeItemsCompressed(data: Data) {
-  if (!isSafeBase64(data)) {
+  if (!isString(data)) {
     return [];
   }
-  let result: unknown;
-  try {
-    result = JSON.parse(decompressFromEncodedURIComponent(data));
-  } catch {
-    return [];
-  }
-
-  if (Array.isArray(result) && result.every(isString)) {
-    return result;
-  }
-
-  return [];
+  const decompressed = decompressFromEncodedURIComponent(data);
+  return decompressed.split(String.fromCharCode(30));
 }
 
 export function deserializeItems(
