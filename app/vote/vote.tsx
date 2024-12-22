@@ -11,7 +11,6 @@ import { RemoveItemButton } from "@/components/IconButtons";
 import { Schulze, utils, InstantRunoff } from "votes";
 import { useMemo } from "react";
 import { ListItemContainer, ListItemTextContainer } from "@/components/List";
-import { Tooltip } from "react-tooltip";
 
 function serializeRankings(
   items: string[],
@@ -269,9 +268,6 @@ export function Vote({
       </ol>
       <div>
         <H1>Final ranking</H1>
-        <Tooltip id="ranking-tooltip">
-          Ranked using the Borda Count method
-        </Tooltip>
         <div className="grid grid-cols-[1fr,auto] flex-1">
           <div className="p-5 grid-cols-subgrid col-span-2 grid font-light">
             <div>Item Name</div>
