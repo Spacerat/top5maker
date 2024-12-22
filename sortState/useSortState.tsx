@@ -18,7 +18,7 @@ import {
   sumFamilialConnections,
   withRemovedNode,
 } from "@/lib/interruptibleSort/graph";
-import { cacheQueryKey, itemsQueryKey, MAX_ITEMS } from "./config";
+import { cacheQueryKeyOld, itemsQueryKeyOld, MAX_ITEMS } from "./config";
 import {
   deserializeCache,
   deserializeItems,
@@ -28,8 +28,8 @@ import {
 import { useSortUrl } from "./useSortUrl";
 
 type QueryParams = {
-  [itemsQueryKey]: string;
-  [cacheQueryKey]: string;
+  [itemsQueryKeyOld]: string;
+  [cacheQueryKeyOld]: string;
 };
 
 function getSortedness(cache: Graph, maxItems: number) {
@@ -46,7 +46,7 @@ function getSortedness(cache: Graph, maxItems: number) {
   );
 }
 
-type QueryState = { [cacheQueryKey]: string; [itemsQueryKey]: string };
+type QueryState = { [cacheQueryKeyOld]: string; [itemsQueryKeyOld]: string };
 
 type StateUpdate = { newCache?: SortCache; newItems?: readonly string[] };
 
@@ -83,7 +83,7 @@ function swapComparisonIfNeeded(currStatus: SortStatus, newStatus: SortStatus) {
 }
 
 const initialState = (query: QueryState): SortState => {
-  const items = deserializeItems(sanitize(query[itemsQueryKey]));
+  const items = deserializeItems(sanitize(query[itemsQueryKeyOld]));
   return {
     query: sanitizeQueryObject(query),
     items,
@@ -95,15 +95,15 @@ const initialState = (query: QueryState): SortState => {
 
 function sanitizeQuery(query: ReadonlyURLSearchParams): QueryState {
   return {
-    [itemsQueryKey]: sanitize(query.get(itemsQueryKey)),
-    [cacheQueryKey]: sanitize(query.get(cacheQueryKey)),
+    [itemsQueryKeyOld]: sanitize(query.get(itemsQueryKeyOld)),
+    [cacheQueryKeyOld]: sanitize(query.get(cacheQueryKeyOld)),
   };
 }
 
 function sanitizeQueryObject(query: Record<string, unknown>): QueryState {
   return {
-    [itemsQueryKey]: sanitize(query[itemsQueryKey]),
-    [cacheQueryKey]: sanitize(query[cacheQueryKey]),
+    [itemsQueryKeyOld]: sanitize(query[itemsQueryKeyOld]),
+    [cacheQueryKeyOld]: sanitize(query[cacheQueryKeyOld]),
   };
 }
 
@@ -142,16 +142,16 @@ export function useSortState() {
         // Deserialize the query parameters
         curr.hydrated = true;
 
-        const queryItems = sanitize(query.get(itemsQueryKey));
-        const queryChanged = queryItems != curr.query?.[itemsQueryKey];
+        const queryItems = sanitize(query.get(itemsQueryKeyOld));
+        const queryChanged = queryItems != curr.query?.[itemsQueryKeyOld];
         if (queryChanged) {
-          curr.query[itemsQueryKey] = queryItems;
+          curr.query[itemsQueryKeyOld] = queryItems;
           curr.items = deserializeItems(queryItems);
         }
-        const queryCache = sanitize(query.get(cacheQueryKey));
-        const cacheChanged = queryCache != curr.query[itemsQueryKey];
+        const queryCache = sanitize(query.get(cacheQueryKeyOld));
+        const cacheChanged = queryCache != curr.query[itemsQueryKeyOld];
         if (cacheChanged) {
-          curr.query[itemsQueryKey] = queryCache;
+          curr.query[itemsQueryKeyOld] = queryCache;
           curr.cache = deserializeCache(curr.items, queryCache);
         }
 
@@ -174,8 +174,8 @@ export function useSortState() {
 
   function setState({ newCache = cache, newItems = items }: StateUpdate) {
     const newQuery = {
-      [itemsQueryKey]: serializeItems(newItems),
-      [cacheQueryKey]: serializeCache(newItems, newCache),
+      [itemsQueryKeyOld]: serializeItems(newItems),
+      [cacheQueryKeyOld]: serializeCache(newItems, newCache),
     };
     replaceQuery(newQuery);
     setHistory((curr) => [...curr, newQuery]);

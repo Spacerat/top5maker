@@ -6,7 +6,7 @@ import { VoteInput } from "./VoteInput";
 import { useRouter, useSearchParams } from "next/navigation";
 import { serializeItems, deserializeItems } from "@/sortState/serialization";
 import { safe64encode, safe64decode } from "@/lib/base64";
-import { itemsQueryKey, rankingsQueryKey } from "@/sortState/config";
+import { itemsQueryKeyOld, rankingsQueryKey } from "@/sortState/config";
 import { RemoveItemButton } from "@/components/IconButtons";
 import { Schulze, utils, InstantRunoff } from "votes";
 import { useMemo } from "react";
@@ -72,7 +72,7 @@ function useVoteState(initialParams: { [key: string]: string }) {
   const { replace } = useRouter();
   const query = useSearchParams() ?? initialParams;
 
-  const items = deserializeItems(query.get(itemsQueryKey) || "");
+  const items = deserializeItems(query.get(itemsQueryKeyOld) || "");
   const rankings = deserializeRankings(
     query.get(rankingsQueryKey) || "",
     items
@@ -85,7 +85,7 @@ function useVoteState(initialParams: { [key: string]: string }) {
     method: string
   ) => {
     const newQuery = {
-      [itemsQueryKey]: serializeItems(newItems),
+      [itemsQueryKeyOld]: serializeItems(newItems),
       [rankingsQueryKey]: serializeRankings(newItems, newRankings),
       method: method,
     };

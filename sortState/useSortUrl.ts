@@ -1,5 +1,5 @@
 import React from "react";
-import { itemsQueryKey } from "./config";
+import { itemsQueryKeyOld } from "./config";
 import { serializeItems } from "./serialization";
 
 /** Generate a sort-page URL for a list of items */
@@ -7,7 +7,7 @@ export function makeSortUrl(items: readonly string[]) {
   return {
     query:
       items && items.length > 0
-        ? { [itemsQueryKey]: serializeItems(items) }
+        ? { [itemsQueryKeyOld]: serializeItems(items) }
         : {},
     pathname: "/sort",
   };

@@ -4,7 +4,7 @@ import { TextArea, TextInput } from "@/components/TextInput";
 import { Button } from "@/components/Button";
 import { FormEventHandler, KeyboardEventHandler } from "react";
 import { deserializeItems, deserializeCache } from "@/sortState/serialization";
-import { itemsQueryKey, cacheQueryKey } from "@/sortState/config";
+import { itemsQueryKeyOld, cacheQueryKeyOld } from "@/sortState/config";
 import { heapSort } from "@/lib/interruptibleSort";
 import { useMetaKey } from "./useMetaKey";
 import { twMerge } from "tailwind-merge";
@@ -89,11 +89,11 @@ function VoteForm({ onReceiveRanking, children, className }: VoteFormProps) {
         onReceiveRanking?.(ranking, name);
         textArea.setCustomValidity("");
         e.currentTarget.reset();
-      } else if (text.includes(itemsQueryKey)) {
+      } else if (text.includes(itemsQueryKeyOld)) {
         try {
           const url = new URL(text);
-          const items = url.searchParams.get(itemsQueryKey);
-          const cache = url.searchParams.get(cacheQueryKey);
+          const items = url.searchParams.get(itemsQueryKeyOld);
+          const cache = url.searchParams.get(cacheQueryKeyOld);
           if (items && cache) {
             const deserializedItems = deserializeItems(items);
             const deserializedCache = deserializeCache(

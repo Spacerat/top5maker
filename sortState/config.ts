@@ -1,5 +1,5 @@
-export const itemsQueryKey = "i";
-export const cacheQueryKey = "c";
+export const itemsQueryKeyOld = "i";
+export const cacheQueryKeyOld = "c";
 export const rankingsQueryKey = "r";
 
 // NOTE: There is a bug which causes exceptions when too many items are added,
