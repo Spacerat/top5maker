@@ -1,3 +1,5 @@
+import { Graph } from "./graph";
+
 export type Graph = Record<string, string[]>;
 
 /**
@@ -165,6 +167,68 @@ function nodeSet(graph: Graph) {
   );
 }
 
+export function subgraphForNodes(graph: Graph, subset: string[]): Graph {
+  const nodeSet = new Set(subset);
+  const newGraph: Graph = {};
+  for (const node of subset) {
+    if (!graph[node]) {
+      newGraph[node] = [];
+    }
+  }
+  for (const [parent, children] of Object.entries(graph)) {
+    if (nodeSet.has(parent)) {
+      newGraph[parent] = children.filter((child) => nodeSet.has(child));
+    }
+  }
+  return newGraph;
+}
+
+export function findTopNodesWithGroups(graph: Graph) {
+  // Use inverse to quickly get parent relationships
+  const inv = inverse(graph);
+  const allNodes = nodeSet(graph);
+  const results: Array<{ root: string; connected: string[] }> = [];
+
+  while (allNodes.size > 0) {
+    let root: string | undefined = undefined;
+    // Find a node with no parents from the inverse graph
+    for (const candidate of allNodes) {
+      const parents = inv[candidate] ?? [];
+      if (parents.length === 0) {
+        root = candidate;
+        break;
+      }
+    }
+    if (!root) {
+      // If none found, pick arbitrarily
+      root = allNodes.values().next().value;
+    }
+    if (!root) break;
+
+    const group = connectedNodes(graph, root);
+    results.push({ root, connected: group });
+    for (const node of group) {
+      allNodes.delete(node);
+    }
+  }
+
+  return results;
+}
+
+export function getSortedness(cache: Graph, maxItems: number) {
+  // TODO: think a bit more than this
+  // The number of familial connections os O(N*2)
+  // Whereas the the number of comparisons needed is O(N log N)
+  // Therefore, this should rescale the metric to be linear in number of comaprisons...
+  // ... I think?
+  const scale = (n: number) => Math.sqrt(n); // * Math.log2(n);
+  return (
+    scale(sumFamilialConnections(cache)) /
+    scale(maxFamilialConnections(maxItems))
+  );
+}
+
+// These functions are used to calculate a metric of soring "progress"
 export function sumFamilialConnections(graph: Graph) {
   const allNodes = nodeSet(graph);
   if (allNodes.size === 0) return 0;
@@ -177,6 +241,7 @@ export function sumFamilialConnections(graph: Graph) {
   return totalCount;
 }
 
+// These functions are used to calculate a metric of soring "progress"
 export function maxFamilialConnections(nodeCount: number) {
   return nodeCount * (nodeCount - 1);
 }

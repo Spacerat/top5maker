@@ -12,12 +12,7 @@ import {
   SortCache,
   SortStatus,
 } from "@/lib/interruptibleSort";
-import {
-  Graph,
-  maxFamilialConnections,
-  sumFamilialConnections,
-  withRemovedNode,
-} from "@/lib/interruptibleSort/graph";
+import { withRemovedNode } from "@/lib/interruptibleSort/graph";
 import { cacheQueryKey, itemsQueryKey, MAX_ITEMS } from "./config";
 import {
   deserializeCache,
@@ -26,25 +21,12 @@ import {
   serializeItems,
 } from "./serialization";
 import { useSortUrl } from "./useSortUrl";
+import { getSortedness } from "@/lib/interruptibleSort/graph";
 
 type QueryParams = {
   [itemsQueryKey]: string;
   [cacheQueryKey]: string;
 };
-
-function getSortedness(cache: Graph, maxItems: number) {
-  // TODO: think a bit more than this
-  // The number of familial connections os O(N*2)
-  // Whereas the the number of comparisons needed is O(N log N)
-  // Therefore, this should rescale the metric to be linear in number of comaprisons...
-  // ... I think?
-
-  const scale = (n: number) => Math.sqrt(n); // * Math.log2(n);
-  return (
-    scale(sumFamilialConnections(cache)) /
-    scale(maxFamilialConnections(maxItems))
-  );
-}
 
 type QueryState = { [cacheQueryKey]: string; [itemsQueryKey]: string };
 
