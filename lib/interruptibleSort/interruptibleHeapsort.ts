@@ -1,44 +1,6 @@
-import {
-  connectedNodes,
-  Graph,
-  inverse,
-  isDescendant,
-  transitiveReduction,
-  withEdge,
-} from "./graph";
-
-export type SortCache = Graph;
-
-/** A comparison which needs to be made to continue the sort process */
-export type Comparison = {
-  /** An item to compare */
-  a: string;
-  /** An item to compare */
-  b: string;
-};
-
-type IncompleteSortState = {
-  /** The current sort-order of the unsorted items */
-  incompleteSorted: string[];
-  notSorted: string[];
-};
-
-type NextComparison = {
-  /** Indicates that more comparisons are needed */
-  done: false;
-
-  /** The next two values which need to be compared  */
-  comparison: Comparison;
-};
-
-type SortItemsState = IncompleteSortState & {
-  /** The sorted items, if any */
-  sorted: string[];
-};
-
-export type InProgressSortStatus = NextComparison & SortItemsState;
-export type DoneSortStatus = { done: true; comparison: null } & SortItemsState;
-export type SortStatus = InProgressSortStatus | DoneSortStatus;
+import { connectedNodes, Graph, inverse, isDescendant } from "./graph";
+import { SortCache } from "./sortCache";
+import { CacheResult, NextComparison, SortStatus } from "./interruptibleSort";
 
 /** Compute the index of the parent of a node in an array-heap */
 const parentIdx = (idx: number) => Math.floor((idx - 1) / 2);
@@ -48,30 +10,6 @@ const childIndices = (idx: number): [number, number] => [
   2 * idx + 1,
   2 * idx + 2,
 ];
-
-/** Return the cache updated  */
-export function cacheWithUpdate(
-  cache: SortCache,
-  { larger, smaller }: { larger: string; smaller: string }
-): SortCache {
-  if (larger === smaller) return cache;
-
-  if (isDescendant(cache, { parent: larger, target: smaller })) {
-    return cache;
-  }
-  return transitiveReduction(
-    withEdge(cache, { parent: larger, child: smaller })
-  );
-}
-
-type CacheResult =
-  | {
-      /** True when the values were found in the cache */
-      done: true;
-      /** True when 'a' < 'b' */
-      lessThan: boolean;
-    }
-  | NextComparison;
 
 /**
  * Return true or false if it is known that a < b or b < a;

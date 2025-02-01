@@ -1,4 +1,5 @@
-import { cacheWithUpdate, heapify, heapSort } from "./interruptibleHeapsort";
+import { heapify, heapSort } from "./interruptibleHeapsort";
+import { cacheWithUpdate } from "./sortCache";
 
 describe("heapify", () => {
   test("builds a small heap", () => {

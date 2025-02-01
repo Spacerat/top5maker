@@ -1,2 +1,3 @@
-export { cacheWithUpdate, heapSort } from "./interruptibleHeapsort";
-export type { SortCache, SortStatus } from "./interruptibleHeapsort";
+export { heapSort } from "./interruptibleHeapsort";
+export { cacheWithUpdate, type SortCache } from "./sortCache";
+export type { SortStatus } from "./interruptibleSort";
