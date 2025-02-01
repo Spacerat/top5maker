@@ -22,18 +22,18 @@ export function tournamentSort(
 ): SortStatus {
   const { sorted, incompleteSorted, notSorted } = bestSorts(cache, items);
 
-  // Return early if we're already done
+  // Return immediately if we're already done
   if (sorted.length === items.length) {
     return done(sorted);
   }
 
-  // Otherwise we need to choose a comparison
+  // Otherwise we need to choose a comparison...
 
   // First, create a subgraph of the items not fully sorted
-  const sub = subgraphForNodes(cache, [...incompleteSorted, ...notSorted]);
+  const subgraph = subgraphForNodes(cache, [...incompleteSorted, ...notSorted]);
 
-  // Find all connected subgraphs, and their roots (largest items)
-  const groups = findTopNodesWithGroups(sub).sort(
+  // Find all connected subgraphs, and their roots (usually the largest item)
+  const groups = findTopNodesWithGroups(subgraph).sort(
     (a, b) => a.connected.length - b.connected.length
   );
 
