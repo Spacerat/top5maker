@@ -90,7 +90,7 @@ function sanitizeQueryObject(query: Record<string, unknown>): QueryState {
 }
 
 /**
- * This hook wraps the core 'heapSort' function to manage the app's state,
+ * This hook wraps the core 'interruptibleSort' function to manage the app's state,
  * keeping it in sync with the current URL.
  */
 export function useSortState() {
