@@ -1,5 +1,3 @@
-import { Graph } from "./graph";
-
 export type Graph = Record<string, string[]>;
 
 /**
