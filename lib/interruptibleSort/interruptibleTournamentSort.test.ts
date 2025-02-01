@@ -1,4 +1,4 @@
-import { tournamentSort } from "./interruptibleTournament";
+import { tournamentSort } from "./interruptibleTournamentSort";
 import { cacheWithUpdate } from "./sortCache";
 
 describe("tournamentSort", () => {
