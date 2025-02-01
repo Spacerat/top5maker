@@ -7,6 +7,11 @@
     "plugin:@typescript-eslint/recommended"
   ],
   "rules": {
-    "no-constant-binary-expression": "error"
+    "no-constant-binary-expression": "error",
+    // allow unused starting with _
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      { "argsIgnorePattern": "^_" }
+    ]
   }
 }
