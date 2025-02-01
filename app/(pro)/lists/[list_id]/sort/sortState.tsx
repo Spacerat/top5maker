@@ -1,5 +1,9 @@
 import { Decision } from "@/app/(pro)/queries";
-import { SortCache, cacheWithUpdate, heapSort } from "@/lib/interruptibleSort";
+import {
+  SortCache,
+  cacheWithUpdate,
+  interruptibleSort,
+} from "@/lib/interruptibleSort";
 import { withRemovedNode } from "@/lib/interruptibleSort/graph";
 
 export type Item = {
@@ -69,7 +73,7 @@ export function getSort(items: Item[], decision: Decision[]): SortResult {
   }
 
   const allItemIds = filtered.map((item) => item.list_item_id);
-  const sortStatus = heapSort(cache, allItemIds);
+  const sortStatus = interruptibleSort(cache, allItemIds);
 
   // Create a map from item ID to item
 

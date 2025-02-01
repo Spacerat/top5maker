@@ -5,7 +5,7 @@ import { Button } from "@/components/Button";
 import { FormEventHandler, KeyboardEventHandler } from "react";
 import { deserializeItems, deserializeCache } from "@/sortState/serialization";
 import { itemsQueryKey, cacheQueryKey } from "@/sortState/config";
-import { heapSort } from "@/lib/interruptibleSort";
+import { interruptibleSort } from "@/lib/interruptibleSort";
 import { useMetaKey } from "./useMetaKey";
 import { twMerge } from "tailwind-merge";
 
@@ -100,7 +100,7 @@ function VoteForm({ onReceiveRanking, children, className }: VoteFormProps) {
               deserializedItems,
               cache
             );
-            const { sorted, done } = heapSort(
+            const { sorted, done } = interruptibleSort(
               deserializedCache,
               deserializedItems
             );

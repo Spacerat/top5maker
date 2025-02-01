@@ -8,7 +8,7 @@ import React from "react";
 import { stringSetRemove, stringSetUnion } from "@/lib/immutableStringSet";
 import {
   cacheWithUpdate,
-  heapSort,
+  interruptibleSort,
   SortCache,
   SortStatus,
 } from "@/lib/interruptibleSort";
@@ -88,7 +88,7 @@ const initialState = (query: QueryState): SortState => {
     query: sanitizeQueryObject(query),
     items,
     cache: {},
-    status: heapSort({}, items),
+    status: interruptibleSort({}, items),
     hydrated: false,
   };
 };
@@ -159,7 +159,7 @@ export function useSortState() {
 
         if (queryChanged || cacheChanged) {
           const currStatus = curr.status;
-          const newStatus = heapSort(curr.cache, curr.items);
+          const newStatus = interruptibleSort(curr.cache, curr.items);
           curr.status = swapComparisonIfNeeded(currStatus, newStatus);
         }
       });
