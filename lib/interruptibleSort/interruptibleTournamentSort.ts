@@ -37,15 +37,29 @@ export function tournamentSort(
   ]).sort((a, b) => a.connected.length - b.connected.length);
 
   if (groups.length < 2) {
+    // HACK: fall back to heapsort for now, until we're 100% confident this can't happen!
     console.error("this should never happen");
-    // Do this as a backup for now until we're fully confident this can't happen!
+    return heapSort(cache, items);
+  }
+
+  const [smaller, larger] = [groups[0], groups[1]];
+
+  if (larger.connected.length > 2 * smaller.connected.length) {
+    // HACK?: fall back to heapsort if there's a large discrepancy between group sizes.
+    //
+    // Without this, the 'tournament sort' method ends up doing an insertion sort when you add
+    // new items at the end of sorting.
+    //
+    // I think I can probably come up with something more elegant that's integrated into the
+    // tournament method. For example, instead of comparing the top elements of groups, compare
+    // the top of the smallest group to the middle of the next group's fully sorted elements.
     return heapSort(cache, items);
   }
 
   // 2. The roots of the two smallest groups are the next comparison
   return {
     done: false,
-    comparison: { a: groups[0].root, b: groups[1].root },
+    comparison: { a: smaller.root, b: larger.root },
     sorted,
     incompleteSorted,
     notSorted,
