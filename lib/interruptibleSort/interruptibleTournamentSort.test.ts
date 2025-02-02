@@ -89,7 +89,7 @@ describe("tournamentSort", () => {
       }
     }
 
-    expect(steps).toEqual(29);
+    expect(steps).toEqual(31);
 
     // The cache has been transitively reduced
     expect(cache).toEqual({
@@ -143,7 +143,7 @@ describe("tournamentSort", () => {
       result = tournamentSort(cache, data);
     }
 
-    expect(steps).toEqual(7);
+    expect(steps).toEqual(8);
 
     expect(result.sorted).toEqual(["10", "9", "8", "7", "6", "5"]);
   });
