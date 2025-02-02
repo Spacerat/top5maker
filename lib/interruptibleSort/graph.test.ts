@@ -61,8 +61,14 @@ describe("familial connections", () => {
     const result = sumFamilialConnections(g);
     expect(result).toEqual(10);
   });
+  test("full sort of four", () => {
+    const g: Graph = { a: ["b"], b: ["c"], c: ["d"] };
+    const result = sumFamilialConnections(g);
+    expect(result).toEqual(12);
+  });
 
   test("max familial connections", () => {
+    expect(maxFamilialConnections(4)).toEqual(12);
     expect(maxFamilialConnections(3)).toEqual(6);
     expect(maxFamilialConnections(0)).toBeCloseTo(0);
   });
