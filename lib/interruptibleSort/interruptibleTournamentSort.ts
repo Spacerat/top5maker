@@ -53,6 +53,8 @@ export function tournamentSort(
     // I think I can probably come up with something more elegant that's integrated into the
     // tournament method. For example, instead of comparing the top elements of groups, compare
     // the top of the smallest group to the middle of the next group's fully sorted elements.
+    //
+    // See the heapsort file for more details.
     return heapSort(cache, items);
   }
 

@@ -1,3 +1,30 @@
+// NOTE:
+// This used to be the main sort implementation for Sort Star
+// I since replaced it with a Tournament Sort, which always finds the
+// 'top' element in N-1 comparisons, and then proceeds to find the next
+// top elements very quickly.
+//
+// Heapsort, in comparison, can take a while to find the top elements
+// but then all of a sudden give you many sorted elements at once.
+//
+// For humans, who often just care about the top few items, I think
+// the tournament is better.
+//
+// HOWEVER - my tournament sort implementation does a very poor job
+// when new items are added at the end of the run, especially if that
+// new item is low on the list. It repeatedly compares the new item
+// to the largest sorted item, gradually going down the list. This ends
+// being an insertion sort, i.e. O(N), when really the optimal thing to
+// do is a binary search, which is O(logN).
+//
+// Thankfully, this heapsort implementation seems effectively perform
+// a binary search in this scenario! I believe this is because, in practice
+// what we're doing is running the "siftDown()" operation of "heapify()" on
+// just the new element, and siftDown is O(logN).
+//
+// And so, until I think of a better solution here, in the tournament sort,
+// I attempt to detect this situation, then and fall back to heapsort.
+
 import { isDescendant } from "./graph";
 import { SortCache } from "./sortCache";
 import { CacheResult, NextComparison, SortStatus } from "./interruptibleSort";
