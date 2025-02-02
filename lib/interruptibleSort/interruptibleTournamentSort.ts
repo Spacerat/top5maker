@@ -4,7 +4,8 @@ import {
   SortStatus,
 } from "@/lib/interruptibleSort/interruptibleSort";
 import { bestSorts } from "./bestSorts";
-import { subgraphForNodes, findTopNodesWithGroups } from "./graph";
+import { findTopNodesWithGroups } from "./graph";
+import { heapSort } from "./interruptibleHeapsort";
 
 function done(items: string[]): DoneSortStatus {
   return {
@@ -29,20 +30,19 @@ export function tournamentSort(
 
   // Otherwise we need to choose a comparison...
 
-  // First, create a subgraph of the items not fully sorted
-  const subgraph = subgraphForNodes(cache, [...incompleteSorted, ...notSorted]);
-
-  // Find all connected subgraphs, and their roots (usually the largest item)
-  const groups = findTopNodesWithGroups(subgraph).sort(
-    (a, b) => a.connected.length - b.connected.length
-  );
+  // 1. Find all connected subgraphs, and their roots (usually the largest item)
+  const groups = findTopNodesWithGroups(cache, [
+    ...incompleteSorted,
+    ...notSorted,
+  ]).sort((a, b) => a.connected.length - b.connected.length);
 
   if (groups.length < 2) {
     console.error("this should never happen");
-    return done(sorted);
+    // Do this as a backup for now until we're fully confident this can't happen!
+    return heapSort(cache, items);
   }
 
-  // 3. The roots of the two smallest groups are the next comparison
+  // 2. The roots of the two smallest groups are the next comparison
   return {
     done: false,
     comparison: { a: groups[0].root, b: groups[1].root },

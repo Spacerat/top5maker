@@ -181,10 +181,12 @@ export function subgraphForNodes(graph: Graph, subset: string[]): Graph {
   return newGraph;
 }
 
-export function findTopNodesWithGroups(graph: Graph) {
+export function findTopNodesWithGroups(graph: Graph, items: string[]) {
+  const subgraph = subgraphForNodes(graph, items);
+
   // Use inverse to quickly get parent relationships
-  const inv = inverse(graph);
-  const allNodes = nodeSet(graph);
+  const inv = inverse(subgraph);
+  const allNodes = nodeSet(subgraph);
   const results: Array<{ root: string; connected: string[] }> = [];
 
   while (allNodes.size > 0) {
@@ -203,7 +205,7 @@ export function findTopNodesWithGroups(graph: Graph) {
     }
     if (!root) break;
 
-    const group = connectedNodes(graph, root);
+    const group = [root, ...allDescendants(subgraph, root)];
     results.push({ root, connected: group });
     for (const node of group) {
       allNodes.delete(node);
