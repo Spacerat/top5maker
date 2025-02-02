@@ -41,6 +41,7 @@ export function bestSorts(cache: SortCache, items: readonly string[]) {
   }
   const inverted = inverse(cache);
 
+  // FIXME: THIS IS PROBABLY BROKEN
   // Check if there is only one item with no parents
   const top = items.find((item) => !inverted[item]);
 
