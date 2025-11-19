@@ -9,9 +9,10 @@ import { Page } from "@/components/layout";
 import { H1, H3 } from "@/components/text";
 import { SortStatus } from "@/lib//interruptibleSort";
 import { SortAppState, useSortState } from "@/sortState/useSortState";
+import { ident } from "@/utils/ident";
 import Head from "next/head";
 import Link from "next/link";
-import React, { ProgressHTMLAttributes, useEffect } from "react";
+import React, { ProgressHTMLAttributes, useEffect, useState } from "react";
 import {
   FacebookIcon,
   FacebookShareButton,
@@ -23,7 +24,6 @@ import {
   WhatsappShareButton,
 } from "react-share";
 import styles from "./sort.module.css";
-import { ident } from "@/utils/ident";
 
 const Centered = ({ children }: React.PropsWithChildren) => (
   <div className={styles.centered}>{children}</div>
@@ -170,6 +170,7 @@ function DoneLayout({ state }: { state: SortAppState }) {
           onReorder={insertBelow}
         />
         <UndoButton undo={undo} />
+        <CopyResultButton sorted={status.sorted} />
         <H3>Share this list</H3>
         <SharePanel sorted={status.sorted} />
       </Page>
@@ -198,6 +199,27 @@ function UndoButton({ undo }: { undo?: null | undefined | (() => void) }) {
       Undo
     </FullMobileButton>
   ) : null;
+}
+
+function CopyResultButton({ sorted }: { sorted: readonly string[] }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    const text = sorted.map((item, index) => `${index + 1}. ${item}`).join("\n");
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  };
+
+  return (
+    <FullMobileButton variant="secondary" onClick={handleCopy}>
+      {copied ? "Copied!" : "Copy Result"}
+    </FullMobileButton>
+  );
 }
 
 function SharePanel({ sorted }: { sorted: readonly string[] }) {

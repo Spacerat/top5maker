@@ -1,5 +1,5 @@
 import React from "react";
-import { CrossIcon, RedoIcon } from "./Icons";
+import { CopyIcon, CrossIcon, RedoIcon } from "./Icons";
 
 import styles from "./IconButtons.module.css";
 import { twMerge } from "tailwind-merge";
@@ -38,6 +38,20 @@ export function RedoItemButton({ name, onClick }: IconButtonProps) {
       title="Re-sort item"
     >
       <RedoIcon />
+    </button>
+  );
+}
+
+export function CopyItemButton({ name, onClick, className }: IconButtonProps) {
+  return (
+    <button
+      type="button"
+      className={twMerge(styles.iconButton, className)}
+      onClick={onClick}
+      aria-label={name ? `Copy ${name}` : "Copy to clipboard"}
+      title="Copy to clipboard"
+    >
+      <CopyIcon />
     </button>
   );
 }
